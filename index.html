@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수능 D-day 계산기 | 모의고사 일정</title>
+    <meta name="description" content="2027학년도 수능 D-day와 모든 모의고사 일정을 한눈에! 매일 자동 업데이트">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        /* 수능 메인 디스플레이 */
+        .main-dday {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(238, 90, 111, 0.3);
+            transition: background 0.3s ease;
+        }
+
+        /* 색상 테마들 */
+        .main-dday.theme-red {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            box-shadow: 0 10px 30px rgba(238, 90, 111, 0.3);
+        }
+
+        .main-dday.theme-blue {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+        }
+
+        .main-dday.theme-pink {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .main-dday.theme-green {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
+        }
+
+        .main-dday.theme-orange {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 10px 30px rgba(250, 112, 154, 0.3);
+        }
+
+        .main-dday.theme-mint {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
+        }
+
+        /* 색상 선택 버튼 */
+        .color-picker {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px #333;
+        }
+
+        .color-btn.red { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
+        .color-btn.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .color-btn.pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .color-btn.green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .color-btn.orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .color-btn.mint { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+        .main-dday-label {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .main-dday-number {
+            font-size: 5em;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-dday-date {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* 모의고사 일정 */
+        .schedule-section {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .schedule-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .schedule-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .schedule-item.upcoming {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .schedule-info {
+            flex: 1;
+        }
+
+        .schedule-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .schedule-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .schedule-dday {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .schedule-item.upcoming .schedule-dday {
+            color: #f57c00;
+        }
+
+        .schedule-item.passed {
+            opacity: 0.5;
+        }
+
+        .schedule-item.passed .schedule-dday {
+            color: #999;
+        }
+
+        /* 광고 영역 */
+        .ad-space {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 60px 20px;
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+        }
+
+        .update-time {
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+
+        .handwriting-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            color: #856404;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .main-dday-number {
+                font-size: 3.5em;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 2027 수능 D-day</h1>
+        <p class="subtitle">모든 모의고사 일정을 한눈에</p>
+
+        <!-- 색상 선택 -->
+        <div class="color-picker">
+            <button class="color-btn red active" onclick="changeTheme('red')" title="빨강"></button>
+            <button class="color-btn blue" onclick="changeTheme('blue')" title="파랑"></button>
+            <button class="color-btn pink" onclick="changeTheme('pink')" title="분홍"></button>
+            <button class="color-btn green" onclick="changeTheme('green')" title="초록"></button>
+            <button class="color-btn orange" onclick="changeTheme('orange')" title="주황"></button>
+            <button class="color-btn mint" onclick="changeTheme('mint')" title="민트"></button>
+        </div>
+
+        <!-- 수능 메인 -->
+        <div class="main-dday theme-red" id="mainDdayBox">
+            <div class="main-dday-label">2027학년도 수능까지</div>
+            <div class="main-dday-number" id="mainDday">D-290</div>
+            <div class="main-dday-date">2026년 11월 18일 (목)</div>
+        </div>
+
+        <!-- 통계 -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">남은 주</div>
+                <div class="stat-value" id="weeksLeft">41주</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">남은 개월</div>
+                <div class="stat-value" id="monthsLeft">9개월</div>
+            </div>
+        </div>
+
+        <!-- 모의고사 일정 -->
+        <div class="schedule-section">
+            <div class="section-title">📝 모의고사 일정</div>
+            <div id="scheduleList"></div>
+        </div>
+
+        <!-- 필적확인란 -->
+        <div class="handwriting-box" id="handwriting"></div>
+
+        <!-- 광고 영역 (나중에 애드센스 코드 삽입) -->
+        <!-- 
+        <div class="ad-space">
+            구글 애드센스 코드를 여기에 삽입하세요
+        </div>
+        -->
+
+        <div class="update-time" id="updateTime"></div>
+    </div>
+
+    <script>
+        // 필적확인란 문구 목록
+        const handwritingTexts = [
+            "흙에서 자란 내 마음 파란 하늘빛",
+            "넓은 벌 동쪽 끝으로 옛이야기",
+            "손금에 맑은 강물이 흐르고",
+            "이 많은 별빛이 내린 언덕 위에",
+            "맑은 강물처럼 조용하고 은근하며",
+            "날마다 새로우며, 깊어지며, 넓어진다",
+            "진실로 내가 그대를 사랑하는 까닭은",
+            "맑은 햇빛으로 반짝반짝 물들으며",
+            "꽃초롱 불 밝히듯 눈을 밝힐까",
+            "햇살도 둥글둥글하게 뭉치는 맑은 날",
+            "넓음과 깊음을 가슴에 채우며",
+            "흙에서 자란 내 마음 파아란 하늘빛",
+            "큰 바다 넓은 하늘을 우리는 가졌노라",
+            "그대만큼 사랑스러운 사람을 본 일이 없다",
+            "너무 맑고 초롱한 그 중 하나 별이여",
+            "많고 많은 사람 중에 그대 한 사람",
+            "넓은 하늘로의 비상을 꿈꾸며",
+            "나의 꿈은 맑은 바람이 되어서",
+            "가장 넓은 길은 언제나 내 마음속에",
+            "저 넓은 세상에서 큰 꿈을 펼쳐라",
+            "초록 물결이 톡톡 튀는 젊음처럼",
+            "하늘을 우러러 한 점 부끄럼이 없기를",
+            "산에는 꽃 피네 꽃이 피네 갈 봄 여름 없이",
+            "언제나 점잖은 편 말이 없구나",
+            "사뿐히 즈려 밟고 가시옵소서",
+            "맑은 햇빛으로 반짝반짝 물들으며",
+            "빈 대에 황촉불이 말없이 녹는 밤에",
+            "엷은 졸음에 겨운 늙으신 아버지가",
+            "기슭에는 채송화가 무더기로 피어서",
+            "실어 나르지 않는 깨끗한 마음으로",
+            "그 맑은 눈빛으로 나를 씻어",
+            "세상이 조금씩 더 밝아지게 하소서",
+            "별이 총총한 맑은 새암을 들여다본다",
+            "햇빛도 그늘이 있어야 맑고 눈이 부시다",
+            "세월이 흘러도 어머니의 마음은 늙지 않습니다",
+            "많이 사랑하고 더 나중까지 지켜주는 이 됩시다",
+            "밝고 맑게 살아가는 희망의 사람이 되게",
+            "삶의 울타리 안에 평안함이 가득하다는 것이다",
+            "꽃씨들은 흙을 뚫고 얼음을 뚫고",
+            "푸르른 보리밭길 엷은 하늘에",
+            "청노루 맑은 눈에 도는 구름",
+            "눈 맑은 사람아 마음 맑은 사람아",
+            "깊은 숲 속에서 나오니 유월의 햇빛이 밝다",
+            "제 몫의 삶 지켜가는 청단풍 한 그루",
+            "등불을 밝혀 어둠을 조금 내몰고",
+            "하염없는 빛 하염없는 기쁨",
+            "바람은 자도 마음은 자지 않는다",
+            "달이 밝고 구름이 흐르고 하늘이 펼치고",
+            "하늘빛을 닮은 그 들판 곁에 서서",
+            "그대 맑은 눈을 들어 나를 보느니",
+            "넓은 하늘의 수만 별을 그대로 총총",
+            "맑고 아름다운 하늘을 받들어",
+            "모두가 이름이 붙어 있지 않은 보석들",
+            "많이 사랑할수록 더 맑게 흐르는",
+            "바위는 제자리에 옴찍 않노니",
+            "햇볕이 유달리 맑은 하늘의 푸른 길을 밟고",
+            "그것들이 내 삶의 거름이 되어",
+            "젊은이여 그 길은 너의 것이다",
+            "별이 더욱 밝은 빛으로 반짝일 때",
+            "하늘 향해 우뚝 솟은 젊음으로",
+            "맑은 웃음 머금은 네가 있었음 좋겠다",
+            "희망을 속삭이는 아침이 밝아오니",
+            "싱그럽고 푸르른 젊음이어라",
+            "삶이란 가꿀수록 아름다운 것이라고",
+            "순간들이 모여 삶은 반짝이는 보물이 된다"
+        ];
+
+        // 랜덤 필적확인란 표시
+        function displayRandomHandwriting() {
+            const randomIndex = Math.floor(Math.random() * handwritingTexts.length);
+            const handwritingEl = document.getElementById('handwriting');
+            if (handwritingEl) {
+                handwritingEl.textContent = handwritingTexts[randomIndex];
+            }
+        }
+
+        // 색상 테마 변경
+        function changeTheme(theme) {
+            const mainDdayBox = document.getElementById('mainDdayBox');
+            if (mainDdayBox) {
+                mainDdayBox.className = `main-dday theme-${theme}`;
+            }
+            
+            // 버튼 active 상태 변경
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.querySelector(`.color-btn.${theme}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // 선택한 테마 저장
+            try {
+                localStorage.setItem('suneung-theme', theme);
+            } catch(e) {
+                // localStorage 사용 불가시 무시
+            }
+        }
+
+        // 저장된 테마 불러오기
+        function loadSavedTheme() {
+            try {
+                const savedTheme = localStorage.getItem('suneung-theme');
+                if (savedTheme) {
+                    changeTheme(savedTheme);
+                }
+            } catch(e) {
+                // localStorage 사용 불가시 기본 테마 유지
+            }
+        }
+        
+        // 일정 데이터
+        const schedules = [
+            {
+                name: '3월 모의고사 (고1, 고2, 고3)',
+                date: '2026-03-24',
+                displayDate: '2026년 3월 24일 (화)'
+            },
+            {
+                name: '5월 모의고사 (고3)',
+                date: '2026-05-07',
+                displayDate: '2026년 5월 7일 (금)'
+            },
+            {
+                name: '6월 모의고사 (고1, 고2, 고3)',
+                date: '2026-06-04',
+                displayDate: '2026년 6월 4일 (목)'
+            },
+            {
+                name: '7월 모의고사 (고3)',
+                date: '2026-07-08',
+                displayDate: '2026년 7월 8일 (수)'
+            },
+            {
+                name: '9월 모의고사 (고1, 고2, 고3)',
+                date: '2026-09-02',
+                displayDate: '2026년 9월 2일 (수)'
+            },
+            {
+                name: '10월 모의고사 (고1, 고2, 고3)',
+                date: '2026-10-20',
+                displayDate: '2026년 10월 20일 (화)'
+            },
+            {
+                name: '2027학년도 수능',
+                date: '2026-11-18',
+                displayDate: '2026년 11월 18일 (목)',
+                isSuneung: true
+            },
+            {
+                name: '2028학년도 수능',
+                date: '2027-11-18',
+                displayDate: '2027년 11월 18일 (목)',
+                isSuneung: true
+            }
+        ];
+
+        const suneungDate = new Date('2026-11-18');
+
+        function calculateDday(targetDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            targetDate.setHours(0, 0, 0, 0);
+
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return diffDays;
+        }
+
+        function updateDisplay() {
+            const today = new Date();
+            
+            // 수능 D-day 계산
+            const suneungDday = calculateDday(new Date(suneungDate));
+            
+            const mainDdayEl = document.getElementById('mainDday');
+            if (mainDdayEl) {
+                if (suneungDday > 0) {
+                    mainDdayEl.textContent = `D-${suneungDday}`;
+                } else if (suneungDday === 0) {
+                    mainDdayEl.textContent = 'D-Day!';
+                } else {
+                    mainDdayEl.textContent = `D+${Math.abs(suneungDday)}`;
+                }
+            }
+
+            // 남은 주/개월
+            const weeksLeft = Math.floor(suneungDday / 7);
+            const monthsLeft = Math.floor(suneungDday / 30);
+            
+            const weeksLeftEl = document.getElementById('weeksLeft');
+            const monthsLeftEl = document.getElementById('monthsLeft');
+            
+            if (weeksLeftEl) {
+                weeksLeftEl.textContent = weeksLeft > 0 ? `${weeksLeft}주` : '0주';
+            }
+            if (monthsLeftEl) {
+                monthsLeftEl.textContent = monthsLeft > 0 ? `${monthsLeft}개월` : '0개월';
+            }
+
+            // 모의고사 일정 표시
+            const scheduleList = document.getElementById('scheduleList');
+            if (scheduleList) {
+                scheduleList.innerHTML = '';
+
+                schedules.forEach(schedule => {
+                    const scheduleDate = new Date(schedule.date);
+                    const dday = calculateDday(new Date(schedule.date));
+                    
+                    const item = document.createElement('div');
+                    item.className = 'schedule-item';
+                    
+                    // 2027수능만 빨간색 강조
+                    if (schedule.isSuneung && schedule.date === '2026-11-18') {
+                        item.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+                        item.style.borderLeft = '4px solid #f44336';
+                    }
+                    
+                    // 다가오는 시험 (7일 이내)
+                    if (dday > 0 && dday <= 7) {
+                        item.classList.add('upcoming');
+                    }
+                    
+                    // 지난 시험
+                    if (dday < 0) {
+                        item.classList.add('passed');
+                    }
+
+                    let ddayText;
+                    if (dday > 0) {
+                        ddayText = `D-${dday}`;
+                    } else if (dday === 0) {
+                        ddayText = 'D-Day!';
+                    } else {
+                        ddayText = '종료';
+                    }
+
+                    item.innerHTML = `
+                        <div class="schedule-info">
+                            <div class="schedule-name">${schedule.name}</div>
+                            <div class="schedule-date">${schedule.displayDate}</div>
+                        </div>
+                        <div class="schedule-dday">${ddayText}</div>
+                    `;
+
+                    scheduleList.appendChild(item);
+                });
+            }
+
+            // 업데이트 시간
+            const now = new Date();
+            const updateTimeStr = `마지막 업데이트: ${now.toLocaleString('ko-KR')}`;
+            const updateTimeEl = document.getElementById('updateTime');
+            if (updateTimeEl) {
+                updateTimeEl.textContent = updateTimeStr;
+            }
+        }
+
+        // 페이지 로드시 실행
+        displayRandomHandwriting();
+        loadSavedTheme();
+        updateDisplay();
+
+        // 자정마다 자동 업데이트
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                updateDisplay();
+            }
+        }, 60000); // 1분마다 체크
+
+        // 1시간마다 화면 갱신 (사용자가 페이지를 계속 켜두고 있는 경우)
+        setInterval(updateDisplay, 3600000);
+    </script>
+</body>
+</html>
