@@ -266,14 +266,6 @@
             color: #f57c00;
         }
 
-        .schedule-item.passed {
-            opacity: 0.5;
-        }
-
-        .schedule-item.passed .schedule-dday {
-            color: #999;
-        }
-
         .update-time {
             text-align: center;
             color: #999;
@@ -312,16 +304,6 @@
             .subtitle {
                 margin-bottom: 15px;
                 font-size: 0.85em;
-            }
-
-            .color-picker {
-                gap: 8px;
-                margin-bottom: 15px;
-            }
-
-            .color-btn {
-                width: 35px;
-                height: 35px;
             }
 
             .main-dday {
@@ -424,15 +406,6 @@
         <h1>🎯 2027 수능 디데이 계산기</h1>
         <p class="subtitle">수능 D-day와 모든 모의고사 일정을 한눈에</p>
 
-        <div class="color-picker">
-            <button class="color-btn red active" onclick="changeTheme('red')" title="빨강"></button>
-            <button class="color-btn blue" onclick="changeTheme('blue')" title="파랑"></button>
-            <button class="color-btn pink" onclick="changeTheme('pink')" title="분홍"></button>
-            <button class="color-btn green" onclick="changeTheme('green')" title="초록"></button>
-            <button class="color-btn orange" onclick="changeTheme('orange')" title="주황"></button>
-            <button class="color-btn mint" onclick="changeTheme('mint')" title="민트"></button>
-        </div>
-
         <div class="main-dday theme-red" id="mainDdayBox">
             <div class="main-dday-label">2027학년도 수능까지</div>
             <div class="main-dday-number" id="mainDday">D-290</div>
@@ -453,11 +426,11 @@
         <div class="schedule-section">
             <div class="section-title">📝 모의고사 일정</div>
             <div class="filter-buttons">
+                <button class="filter-btn" id="btn-suneung" onclick="toggleFilter('suneung')">수능</button>
                 <button class="filter-btn" id="btn-pyeongwon" onclick="toggleFilter('pyeongwon')">평가원</button>
                 <button class="filter-btn" id="btn-gyoyukchung" onclick="toggleFilter('gyoyukchung')">교육청</button>
                 <button class="filter-btn" id="btn-duff" onclick="toggleFilter('duff')">더프</button>
                 <button class="filter-btn" id="btn-surf" onclick="toggleFilter('surf')">서프</button>
-                <button class="filter-btn" id="btn-suneung" onclick="toggleFilter('suneung')">수능</button>
             </div>
             <div id="scheduleList"></div>
         </div>
@@ -549,25 +522,31 @@
             if (mainDdayBox) {
                 mainDdayBox.className = `main-dday theme-${theme}`;
             }
-            
-            document.querySelectorAll('.color-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            const activeBtn = document.querySelector(`.color-btn.${theme}`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-            
+        }
+
+        function loadRandomTheme() {
+            const themes = ['red', 'blue', 'pink', 'green', 'orange', 'mint'];
+            const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+            changeTheme(randomTheme);
+        }
+
+        function saveFilters() {
             try {
-                localStorage.setItem('suneung-theme', theme);
+                localStorage.setItem('suneung-filters', JSON.stringify(activeFilters));
             } catch(e) {}
         }
 
-        function loadSavedTheme() {
+        function loadSavedFilters() {
             try {
-                const savedTheme = localStorage.getItem('suneung-theme');
-                if (savedTheme) {
-                    changeTheme(savedTheme);
+                const saved = localStorage.getItem('suneung-filters');
+                if (saved) {
+                    activeFilters = JSON.parse(saved);
+                    activeFilters.forEach(filter => {
+                        const btn = document.getElementById(`btn-${filter}`);
+                        if (btn) {
+                            btn.classList.add('active');
+                        }
+                    });
                 }
             } catch(e) {}
         }
@@ -614,6 +593,7 @@
                 btn.classList.add('active');
             }
             
+            saveFilters();
             updateDisplay();
         }
 
@@ -710,6 +690,11 @@
                 filteredSchedules.forEach(schedule => {
                     const dday = calculateDday(new Date(schedule.date));
                     
+                    // 당일 지난 일정은 표시 안 함
+                    if (dday < 0) {
+                        return;
+                    }
+                    
                     const item = document.createElement('div');
                     item.className = 'schedule-item';
                     
@@ -721,18 +706,12 @@
                     if (dday > 0 && dday <= 7) {
                         item.classList.add('upcoming');
                     }
-                    
-                    if (dday < 0) {
-                        item.classList.add('passed');
-                    }
 
                     let ddayText;
                     if (dday > 0) {
                         ddayText = `D-${dday}`;
-                    } else if (dday === 0) {
-                        ddayText = 'D-Day!';
                     } else {
-                        ddayText = '종료';
+                        ddayText = 'D-Day!';
                     }
 
                     item.innerHTML = `
@@ -755,7 +734,8 @@
         }
 
         displayRandomHandwriting();
-        loadSavedTheme();
+        loadRandomTheme();
+        loadSavedFilters();
         updateDisplay();
 
         setInterval(() => {
