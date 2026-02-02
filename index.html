@@ -60,67 +60,29 @@
         }
 
         .main-dday.theme-red {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            box-shadow: 0 10px 30px rgba(238, 90, 111, 0.3);
+            background: linear-gradient(135deg, oklch(0.65 0.25 25) 0%, oklch(0.60 0.23 20) 100%);
+            box-shadow: 0 10px 30px oklch(0.60 0.23 20 / 0.3);
         }
 
         .main-dday.theme-blue {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+            background: linear-gradient(135deg, oklch(0.70 0.20 240) 0%, oklch(0.75 0.22 210) 100%);
+            box-shadow: 0 10px 30px oklch(0.70 0.20 240 / 0.3);
         }
 
         .main-dday.theme-pink {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+            background: linear-gradient(135deg, oklch(0.72 0.22 340) 0%, oklch(0.65 0.25 10) 100%);
+            box-shadow: 0 10px 30px oklch(0.72 0.22 340 / 0.3);
         }
 
         .main-dday.theme-green {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
+            background: linear-gradient(135deg, oklch(0.75 0.20 155) 0%, oklch(0.80 0.18 180) 100%);
+            box-shadow: 0 10px 30px oklch(0.75 0.20 155 / 0.3);
         }
 
         .main-dday.theme-orange {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            box-shadow: 0 10px 30px rgba(250, 112, 154, 0.3);
+            background: linear-gradient(135deg, oklch(0.70 0.20 40) 0%, oklch(0.85 0.18 90) 100%);
+            box-shadow: 0 10px 30px oklch(0.70 0.20 40 / 0.3);
         }
-
-        .main-dday.theme-mint {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            box-shadow: 0 10px 30px rgba(168, 237, 234, 0.3);
-        }
-
-        .color-picker {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .color-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .color-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .color-btn.active {
-            border-color: white;
-            box-shadow: 0 0 0 2px #333;
-        }
-
-        .color-btn.red { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
-        .color-btn.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .color-btn.pink { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .color-btn.green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .color-btn.orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-        .color-btn.mint { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
 
         .main-dday-label {
             font-size: 1.3em;
@@ -295,7 +257,7 @@
                 padding: 20px 15px;
                 border-radius: 15px;
             }
-            
+
             h1 {
                 font-size: 1.4em;
                 margin-bottom: 5px;
@@ -408,8 +370,8 @@
 
         <div class="main-dday theme-red" id="mainDdayBox">
             <div class="main-dday-label">2027학년도 수능까지</div>
-            <div class="main-dday-number" id="mainDday">D-290</div>
-            <div class="main-dday-date">2026년 11월 18일 (목)</div>
+            <div class="main-dday-number" id="mainDday">D-291</div>
+            <div class="main-dday-date">2026년 11월 19일 (목)</div>
         </div>
 
         <div class="stats-row">
@@ -525,7 +487,7 @@
         }
 
         function loadRandomTheme() {
-            const themes = ['red', 'blue', 'pink', 'green', 'orange', 'mint'];
+            const themes = ['red', 'blue', 'pink', 'green', 'orange'];
             const randomTheme = themes[Math.floor(Math.random() * themes.length)];
             changeTheme(randomTheme);
         }
@@ -575,7 +537,7 @@
             { name: '10월 모의고사', date: '2026-10-20', displayDate: '2026년 10월 20일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3' },
             { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff' },
             { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf' },
-            { name: '2027학년도 수능', date: '2026-11-18', displayDate: '2026년 11월 18일 (목)', category: 'suneung', isSuneung: true },
+            { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true },
             { name: '2028학년도 수능', date: '2027-11-18', displayDate: '2027년 11월 18일 (목)', category: 'suneung', isSuneung: true }
         ];
 
@@ -597,7 +559,7 @@
             updateDisplay();
         }
 
-        const suneungDate = new Date('2026-11-18');
+        const suneungDate = new Date('2026-11-19');
 
         function calculateDday(targetDate) {
             const today = new Date();
@@ -635,13 +597,11 @@
             if (scheduleList) {
                 scheduleList.innerHTML = '';
 
-                // 필터가 하나도 선택 안 됐으면 안내 문구
                 if (activeFilters.length === 0) {
                     scheduleList.innerHTML = '<div class="empty-message">위 버튼을 눌러 모의고사를 선택하세요</div>';
                     return;
                 }
 
-                // 필터링된 일정만 표시
                 let filteredSchedules = [];
 
                 schedules.forEach(schedule => {
@@ -650,7 +610,6 @@
                     let grades = '';
 
                     if (schedule.category === 'both') {
-                        // 6월, 9월 모의고사
                         const hasPyeongwon = activeFilters.includes('pyeongwon');
                         const hasGyoyukchung = activeFilters.includes('gyoyukchung');
 
@@ -665,7 +624,6 @@
                             grades = '고1, 고2';
                         }
                     } else {
-                        // 다른 모든 일정
                         if (activeFilters.includes(schedule.category)) {
                             shouldShow = true;
                             if (schedule.grades) {
@@ -690,15 +648,12 @@
                 filteredSchedules.forEach(schedule => {
                     const dday = calculateDday(new Date(schedule.date));
                     
-                    // 당일 지난 일정은 표시 안 함
-                    if (dday < 0) {
-                        return;
-                    }
+                    if (dday < 0) return;
                     
                     const item = document.createElement('div');
                     item.className = 'schedule-item';
                     
-                    if (schedule.isSuneung && schedule.date === '2026-11-18') {
+                    if (schedule.isSuneung && schedule.date === '2026-11-19') {
                         item.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
                         item.style.borderLeft = '4px solid #f44336';
                     }
@@ -707,12 +662,7 @@
                         item.classList.add('upcoming');
                     }
 
-                    let ddayText;
-                    if (dday > 0) {
-                        ddayText = `D-${dday}`;
-                    } else {
-                        ddayText = 'D-Day!';
-                    }
+                    let ddayText = dday > 0 ? `D-${dday}` : 'D-Day!';
 
                     item.innerHTML = `
                         <div class="schedule-info">
@@ -738,13 +688,7 @@
         loadSavedFilters();
         updateDisplay();
 
-        setInterval(() => {
-            const now = new Date();
-            if (now.getHours() === 0 && now.getMinutes() === 0) {
-                updateDisplay();
-            }
-        }, 60000);
-
+        // 1시간마다 업데이트
         setInterval(updateDisplay, 3600000);
     </script>
 </body>
