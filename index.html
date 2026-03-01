@@ -88,9 +88,33 @@
       "endDate": "2026-11-19",
       "eventStatus": "https://schema.org/EventScheduled",
       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "location": { "@type": "Country", "name": "대한민국" },
+      "location": {
+        "@type": "Place",
+        "name": "전국 시험장",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "KR",
+          "addressLocality": "대한민국 전국"
+        }
+      },
       "description": "2027학년도 대학수학능력시험 (수능)",
-      "organizer": { "@type": "Organization", "name": "한국교육과정평가원" }
+      "image": "https://chaehun1.github.io/ksat-dday/og-image.png",
+      "organizer": {
+        "@type": "Organization",
+        "name": "한국교육과정평가원",
+        "url": "https://www.suneung.re.kr"
+      },
+      "performer": {
+        "@type": "Organization",
+        "name": "수험생"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW",
+        "availability": "https://schema.org/InStock",
+        "url": "https://chaehun1.github.io/ksat-dday/"
+      }
     }
     </script>
     <script type="application/ld+json">
