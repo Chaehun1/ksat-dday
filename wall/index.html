@@ -124,6 +124,14 @@
         .delete-btn { margin-left: auto; background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.82em; padding: 5px 8px; border-radius: 6px; font-family: 'IBM Plex Sans KR', sans-serif; }
         .delete-btn:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
+        .raw-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0f0f5; border: 1px solid #ddd; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #888; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
+        .raw-btn:hover { background: #e5e5ea; color: #555; }
+        .raw-btn.active { background: #fff3e0; border-color: #ffb74d; color: #e65100; }
+        html[data-theme="dark"] .raw-btn { background: #2a2d40; border-color: #3a3d55; color: #9a9aaa; }
+        html[data-theme="dark"] .raw-btn:hover { background: #3a3d55; color: #e8e8ea; }
+        html[data-theme="dark"] .raw-btn.active { background: #3d2a0a; border-color: #c87941; color: #ffb74d; }
+        .delete-btn:hover { background: #ffebee; color: #e53935; }
+        html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
 
         .hidden-post { background: transparent !important; box-shadow: none !important; padding: 0; }
         .hidden-toggle { width: 100%; padding: 12px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; border-radius: 12px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.85em; color: #888; cursor: pointer; backdrop-filter: blur(4px); }
@@ -131,6 +139,18 @@
 
         .status { text-align: center; padding: 30px 20px; color: rgba(255,255,255,0.9); font-size: 0.95em; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
         .empty { text-align: center; padding: 40px 20px; color: #999; font-size: 0.92em; background: rgba(255,255,255,0.92); border-radius: 16px; backdrop-filter: blur(8px); }
+
+        /* ── Pagination ── */
+        .pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 18px; flex-wrap: wrap; }
+        .page-btn { min-width: 36px; height: 36px; padding: 0 10px; border: 1px solid #ddd; background: rgba(255,255,255,0.92); color: #666; border-radius: 10px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.88em; font-weight: 600; cursor: pointer; backdrop-filter: blur(6px); transition: all 0.18s; display: inline-flex; align-items: center; justify-content: center; }
+        .page-btn:hover:not(:disabled) { background: #fff; color: #333; border-color: #bbb; }
+        .page-btn.active { background: #667eea; color: #fff; border-color: #667eea; box-shadow: 0 2px 8px rgba(102,126,234,0.35); }
+        .page-btn:disabled { opacity: 0.35; cursor: default; }
+        .page-info { font-size: 0.82em; color: rgba(255,255,255,0.85); font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.2); padding: 0 4px; }
+        html[data-theme="dark"] .page-btn { background: #2a2d40; border-color: #3a3d55; color: #9aa5ea; }
+        html[data-theme="dark"] .page-btn:hover:not(:disabled) { background: #3a3d55; color: #e8e8ea; }
+        html[data-theme="dark"] .page-btn.active { background: #667eea; color: #fff; border-color: #667eea; }
+        html[data-theme="dark"] .page-info { color: rgba(232,232,234,0.7); }
 
         @media (max-width: 640px) {
             body { padding: 10px; padding-top: 56px; }
@@ -173,8 +193,8 @@
         </header>
 
         <section class="compose">
-            <input type="text" id="nickInput" maxlength="20" placeholder="닉네임 (비우면 '익명 수험생')">
-            <textarea id="textInput" maxlength="220" placeholder="하고 싶은 말을 자유롭게 남겨주세요 (최대 200자)"></textarea>
+            <input type="text" id="nickInput" maxlength="20" placeholder="닉네임 (비우면 '익명의 수험생')">
+            <textarea id="textInput" maxlength="220" placeholder="하고 싶은 말을 자유롭게 남겨주세요 (최대 200자)&#10;과도한 욕설, 친목, 도배 등은 삭제될 수 있습니다"></textarea>
             <div class="compose-bottom">
                 <span class="char-count" id="charCount">0 / 200</span>
                 <button class="submit-btn" id="submitBtn" disabled>연결 중...</button>
@@ -189,6 +209,7 @@
         <div class="feed" id="feed">
             <div class="status" id="status">불러오는 중...</div>
         </div>
+        <div class="pagination" id="pagination"></div>
     </div>
 
     <div id="toast" class="toast" role="status"></div>
@@ -273,12 +294,13 @@
             const nickRaw = document.getElementById('nickInput').value.trim();
             if (!text) { toast('내용을 입력해주세요'); return; }
             if (text.length > 200) { toast('200자 이내로 입력해주세요'); return; }
-            const nickname = nickRaw || ('익명 수험생 #' + getAnonId());
+            const nickname = nickRaw || ('익명의 수험생 #' + getAnonId());
             submitBtn.disabled = true;
             submitBtn.textContent = '전송 중...';
             try {
                 await addDoc(msgCol, {
                     text: censor(text),
+                    rawText: text,
                     nickname: censor(nickname).slice(0, 20),
                     createdAt: serverTimestamp(),
                     likes: 0,
@@ -290,6 +312,7 @@
                 charCount.textContent = '0 / 200';
                 charCount.classList.remove('warn','over');
                 toast('✅ 글이 등록되었습니다');
+                currentPage = 1;
                 loadPosts();
             } catch (e) {
                 console.error(e);
@@ -301,9 +324,12 @@
         });
 
         let currentSort = 'hot';
+        let currentPage = 1;
+        const PAGE_SIZE = 10;
         document.querySelectorAll('.sort-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentSort = btn.getAttribute('data-sort');
+                currentPage = 1;
                 document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b === btn));
                 renderPosts();
             });
@@ -321,6 +347,7 @@
                     allPosts.push({
                         id: d.id,
                         text: data.text || '',
+                        rawText: data.rawText || '',
                         nickname: data.nickname || '익명',
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
                         likes: data.likes || 0,
@@ -336,26 +363,47 @@
             }
         }
 
-        function renderPosts() {
-            const feed = document.getElementById('feed');
-            feed.innerHTML = '';
-            if (allPosts.length === 0) {
-                feed.innerHTML = '<div class="empty">📝 아직 글이 없습니다. 첫 번째 글을 남겨보세요!</div>';
-                return;
-            }
+        // 원글 보기 상태 (postId set)
+        const rawViewing = new Set();
+
+        function getSortedPosts() {
             let posts = allPosts.slice();
             if (currentSort === 'hot') {
                 const startToday = new Date(); startToday.setHours(0,0,0,0);
                 posts = posts.filter(p => p.createdAt && p.createdAt >= startToday);
                 posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes) || b.createdAt - a.createdAt);
-                if (posts.length === 0) {
-                    feed.innerHTML = '<div class="empty">오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!</div>';
-                    return;
-                }
             }
-            const votes = getVotes();
+            return posts;
+        }
+
+        function renderPosts() {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+
+            if (allPosts.length === 0) {
+                feed.innerHTML = '<div class="empty">📝 아직 글이 없습니다. 첫 번째 글을 남겨보세요!</div>';
+                renderPagination(0);
+                return;
+            }
+
+            const posts = getSortedPosts();
+
+            if (posts.length === 0) {
+                feed.innerHTML = '<div class="empty">오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!</div>';
+                renderPagination(0);
+                return;
+            }
+
+            // 페이지 범위 계산
+            const totalPages = Math.ceil(posts.length / PAGE_SIZE);
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const pagePosts = posts.slice(start, start + PAGE_SIZE);
+
+            const votes    = getVotes();
             const revealed = getRevealed();
-            posts.forEach(p => {
+
+            pagePosts.forEach(p => {
                 const hidden = p.dislikes >= 5 && !revealed.includes(p.id);
                 if (hidden) {
                     const wrap = document.createElement('div');
@@ -368,9 +416,17 @@
                     feed.appendChild(wrap);
                     return;
                 }
+
+                const isShowingRaw = rawViewing.has(p.id);
+                const hasCensored  = p.rawText && p.rawText !== p.text;
+                const displayText  = isShowingRaw && p.rawText ? p.rawText : p.text;
+                const rawBtnHtml   = hasCensored
+                    ? `<button class="raw-btn${isShowingRaw ? ' active' : ''}" data-id="${p.id}">${isShowingRaw ? '🔒 필터링 보기' : '👁️ 원글 보기'}</button>`
+                    : '';
+
                 const el = document.createElement('article');
                 el.className = 'post';
-                const voted = votes[p.id];
+                const voted  = votes[p.id];
                 const isMine = currentUid && p.authorUid === currentUid;
                 const ipLabel = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
                 el.innerHTML = `
@@ -381,20 +437,112 @@
                         </div>
                         <span class="post-time">${timeAgo(p.createdAt)}</span>
                     </div>
-                    <div class="post-text">${escapeHtml(p.text)}</div>
+                    <div class="post-text">${escapeHtml(displayText)}</div>
                     <div class="post-actions">
                         <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" ${voted?'disabled':''}>👍 <span>${p.likes}</span></button>
                         <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" ${voted?'disabled':''}>👎 <span>${p.dislikes}</span></button>
+                        ${rawBtnHtml}
                         ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : ''}
                     </div>`;
                 feed.appendChild(el);
             });
+
             feed.querySelectorAll('.react-btn:not([disabled])').forEach(btn => {
                 btn.addEventListener('click', () => vote(btn.getAttribute('data-id'), btn.getAttribute('data-kind')));
             });
             feed.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', () => deletePost(btn.getAttribute('data-del')));
             });
+            feed.querySelectorAll('.raw-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    if (rawViewing.has(id)) rawViewing.delete(id);
+                    else rawViewing.add(id);
+                    renderPosts();
+                });
+            });
+
+            renderPagination(posts.length);
+        }
+
+        function renderPagination(total) {
+            const container  = document.getElementById('pagination');
+            container.innerHTML = '';
+            const totalPages = Math.ceil(total / PAGE_SIZE);
+            if (totalPages <= 1) return;
+
+            // 표시할 페이지 번호 범위 계산 (현재 페이지 중심 ±2)
+            const WINDOW = 2;
+            const rangeStart = Math.max(1, currentPage - WINDOW);
+            const rangeEnd   = Math.min(totalPages, currentPage + WINDOW);
+
+            const goTo = page => {
+                currentPage = page;
+                renderPosts();
+                // 페이지 변경 시 피드 상단으로 스크롤
+                document.getElementById('feed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+
+            // 이전 버튼
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.textContent = '←';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => goTo(currentPage - 1));
+            container.appendChild(prevBtn);
+
+            // 첫 페이지 + 말줄임
+            if (rangeStart > 1) {
+                const firstBtn = document.createElement('button');
+                firstBtn.className = 'page-btn';
+                firstBtn.textContent = '1';
+                firstBtn.addEventListener('click', () => goTo(1));
+                container.appendChild(firstBtn);
+                if (rangeStart > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'page-info';
+                    ellipsis.textContent = '…';
+                    container.appendChild(ellipsis);
+                }
+            }
+
+            // 중간 페이지 번호들
+            for (let i = rangeStart; i <= rangeEnd; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+                btn.textContent = i;
+                btn.addEventListener('click', () => goTo(i));
+                container.appendChild(btn);
+            }
+
+            // 마지막 페이지 + 말줄임
+            if (rangeEnd < totalPages) {
+                if (rangeEnd < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'page-info';
+                    ellipsis.textContent = '…';
+                    container.appendChild(ellipsis);
+                }
+                const lastBtn = document.createElement('button');
+                lastBtn.className = 'page-btn';
+                lastBtn.textContent = totalPages;
+                lastBtn.addEventListener('click', () => goTo(totalPages));
+                container.appendChild(lastBtn);
+            }
+
+            // 다음 버튼
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.textContent = '→';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => goTo(currentPage + 1));
+            container.appendChild(nextBtn);
+
+            // 페이지 정보 텍스트
+            const info = document.createElement('span');
+            info.className = 'page-info';
+            info.textContent = `${currentPage} / ${totalPages}`;
+            container.appendChild(info);
         }
 
         async function vote(id, kind) {
