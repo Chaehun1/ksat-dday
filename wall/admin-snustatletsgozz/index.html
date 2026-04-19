@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <!-- 검색엔진 색인 차단 -->
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8ea;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+
+        .container { max-width: 720px; margin: 0 auto; }
+
+        /* ── Header ── */
+        .admin-header {
+            background: rgba(229,57,53,0.15);
+            border: 1px solid rgba(229,57,53,0.4);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .admin-header-icon { font-size: 2.2em; }
+        .admin-header-text h1 { font-size: 1.4em; font-weight: 700; color: #ff8a8a; margin-bottom: 4px; }
+        .admin-header-text p  { font-size: 0.85em; color: #9a9aaa; }
+
+        /* ── Card ── */
+        .card {
+            background: #1e2030;
+            border: 1px solid #2a2d40;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        /* ── UID box ── */
+        .uid-box {
+            background: #12131f;
+            border: 1px solid #2a2d40;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .uid-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9em;
+            color: #a8d8a8;
+            flex: 1;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #2a2d40;
+            border: 1px solid #3a3d55;
+            color: #9aa5ea;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .copy-btn:hover { background: #3a3d55; color: #fff; }
+
+        .uid-guide {
+            margin-top: 12px;
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.25);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 0.84em;
+            color: #9aa5ea;
+            line-height: 1.65;
+        }
+        .uid-guide code {
+            font-family: 'IBM Plex Mono', monospace;
+            background: rgba(102,126,234,0.2);
+            padding: 1px 6px;
+            border-radius: 4px;
+            color: #a8b8ff;
+            font-size: 0.95em;
+        }
+        .uid-guide ol { padding-left: 18px; margin-top: 8px; }
+        .uid-guide li { margin-bottom: 4px; }
+
+        /* ── Rules block ── */
+        .rules-block {
+            background: #12131f;
+            border: 1px solid #2a2d40;
+            border-radius: 10px;
+            padding: 16px 18px;
+            position: relative;
+        }
+        .rules-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.82em;
+            color: #c8d8ff;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .rules-copy-btn {
+            position: absolute;
+            top: 10px; right: 12px;
+            background: #2a2d40;
+            border: 1px solid #3a3d55;
+            color: #9aa5ea;
+            border-radius: 7px;
+            padding: 5px 12px;
+            font-size: 0.78em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            transition: all 0.2s;
+        }
+        .rules-copy-btn:hover { background: #3a3d55; color: #fff; }
+
+        /* ── Status badge ── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.82em;
+            font-weight: 600;
+        }
+        .status-badge.connecting { background: rgba(255,183,49,0.15); color: #ffc107; border: 1px solid rgba(255,183,49,0.3); }
+        .status-badge.ready      { background: rgba(76,175,80,0.15);  color: #81c784; border: 1px solid rgba(76,175,80,0.3); }
+        .status-badge.error      { background: rgba(229,57,53,0.15);  color: #ff8a8a; border: 1px solid rgba(229,57,53,0.3); }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+        /* ── Sort & filter row ── */
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .toolbar-btn {
+            padding: 7px 16px;
+            border: 1px solid #3a3d55;
+            background: #2a2d40;
+            color: #9aa5ea;
+            border-radius: 999px;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            font-size: 0.83em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toolbar-btn:hover  { background: #3a3d55; color: #fff; }
+        .toolbar-btn.active { background: #667eea; color: #fff; border-color: #667eea; }
+        .toolbar-btn.danger { border-color: rgba(229,57,53,0.5); color: #ff8a8a; }
+        .toolbar-btn.danger:hover { background: #e53935; color: #fff; border-color: #e53935; }
+        .post-count { margin-left: auto; font-size: 0.82em; color: #666; }
+
+        /* ── Post list ── */
+        .post-list { display: flex; flex-direction: column; gap: 10px; }
+        .post-item {
+            background: #12131f;
+            border: 1px solid #2a2d40;
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: border-color 0.15s;
+        }
+        .post-item:hover { border-color: #3a3d55; }
+        .post-item.selected { border-color: rgba(229,57,53,0.5); background: rgba(229,57,53,0.06); }
+
+        .post-check {
+            width: 18px; height: 18px;
+            border: 2px solid #3a3d55;
+            border-radius: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+            appearance: none;
+            background: transparent;
+            transition: all 0.15s;
+        }
+        .post-check:checked { background: #e53935; border-color: #e53935; }
+        .post-check:checked::after { content: '✓'; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 700; }
+
+        .post-body { flex: 1; min-width: 0; }
+        .post-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+        .post-nick { font-weight: 700; font-size: 0.9em; color: #e8e8ea; }
+        .post-ip   { font-family: 'IBM Plex Mono', monospace; font-size: 0.75em; color: #666; }
+        .post-time { font-size: 0.75em; color: #666; margin-left: auto; }
+        .post-text { font-size: 0.9em; color: #b0b0c0; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+        .post-stats { display: flex; gap: 10px; margin-top: 8px; font-size: 0.78em; color: #666; }
+        .post-stats span { display: flex; align-items: center; gap: 4px; }
+
+        .del-btn {
+            background: transparent;
+            border: 1px solid rgba(229,57,53,0.3);
+            color: #ff8a8a;
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 0.78em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            transition: all 0.15s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .del-btn:hover { background: #e53935; color: #fff; border-color: #e53935; }
+
+        /* ── Bulk delete bar ── */
+        .bulk-bar {
+            position: sticky;
+            bottom: 16px;
+            background: rgba(30,32,48,0.95);
+            border: 1px solid rgba(229,57,53,0.4);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            margin-top: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: all 0.25s ease;
+        }
+        .bulk-bar.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .bulk-bar-text { font-size: 0.88em; color: #ff8a8a; font-weight: 600; flex: 1; }
+        .bulk-cancel-btn { background: transparent; border: 1px solid #3a3d55; color: #9a9aaa; border-radius: 999px; padding: 7px 16px; font-size: 0.84em; font-weight: 600; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; }
+        .bulk-del-btn    { background: #e53935; border: none; color: #fff; border-radius: 999px; padding: 7px 18px; font-size: 0.84em; font-weight: 700; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: background 0.2s; }
+        .bulk-del-btn:hover { background: #c62828; }
+
+        /* ── Empty / Loading ── */
+        .empty-state { text-align: center; padding: 48px 20px; color: #555; font-size: 0.92em; }
+        .empty-icon  { font-size: 2.5em; margin-bottom: 12px; display: block; }
+
+        /* ── Toast ── */
+        .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #e8e8ea; color: #1e2030; padding: 11px 20px; border-radius: 20px; font-size: 0.86em; font-weight: 600; opacity: 0; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── Nav ── */
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: #667eea; text-decoration: none; font-size: 0.86em; font-weight: 600; margin-bottom: 16px; }
+        .back-link:hover { color: #9aa5ea; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back-link">← 게시판으로 돌아가기</a>
+
+        <div class="admin-header">
+            <div class="admin-header-icon">🛡️</div>
+            <div class="admin-header-text">
+                <h1>관리자 페이지</h1>
+                <p>이 URL은 비공개입니다. 다른 사람과 공유하지 마세요.</p>
+            </div>
+        </div>
+
+        <!-- UID 확인 카드 -->
+        <div class="card" id="uidCard">
+            <div class="card-title">🔑 관리자 UID</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <span class="status-badge connecting" id="authStatus">
+                    <span class="status-dot"></span> 연결 중...
+                </span>
+            </div>
+            <div class="uid-box">
+                <span class="uid-value" id="uidValue">로딩 중...</span>
+                <button class="copy-btn" id="copyUidBtn">복사</button>
+            </div>
+            <div class="uid-guide" id="uidGuide" style="display:none;">
+                <strong>📋 Firebase Rules 설정 방법</strong>
+                <ol>
+                    <li>위 UID를 복사하세요</li>
+                    <li><a href="https://console.firebase.google.com" target="_blank" style="color:#9aa5ea;">Firebase Console</a> → Firestore Database → 규칙 탭으로 이동</li>
+                    <li>아래 Rules 코드를 붙여넣고 저장하세요</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Firestore Rules 카드 -->
+        <div class="card" id="rulesCard" style="display:none;">
+            <div class="card-title">📄 Firestore Rules</div>
+            <div class="rules-block">
+                <pre class="rules-code" id="rulesCode"></pre>
+                <button class="rules-copy-btn" id="copyRulesBtn">복사</button>
+            </div>
+        </div>
+
+        <!-- 게시글 관리 카드 -->
+        <div class="card">
+            <div class="card-title">📝 게시글 관리</div>
+            <div class="toolbar">
+                <button class="toolbar-btn active" data-sort="new" id="sortNewBtn">⏰ 최신순</button>
+                <button class="toolbar-btn" data-sort="hot" id="sortHotBtn">🔥 인기순</button>
+                <button class="toolbar-btn" data-sort="reported" id="sortReportBtn">👎 싫어요순</button>
+                <span class="post-count" id="postCount"></span>
+            </div>
+            <div class="post-list" id="postList">
+                <div class="empty-state"><span class="empty-icon">⏳</span>연결 중...</div>
+            </div>
+        </div>
+
+        <!-- 선택 삭제 바 -->
+        <div class="bulk-bar" id="bulkBar">
+            <span class="bulk-bar-text" id="bulkBarText">0개 선택됨</span>
+            <button class="bulk-cancel-btn" id="bulkCancelBtn">선택 해제</button>
+            <button class="bulk-del-btn"    id="bulkDelBtn">선택 삭제</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, deleteDoc, writeBatch }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+        // ── Firebase ──────────────────────────────────────────────────
+        const firebaseConfig = {
+            apiKey:            "AIzaSyAQjIqBSTukahMjOlW7kQyigqz9Y_Tzq_Q",
+            authDomain:        "ksat-dday-bc76f.firebaseapp.com",
+            projectId:         "ksat-dday-bc76f",
+            storageBucket:     "ksat-dday-bc76f.firebasestorage.app",
+            messagingSenderId: "291375667501",
+            appId:             "1:291375667501:web:3def7360892dcfc3bf9ba4"
+        };
+        const app    = initializeApp(firebaseConfig);
+        const db     = getFirestore(app);
+        const auth   = getAuth(app);
+        const msgCol = collection(db, 'messages');
+
+        // ── State ─────────────────────────────────────────────────────
+        let currentUid  = null;
+        let allPosts    = [];
+        let currentSort = 'new';
+        let selected    = new Set();
+
+        // ── Helpers ───────────────────────────────────────────────────
+        const showToast = msg => {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.classList.add('show');
+            clearTimeout(t._tm);
+            t._tm = setTimeout(() => t.classList.remove('show'), 2400);
+        };
+
+        const copyText = async text => {
+            try { await navigator.clipboard.writeText(text); return true; } catch {}
+            const ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); document.body.removeChild(ta); return true; } catch { document.body.removeChild(ta); return false; }
+        };
+
+        const timeAgo = date => {
+            if (!date) return '';
+            const diff = (Date.now() - date.getTime()) / 1000;
+            if (diff < 60)     return '방금 전';
+            if (diff < 3600)   return Math.floor(diff / 60) + '분 전';
+            if (diff < 86400)  return Math.floor(diff / 3600) + '시간 전';
+            if (diff < 604800) return Math.floor(diff / 86400) + '일 전';
+            return date.toLocaleDateString('ko-KR');
+        };
+
+        const escapeHtml = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        // ── Auth ──────────────────────────────────────────────────────
+        signInAnonymously(auth).catch(e => {
+            document.getElementById('authStatus').className = 'status-badge error';
+            document.getElementById('authStatus').innerHTML = '<span class="status-dot"></span> 인증 실패';
+            showToast('Firebase 인증 실패: ' + e.message);
+        });
+
+        onAuthStateChanged(auth, user => {
+            if (!user) return;
+            currentUid = user.uid;
+
+            // Update UID UI
+            const statusEl = document.getElementById('authStatus');
+            statusEl.className = 'status-badge ready';
+            statusEl.innerHTML = '<span class="status-dot"></span> 연결됨';
+            document.getElementById('uidValue').textContent = currentUid;
+            document.getElementById('uidGuide').style.display = '';
+
+            // Generate & show Rules
+            const rules = generateRules(currentUid);
+            document.getElementById('rulesCode').textContent = rules;
+            document.getElementById('rulesCard').style.display = '';
+
+            loadPosts();
+        });
+
+        // ── Rules generator ───────────────────────────────────────────
+        const generateRules = uid => `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /messages/{messageId} {
+      // 누구나 읽기 가능
+      allow read: if true;
+
+      // 로그인된 사용자만 글 작성 가능
+      allow create: if request.auth != null;
+
+      // 좋아요/싫어요 업데이트: 로그인된 사용자만
+      allow update: if request.auth != null;
+
+      // 삭제: 본인 글 또는 관리자만
+      allow delete: if request.auth != null
+                    && (request.auth.uid == resource.data.authorUid
+                        || request.auth.uid == "${uid}");
+    }
+  }
+}`;
+
+        // ── Load posts ────────────────────────────────────────────────
+        const loadPosts = async () => {
+            try {
+                const q    = query(msgCol, orderBy('createdAt', 'desc'), limit(500));
+                const snap = await getDocs(q);
+                allPosts   = snap.docs.map(d => {
+                    const data = d.data();
+                    return {
+                        id:        d.id,
+                        text:      data.text      || '',
+                        nickname:  data.nickname  || '익명',
+                        createdAt: data.createdAt ? data.createdAt.toDate() : null,
+                        likes:     data.likes     || 0,
+                        dislikes:  data.dislikes  || 0,
+                        authorUid: data.authorUid || '',
+                        ipPrefix:  data.ipPrefix  || ''
+                    };
+                });
+                renderPosts();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('postList').innerHTML =
+                    `<div class="empty-state"><span class="empty-icon">❌</span>불러오기 실패: ${e.message}</div>`;
+            }
+        };
+
+        // ── Render posts ──────────────────────────────────────────────
+        const sortedPosts = () => {
+            const posts = [...allPosts];
+            if (currentSort === 'new')      return posts; // already newest first
+            if (currentSort === 'hot')      return posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes));
+            if (currentSort === 'reported') return posts.sort((a,b) => b.dislikes - a.dislikes);
+            return posts;
+        };
+
+        const renderPosts = () => {
+            const list  = document.getElementById('postList');
+            const posts = sortedPosts();
+            document.getElementById('postCount').textContent = `총 ${posts.length}개`;
+
+            if (posts.length === 0) {
+                list.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span>게시글이 없습니다</div>';
+                return;
+            }
+
+            list.innerHTML = '';
+            posts.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'post-item' + (selected.has(p.id) ? ' selected' : '');
+                el.dataset.id = p.id;
+
+                el.innerHTML = `
+                    <input type="checkbox" class="post-check" data-id="${p.id}" ${selected.has(p.id) ? 'checked' : ''}>
+                    <div class="post-body">
+                        <div class="post-meta">
+                            <span class="post-nick">${escapeHtml(p.nickname)}</span>
+                            <span class="post-ip">${p.ipPrefix ? '(' + escapeHtml(p.ipPrefix) + ')' : ''}</span>
+                            <span class="post-time">${timeAgo(p.createdAt)}</span>
+                        </div>
+                        <div class="post-text">${escapeHtml(p.text)}</div>
+                        <div class="post-stats">
+                            <span>👍 ${p.likes}</span>
+                            <span>👎 ${p.dislikes}</span>
+                            <span style="font-family:monospace;font-size:0.9em;color:#444;">${p.id.slice(0,8)}...</span>
+                        </div>
+                    </div>
+                    <button class="del-btn" data-id="${p.id}">삭제</button>`;
+                list.appendChild(el);
+            });
+
+            // Checkbox events
+            list.querySelectorAll('.post-check').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const id = cb.dataset.id;
+                    const item = cb.closest('.post-item');
+                    if (cb.checked) { selected.add(id);    item.classList.add('selected'); }
+                    else            { selected.delete(id); item.classList.remove('selected'); }
+                    updateBulkBar();
+                });
+            });
+
+            // Single delete events
+            list.querySelectorAll('.del-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteSingle(btn.dataset.id));
+            });
+        };
+
+        // ── Bulk bar ──────────────────────────────────────────────────
+        const updateBulkBar = () => {
+            const bar = document.getElementById('bulkBar');
+            const n   = selected.size;
+            if (n > 0) {
+                bar.classList.add('visible');
+                document.getElementById('bulkBarText').textContent = `${n}개 선택됨`;
+            } else {
+                bar.classList.remove('visible');
+            }
+        };
+
+        document.getElementById('bulkCancelBtn').addEventListener('click', () => {
+            selected.clear();
+            renderPosts();
+            updateBulkBar();
+        });
+
+        document.getElementById('bulkDelBtn').addEventListener('click', async () => {
+            if (selected.size === 0) return;
+            if (!confirm(`선택한 ${selected.size}개의 글을 삭제하시겠어요?`)) return;
+            await deleteMultiple([...selected]);
+        });
+
+        // ── Delete functions ──────────────────────────────────────────
+        const deleteSingle = async id => {
+            if (!confirm('이 글을 삭제하시겠어요?')) return;
+            try {
+                await deleteDoc(doc(db, 'messages', id));
+                allPosts = allPosts.filter(p => p.id !== id);
+                selected.delete(id);
+                renderPosts();
+                updateBulkBar();
+                showToast('🗑️ 삭제되었습니다');
+            } catch (e) {
+                console.error(e);
+                showToast('삭제 실패: ' + e.message);
+            }
+        };
+
+        const deleteMultiple = async ids => {
+            try {
+                // Firestore batch는 500개 제한 → 청크 처리
+                const CHUNK = 490;
+                for (let i = 0; i < ids.length; i += CHUNK) {
+                    const batch = writeBatch(db);
+                    ids.slice(i, i + CHUNK).forEach(id => batch.delete(doc(db, 'messages', id)));
+                    await batch.commit();
+                }
+                allPosts = allPosts.filter(p => !ids.includes(p.id));
+                selected.clear();
+                renderPosts();
+                updateBulkBar();
+                showToast(`🗑️ ${ids.length}개 삭제되었습니다`);
+            } catch (e) {
+                console.error(e);
+                showToast('삭제 실패: ' + e.message);
+            }
+        };
+
+        // ── Sort ──────────────────────────────────────────────────────
+        document.querySelectorAll('[data-sort]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentSort = btn.dataset.sort;
+                document.querySelectorAll('[data-sort]').forEach(b => b.classList.toggle('active', b === btn));
+                renderPosts();
+            });
+        });
+
+        // ── Copy buttons ──────────────────────────────────────────────
+        document.getElementById('copyUidBtn').addEventListener('click', async () => {
+            if (await copyText(currentUid || '')) showToast('✅ UID 복사됨');
+        });
+
+        document.getElementById('copyRulesBtn').addEventListener('click', async () => {
+            if (await copyText(document.getElementById('rulesCode').textContent)) showToast('✅ Rules 복사됨');
+        });
+    </script>
+</body>
+</html>
