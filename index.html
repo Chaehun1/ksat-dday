@@ -47,245 +47,271 @@
             overflow-x: hidden;
         }
 
-        html[data-season="spring"]   body { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 50%, #a8e6cf 100%); }
-        html[data-season="summer"]   body { background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%); }
-        html[data-season="autumn"]   body { background: linear-gradient(135deg, #f2994a 0%, #c0392b 100%); }
-        html[data-season="winter"]   body { background: linear-gradient(135deg, #8ec5fc 0%, #4b6cb7 50%, #182848 100%); }
+        /* Seasonal backgrounds (light) */
+        html[data-season="spring"] body { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 50%, #a8e6cf 100%); }
+        html[data-season="summer"] body { background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%); }
+        html[data-season="autumn"] body { background: linear-gradient(135deg, #f2994a 0%, #c0392b 100%); }
+        html[data-season="winter"] body { background: linear-gradient(135deg, #8ec5fc 0%, #4b6cb7 50%, #182848 100%); }
         html[data-season="imminent"] body { background: linear-gradient(135deg, #232526 0%, #7b0000 50%, #c31432 100%); }
 
-        /* ── Particles ─────────────────────────────────────────────── */
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .particle  { position: absolute; top: -10%; font-size: 1.4em; opacity: 0.85; will-change: transform; user-select: none; }
-        @keyframes pfall  { 0%{transform:translate3d(0,-10vh,0) rotate(0deg);opacity:0} 10%{opacity:.9} 90%{opacity:.9} 100%{transform:translate3d(var(--drift,40px),110vh,0) rotate(var(--spin,360deg));opacity:0} }
-        @keyframes pfloat { 0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.6} 50%{transform:translate3d(var(--drift,20px),-30px,0) scale(1.15);opacity:1} }
-        @keyframes pember { 0%{transform:translate3d(0,0,0) scale(.6);opacity:0} 20%{opacity:1} 100%{transform:translate3d(var(--drift,-30px),-110vh,0) scale(1.3);opacity:0} }
-        .particle.fall  { animation: pfall  linear      infinite; }
+        /* ===== PARTICLES LAYER ===== */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            top: -10%;
+            font-size: 1.4em;
+            opacity: 0.85;
+            will-change: transform;
+            user-select: none;
+        }
+        @keyframes pfall {
+            0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.9; }
+            90%  { opacity: 0.9; }
+            100% { transform: translate3d(var(--drift,40px), 110vh, 0) rotate(var(--spin,360deg)); opacity: 0; }
+        }
+        @keyframes pfloat {
+            0%,100% { transform: translate3d(0,0,0) scale(1); opacity: 0.6; }
+            50%     { transform: translate3d(var(--drift,20px), -30px, 0) scale(1.15); opacity: 1; }
+        }
+        @keyframes pember {
+            0%   { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+            20%  { opacity: 1; }
+            100% { transform: translate3d(var(--drift,-30px), -110vh, 0) scale(1.3); opacity: 0; }
+        }
+        .particle.fall { animation: pfall linear infinite; }
         .particle.float { animation: pfloat ease-in-out infinite; top: auto; }
-        .particle.ember { animation: pember linear      infinite; top: auto; bottom: -5%; }
+        .particle.ember { animation: pember linear infinite; top: auto; bottom: -5%; }
+
         @media (prefers-reduced-motion: reduce) {
             .particles { display: none; }
             .main-dday.theme-imminent { animation: fadeUp 0.55s ease-out 0.05s both !important; }
         }
 
-        /* ── Dark mode ─────────────────────────────────────────────── */
+        /* Dark mode */
         html[data-theme="dark"] body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #e8e8ea; }
-        html[data-theme="dark"][data-season="spring"]   body { background: linear-gradient(135deg, #3a1f2b 0%, #2d1a24 50%, #1f2a28 100%); }
-        html[data-theme="dark"][data-season="summer"]   body { background: linear-gradient(135deg, #0e3a34 0%, #0a1f3d 100%); }
-        html[data-theme="dark"][data-season="autumn"]   body { background: linear-gradient(135deg, #3d1f0a 0%, #2d0e0a 100%); }
-        html[data-theme="dark"][data-season="winter"]   body { background: linear-gradient(135deg, #1a2540 0%, #0d1628 100%); }
+        html[data-theme="dark"][data-season="spring"] body { background: linear-gradient(135deg, #3a1f2b 0%, #2d1a24 50%, #1f2a28 100%); }
+        html[data-theme="dark"][data-season="summer"] body { background: linear-gradient(135deg, #0e3a34 0%, #0a1f3d 100%); }
+        html[data-theme="dark"][data-season="autumn"] body { background: linear-gradient(135deg, #3d1f0a 0%, #2d0e0a 100%); }
+        html[data-theme="dark"][data-season="winter"] body { background: linear-gradient(135deg, #1a2540 0%, #0d1628 100%); }
         html[data-theme="dark"][data-season="imminent"] body { background: linear-gradient(135deg, #1a0a0a 0%, #3d0000 50%, #5c0a14 100%); }
-        html[data-theme="dark"] .left-panel,
-        html[data-theme="dark"] .right-panel           { background: #1e2030; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-        html[data-theme="dark"] h1,
-        html[data-theme="dark"] .section-title,
-        html[data-theme="dark"] .stat-value,
-        html[data-theme="dark"] .schedule-name         { color: #e8e8ea; }
-        html[data-theme="dark"] .subtitle,
-        html[data-theme="dark"] .schedule-date         { color: #9a9aaa; }
-        html[data-theme="dark"] .mode-tabs             { background: #2a2d40; }
-        html[data-theme="dark"] .mode-tab.active       { background: #3a3d55; color: #fff; }
-        html[data-theme="dark"] .stat-card,
-        html[data-theme="dark"] .progress-section,
-        html[data-theme="dark"] .schedule-item         { background: #2a2d40; }
-        html[data-theme="dark"] .schedule-item.is-suneung { background: linear-gradient(135deg,#4a1f24,#5c2830); }
-        html[data-theme="dark"] .schedule-item.upcoming   { background: linear-gradient(135deg,#4a3f1f,#5c4d28); }
-        html[data-theme="dark"] .handwriting-box       { background: #3a3420; border-left-color: #ffc107; }
-        html[data-theme="dark"] .handwriting-text      { color: #f0d88a; }
-        html[data-theme="dark"] .handwriting-src       { color: #b8a570; }
-        html[data-theme="dark"] .progress-track        { background: #3a3d55; }
-        html[data-theme="dark"] .filter-btn            { background: #2a2d40; color: #9aa5ea; border-color: #9aa5ea; }
-        html[data-theme="dark"] .filter-btn.active     { background: #667eea; color: #fff; }
-        html[data-theme="dark"] .past-toggle           { background: #2a2d40; color: #999; border-color: #444; }
-        html[data-theme="dark"] .past-toggle.active    { background: #2d3566; color: #9aa5ea; border-color: #9aa5ea; }
-        html[data-theme="dark"] .footer                { border-top-color: #333; }
-        html[data-theme="dark"] .update-time,
-        html[data-theme="dark"] .next-update           { color: #777; }
+        html[data-theme="dark"] .left-panel, html[data-theme="dark"] .right-panel { background: #1e2030; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        html[data-theme="dark"] h1, html[data-theme="dark"] .section-title, html[data-theme="dark"] .stat-value, html[data-theme="dark"] .schedule-name { color: #e8e8ea; }
+        html[data-theme="dark"] .subtitle, html[data-theme="dark"] .schedule-date { color: #9a9aaa; }
+        html[data-theme="dark"] .mode-tabs { background: #2a2d40; }
+        html[data-theme="dark"] .mode-tab.active { background: #3a3d55; color: #fff; }
+        html[data-theme="dark"] .stat-card, html[data-theme="dark"] .progress-section, html[data-theme="dark"] .schedule-item { background: #2a2d40; }
+        html[data-theme="dark"] .schedule-item.is-suneung { background: linear-gradient(135deg, #4a1f24 0%, #5c2830 100%); }
+        html[data-theme="dark"] .schedule-item.upcoming { background: linear-gradient(135deg, #4a3f1f 0%, #5c4d28 100%); }
+        html[data-theme="dark"] .handwriting-box { background: #3a3420; border-left-color: #ffc107; }
+        html[data-theme="dark"] .handwriting-text { color: #f0d88a; }
+        html[data-theme="dark"] .handwriting-src { color: #b8a570; }
+        html[data-theme="dark"] .progress-track { background: #3a3d55; }
+        html[data-theme="dark"] .filter-btn { background: #2a2d40; color: #9aa5ea; border-color: #9aa5ea; }
+        html[data-theme="dark"] .filter-btn.active { background: #667eea; color: #fff; }
+        html[data-theme="dark"] .past-toggle { background: #2a2d40; color: #999; border-color: #444; }
+        html[data-theme="dark"] .past-toggle.active { background: #2d3566; color: #9aa5ea; border-color: #9aa5ea; }
+        html[data-theme="dark"] .footer { border-top-color: #333; }
+        html[data-theme="dark"] .update-time, html[data-theme="dark"] .next-update { color: #777; }
         html[data-theme="dark"] .schedule-scroll::-webkit-scrollbar-thumb { background: #444; }
-        html[data-theme="dark"] .nav-bar               { background: rgba(30,32,48,0.92); }
-        html[data-theme="dark"] .nav-link              { color: #9a9aaa; }
-        html[data-theme="dark"] .nav-link:hover        { color: #e8e8ea; background: rgba(154,165,234,0.12); }
-        html[data-theme="dark"] .nav-link.active       { background: #667eea; color: #fff; }
-        html[data-theme="dark"] .fab-btn               { background: rgba(42,45,64,0.92); color: #e8e8ea; }
-        html[data-theme="dark"] .fab-btn:hover         { background: #2a2d40; }
-        html[data-theme="dark"] .theme-menu            { background: #2a2d40; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        html[data-theme="dark"] .theme-opt             { color: #e8e8ea; }
-        html[data-theme="dark"] .theme-opt:hover       { background: #3a3d55; }
-        html[data-theme="dark"] .theme-opt.selected    { background: #2d3566; color: #9aa5ea; }
-        html[data-theme="dark"] .toast                 { background: #e8e8ea; color: #1e2030; }
 
-        /* ── Layout ────────────────────────────────────────────────── */
-        .nav-bar {
-            max-width: 1100px; margin: 0 auto 18px;
-            display: flex; justify-content: center; gap: 6px;
-            background: rgba(255,255,255,0.92); border-radius: 999px; padding: 6px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15); backdrop-filter: blur(8px);
-            position: relative; z-index: 2;
-        }
-        .nav-link { padding: 10px 22px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.92em; font-weight: 600; color: #666; text-decoration: none; transition: all 0.25s ease; }
-        .nav-link:hover  { color: #333; background: rgba(102,126,234,0.08); }
-        .nav-link.active { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
-
-        .layout      { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 500px 1fr; gap: 24px; align-items: start; position: relative; z-index: 1; }
-        .left-panel  { position: sticky; top: 20px; background: white; border-radius: 20px; padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transition: background 0.4s ease; }
+        .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 500px 1fr; gap: 24px; align-items: start; position: relative; z-index: 1; }
+        .left-panel { position: sticky; top: 20px; background: white; border-radius: 20px; padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transition: background 0.4s ease; }
         .right-panel { background: white; border-radius: 20px; padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: calc(100vh - 40px); display: flex; flex-direction: column; transition: background 0.4s ease; }
 
-        /* ── FAB ───────────────────────────────────────────────────── */
         .fab-actions { position: fixed; top: 16px; right: 16px; display: flex; gap: 6px; z-index: 100; }
         .fab-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); cursor: pointer; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; padding: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(6px); position: relative; }
         .fab-btn:hover { transform: scale(1.08); background: #fff; }
+        html[data-theme="dark"] .fab-btn { background: rgba(42,45,64,0.92); color: #e8e8ea; }
+        html[data-theme="dark"] .fab-btn:hover { background: #2a2d40; }
+
         .theme-menu { position: absolute; top: 46px; right: 0; background: #fff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 8px; min-width: 170px; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all 0.2s ease; }
         .theme-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        html[data-theme="dark"] .theme-menu { background: #2a2d40; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .theme-opt { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 12px; border: none; background: transparent; border-radius: 9px; cursor: pointer; font-size: 0.88em; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 500; color: #333; text-align: left; transition: background 0.15s ease; }
-        .theme-opt:hover   { background: #f0f0f5; }
-        .theme-opt.selected{ background: #eef0ff; color: #667eea; font-weight: 700; }
-        .theme-opt .emoji  { font-size: 1.1em; }
+        html[data-theme="dark"] .theme-opt { color: #e8e8ea; }
+        .theme-opt:hover { background: #f0f0f5; }
+        html[data-theme="dark"] .theme-opt:hover { background: #3a3d55; }
+        .theme-opt.selected { background: #eef0ff; color: #667eea; font-weight: 700; }
+        html[data-theme="dark"] .theme-opt.selected { background: #2d3566; color: #9aa5ea; }
+        .theme-opt .emoji { font-size: 1.1em; }
 
-        /* ── Toast ─────────────────────────────────────────────────── */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: #fff; padding: 12px 22px; border-radius: 24px; font-size: 0.88em; font-weight: 500; opacity: 0; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        html[data-theme="dark"] .toast { background: #e8e8ea; color: #1e2030; }
 
-        /* ── Animations ────────────────────────────────────────────── */
-        @keyframes fadeDown  { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes fadeUp    { from{opacity:0;transform:translateY(14px)}  to{opacity:1;transform:translateY(0)} }
-        @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
-        @keyframes numberFlip{ from{opacity:0;transform:translateY(8px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+        @keyframes fadeDown { from { opacity:0; transform:translateY(-14px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes numberFlip { from { opacity:0; transform:translateY(8px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
 
-        /* ── Header ────────────────────────────────────────────────── */
-        .header   { text-align: center; margin-bottom: 18px; animation: fadeDown 0.5s ease-out; }
-        h1        { font-weight: 700; font-size: 1.6em; letter-spacing: -0.02em; color: #333; margin-bottom: 4px; }
+        .header { text-align: center; margin-bottom: 18px; animation: fadeDown 0.5s ease-out; }
+        h1 { font-weight: 700; font-size: 1.6em; letter-spacing: -0.02em; color: #333; margin-bottom: 4px; }
         .subtitle { color: #888; font-size: 0.88em; font-weight: 400; }
 
-        /* ── Mode tabs ─────────────────────────────────────────────── */
         .mode-tabs { display: flex; background: #f0f0f5; border-radius: 12px; padding: 4px; margin-bottom: 18px; animation: fadeDown 0.5s ease-out 0.05s both; }
-        .mode-tab  { flex: 1; padding: 10px 0; border: none; background: transparent; border-radius: 9px; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.92em; font-weight: 600; color: #999; transition: all 0.25s ease; }
-        .mode-tab.active      { background: white; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .mode-tab { flex: 1; padding: 10px 0; border: none; background: transparent; border-radius: 9px; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.92em; font-weight: 600; color: #999; transition: all 0.25s ease; }
+        .mode-tab.active { background: white; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
         .mode-tab:hover:not(.active) { color: #666; }
 
-        /* ── D-day hero ────────────────────────────────────────────── */
         .main-dday { position: relative; border-radius: 16px; padding: 36px 24px; text-align: center; margin-bottom: 20px; color: white; overflow: hidden; animation: fadeUp 0.55s ease-out 0.05s both; transition: background 0.5s ease, box-shadow 0.5s ease; }
-        .main-dday::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 25% 35%,rgba(255,255,255,0.12),transparent 45%), radial-gradient(circle at 75% 75%,rgba(0,0,0,0.08),transparent 45%); pointer-events:none; }
-        .main-dday.theme-coral    { background:linear-gradient(135deg,#ff6b6b,#ee5a6f);  box-shadow:0 10px 30px rgba(238,90,111,0.3); }
-        .main-dday.theme-lavender { background:linear-gradient(135deg,#667eea,#764ba2);  box-shadow:0 10px 30px rgba(102,126,234,0.3); }
-        .main-dday.theme-sage     { background:linear-gradient(135deg,#20bf6b,#0fb9b1);  box-shadow:0 10px 30px rgba(32,191,107,0.3); }
-        .main-dday.theme-rose     { background:linear-gradient(135deg,#fc5c7d,#e66767);  box-shadow:0 10px 30px rgba(252,92,125,0.3); }
-        .main-dday.theme-marigold { background:linear-gradient(135deg,#f7b731,#fd9644);  box-shadow:0 10px 30px rgba(247,183,49,0.3); }
-        .main-dday.theme-6mo      { background:linear-gradient(135deg,#11998e,#38ef7d);  box-shadow:0 10px 30px rgba(17,153,142,0.3); }
-        .main-dday.theme-spring   { background:linear-gradient(135deg,#ff9a9e,#fad0c4 50%,#a1ffce); box-shadow:0 10px 30px rgba(255,154,158,0.35); }
-        .main-dday.theme-summer   { background:linear-gradient(135deg,#00c6fb,#005bea);  box-shadow:0 10px 30px rgba(0,91,234,0.35); }
-        .main-dday.theme-autumn   { background:linear-gradient(135deg,#ff9966,#ff5e62 50%,#8e2019); box-shadow:0 10px 30px rgba(255,94,98,0.35); }
-        .main-dday.theme-winter   { background:linear-gradient(135deg,#a1c4fd,#4b6cb7 50%,#182848); box-shadow:0 10px 30px rgba(75,108,183,0.35); }
-        .main-dday.theme-imminent { background:linear-gradient(135deg,#ff416c,#b20710);  box-shadow:0 10px 30px rgba(178,7,16,0.45); animation: fadeUp 0.55s ease-out 0.05s both, imminentPulse 2.5s ease-in-out infinite; }
-        @keyframes imminentPulse { 0%,100%{box-shadow:0 10px 30px rgba(178,7,16,0.45)} 50%{box-shadow:0 10px 40px rgba(255,65,108,0.7)} }
+        .main-dday::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 25% 35%, rgba(255,255,255,0.12), transparent 45%), radial-gradient(circle at 75% 75%, rgba(0,0,0,0.08), transparent 45%); pointer-events: none; }
+        .main-dday.theme-coral    { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); box-shadow: 0 10px 30px rgba(238,90,111,0.3); }
+        .main-dday.theme-lavender { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 10px 30px rgba(102,126,234,0.3); }
+        .main-dday.theme-sage     { background: linear-gradient(135deg, #20bf6b 0%, #0fb9b1 100%); box-shadow: 0 10px 30px rgba(32,191,107,0.3); }
+        .main-dday.theme-rose     { background: linear-gradient(135deg, #fc5c7d 0%, #e66767 100%); box-shadow: 0 10px 30px rgba(252,92,125,0.3); }
+        .main-dday.theme-marigold { background: linear-gradient(135deg, #f7b731 0%, #fd9644 100%); box-shadow: 0 10px 30px rgba(247,183,49,0.3); }
+        .main-dday.theme-6mo      { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 10px 30px rgba(17,153,142,0.3); }
+        .main-dday.theme-spring   { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #a1ffce 100%); box-shadow: 0 10px 30px rgba(255,154,158,0.35); }
+        .main-dday.theme-summer   { background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); box-shadow: 0 10px 30px rgba(0,91,234,0.35); }
+        .main-dday.theme-autumn   { background: linear-gradient(135deg, #ff9966 0%, #ff5e62 50%, #8e2019 100%); box-shadow: 0 10px 30px rgba(255,94,98,0.35); }
+        .main-dday.theme-winter   { background: linear-gradient(135deg, #a1c4fd 0%, #4b6cb7 50%, #182848 100%); box-shadow: 0 10px 30px rgba(75,108,183,0.35); }
+        .main-dday.theme-imminent { background: linear-gradient(135deg, #ff416c 0%, #b20710 100%); box-shadow: 0 10px 30px rgba(178,7,16,0.45); animation: fadeUp 0.55s ease-out 0.05s both, imminentPulse 2.5s ease-in-out infinite; }
+        @keyframes imminentPulse { 0%,100% { box-shadow: 0 10px 30px rgba(178,7,16,0.45); } 50% { box-shadow: 0 10px 40px rgba(255,65,108,0.7); } }
         .main-dday-number.animating { animation: numberFlip 0.3s ease-out both; }
-        .main-dday-label  { position:relative; font-size:1.05em; font-weight:600; opacity:.95; margin-bottom:6px; }
-        .main-dday-number { position:relative; font-size:4.5em; font-weight:700; margin:12px 0; text-shadow:2px 2px 4px rgba(0,0,0,0.2); }
-        .main-dday-date   { position:relative; font-size:.95em; opacity:.88; font-weight:500; }
+        .main-dday-label { position: relative; font-size: 1.05em; font-weight: 600; opacity: 0.95; margin-bottom: 6px; }
+        .main-dday-number { position: relative; font-size: 4.5em; font-weight: 700; margin: 12px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .main-dday-date { position: relative; font-size: 0.95em; opacity: 0.88; font-weight: 500; }
 
-        /* ── Stats ─────────────────────────────────────────────────── */
-        .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:22px; animation:fadeUp 0.55s ease-out 0.12s both; }
-        .stat-card  { background:#f8f9fa; padding:16px 8px; border-radius:12px; text-align:center; }
-        .stat-label { color:#999; font-size:.78em; font-weight:500; margin-bottom:5px; }
-        .stat-value { font-size:1.6em; font-weight:700; color:#333; transition:all 0.3s ease; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 22px; animation: fadeUp 0.55s ease-out 0.12s both; }
+        .stat-card { background: #f8f9fa; padding: 16px 8px; border-radius: 12px; text-align: center; }
+        .stat-label { color: #999; font-size: 0.78em; font-weight: 500; margin-bottom: 5px; }
+        .stat-value { font-size: 1.6em; font-weight: 700; color: #333; transition: all 0.3s ease; }
 
-        /* ── Progress ──────────────────────────────────────────────── */
-        .progress-section { background:#f8f9fa; border-radius:12px; padding:16px 18px; margin-bottom:22px; animation:fadeUp 0.55s ease-out 0.18s both; }
-        .progress-header  { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-        .progress-label   { font-size:.84em; color:#666; font-weight:600; }
-        .progress-percent { font-size:.84em; color:#667eea; font-weight:700; transition:color 0.3s ease; }
-        .progress-track   { width:100%; height:7px; background:#e9ecef; border-radius:4px; overflow:hidden; }
-        .progress-fill    { height:100%; background:linear-gradient(90deg,#667eea,#764ba2); border-radius:4px; transition:width 1s ease-out, background 0.5s ease; }
-        .progress-fill.mode-6mo { background:linear-gradient(90deg,#11998e,#38ef7d); }
-        .progress-dates   { display:flex; justify-content:space-between; margin-top:8px; font-size:.7em; color:#aaa; font-weight:500; }
+        .progress-section { background: #f8f9fa; border-radius: 12px; padding: 16px 18px; margin-bottom: 22px; animation: fadeUp 0.55s ease-out 0.18s both; }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-label { font-size: 0.84em; color: #666; font-weight: 600; }
+        .progress-percent { font-size: 0.84em; color: #667eea; font-weight: 700; transition: color 0.3s ease; }
+        .progress-track { width: 100%; height: 7px; background: #e9ecef; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 4px; transition: width 1s ease-out, background 0.5s ease; }
+        .progress-fill.mode-6mo { background: linear-gradient(90deg, #11998e, #38ef7d); }
+        .progress-dates { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.7em; color: #aaa; font-weight: 500; }
 
-        /* ── Handwriting ───────────────────────────────────────────── */
-        .handwriting-box  { background:#fff9e6; border-left:4px solid #ffc107; padding:20px; border-radius:10px; text-align:center; animation:fadeUp 0.55s ease-out 0.24s both; }
-        .handwriting-text { font-size:1.1em; font-weight:600; color:#7a6520; line-height:1.7; }
-        .handwriting-src  { font-size:.7em; font-weight:500; color:#b8a570; margin-top:6px; }
+        .handwriting-box { background: #fff9e6; border-left: 4px solid #ffc107; padding: 20px; border-radius: 10px; text-align: center; animation: fadeUp 0.55s ease-out 0.24s both; }
+        .handwriting-text { font-size: 1.1em; font-weight: 600; color: #7a6520; line-height: 1.7; }
+        .handwriting-src { font-size: 0.7em; font-weight: 500; color: #b8a570; margin-top: 6px; }
 
-        /* ── Right panel ───────────────────────────────────────────── */
-        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; animation:fadeDown 0.5s ease-out; }
-        .section-title  { font-size:1.3em; font-weight:700; color:#333; padding-bottom:10px; border-bottom:3px solid #667eea; }
-        .past-toggle    { font-family:'IBM Plex Sans KR',sans-serif; font-size:.8em; font-weight:600; color:#999; background:white; border:1px solid #ddd; padding:6px 14px; border-radius:20px; cursor:pointer; transition:all 0.2s ease; }
-        .past-toggle:hover  { color:#666; border-color:#bbb; }
-        .past-toggle.active { color:#667eea; border-color:#667eea; background:#eef0ff; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; animation: fadeDown 0.5s ease-out; }
+        .section-title { font-size: 1.3em; font-weight: 700; color: #333; padding-bottom: 10px; border-bottom: 3px solid #667eea; }
+        .past-toggle { font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.8em; font-weight: 600; color: #999; background: white; border: 1px solid #ddd; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
+        .past-toggle:hover { color: #666; border-color: #bbb; }
+        .past-toggle.active { color: #667eea; border-color: #667eea; background: #eef0ff; }
 
-        .filter-buttons { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; animation:fadeUp 0.5s ease-out 0.05s both; }
-        .filter-btn { font-family:'IBM Plex Sans KR',sans-serif; padding:9px 20px; border:2px solid #667eea; background:white; color:#667eea; border-radius:25px; cursor:pointer; font-weight:600; font-size:.88em; transition:all 0.3s ease; }
-        .filter-btn:hover  { transform:translateY(-2px); box-shadow:0 3px 10px rgba(102,126,234,0.3); }
-        .filter-btn.active { background:#667eea; color:white; }
+        .filter-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; animation: fadeUp 0.5s ease-out 0.05s both; }
+        .filter-btn { font-family: 'IBM Plex Sans KR', sans-serif; padding: 9px 20px; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 0.88em; transition: all 0.3s ease; }
+        .filter-btn:hover { transform: translateY(-2px); box-shadow: 0 3px 10px rgba(102,126,234,0.3); }
+        .filter-btn.active { background: #667eea; color: white; }
 
-        .schedule-scroll { flex:1; overflow-y:auto; min-height:0; padding-right:4px; }
-        .schedule-scroll::-webkit-scrollbar       { width:5px; }
-        .schedule-scroll::-webkit-scrollbar-track { background:transparent; }
-        .schedule-scroll::-webkit-scrollbar-thumb { background:#ddd; border-radius:3px; }
-        .schedule-scroll::-webkit-scrollbar-thumb:hover { background:#bbb; }
+        .schedule-scroll { flex: 1; overflow-y: auto; min-height: 0; padding-right: 4px; }
+        .schedule-scroll::-webkit-scrollbar { width: 5px; }
+        .schedule-scroll::-webkit-scrollbar-track { background: transparent; }
+        .schedule-scroll::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+        .schedule-scroll::-webkit-scrollbar-thumb:hover { background: #bbb; }
 
-        .schedule-list  { display:flex; flex-direction:column; gap:10px; }
-        .empty-message  { text-align:center; padding:48px 20px; color:#aaa; font-size:.95em; }
-        .empty-icon     { font-size:2em; margin-bottom:10px; display:block; }
+        .schedule-list { display: flex; flex-direction: column; gap: 10px; }
+        .empty-message { text-align: center; padding: 48px 20px; color: #aaa; font-size: 0.95em; }
+        .empty-icon { font-size: 2em; margin-bottom: 10px; display: block; }
 
-        .schedule-item  { background:#f8f9fa; padding:16px 20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; transition:all 0.2s ease; animation:fadeIn 0.3s ease-out both; }
-        .schedule-item:hover      { transform:translateY(-3px); box-shadow:0 5px 15px rgba(0,0,0,0.08); }
-        .schedule-item.is-suneung { background:linear-gradient(135deg,#ffebee,#ffcdd2); border-left:4px solid #f44336; }
-        .schedule-item.upcoming   { background:linear-gradient(135deg,#fff9e6,#fff3cd); border-left:4px solid #ffc107; }
-        .schedule-item.past-item  { opacity:.4; }
-        .schedule-info  { flex:1; min-width:0; }
-        .schedule-name  { font-size:.95em; font-weight:600; color:#333; margin-bottom:3px; }
-        .schedule-date  { color:#999; font-size:.82em; font-weight:400; }
-        .schedule-dday  { font-size:1.5em; font-weight:700; min-width:85px; text-align:right; flex-shrink:0; margin-left:12px; }
-        .schedule-dday.future { color:#667eea; }
-        .schedule-dday.today  { color:#f44336; }
-        .schedule-dday.past   { color:#ccc; }
-        .schedule-item.upcoming .schedule-dday   { color:#f57c00; }
-        .schedule-item.is-suneung .schedule-dday { color:#f44336; }
+        .schedule-item { background: #f8f9fa; padding: 16px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; animation: fadeIn 0.3s ease-out both; }
+        .schedule-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .schedule-item.is-suneung { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 4px solid #f44336; }
+        .schedule-item.upcoming { background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%); border-left: 4px solid #ffc107; }
+        .schedule-item.past-item { opacity: 0.4; }
+        .schedule-info { flex: 1; min-width: 0; }
+        .schedule-name { font-size: 0.95em; font-weight: 600; color: #333; margin-bottom: 3px; }
+        .schedule-date { color: #999; font-size: 0.82em; font-weight: 400; }
+        .schedule-dday { font-size: 1.5em; font-weight: 700; min-width: 85px; text-align: right; flex-shrink: 0; margin-left: 12px; }
+        .schedule-dday.future { color: #667eea; }
+        .schedule-dday.today { color: #f44336; }
+        .schedule-dday.past { color: #ccc; }
+        .schedule-item.upcoming .schedule-dday { color: #f57c00; }
+        .schedule-item.is-suneung .schedule-dday { color: #f44336; }
 
-        .badge             { display:inline-block; font-size:.7em; font-weight:700; padding:2px 8px; border-radius:5px; margin-left:6px; vertical-align:middle; }
-        .badge-suneung     { background:#ffebee; color:#e53935; }
-        .badge-pyeongwon   { background:#eef0ff; color:#667eea; }
-        .badge-gyoyukchung { background:#e8f5e9; color:#2e7d32; }
-        .badge-duff        { background:#fff8e1; color:#f57f17; }
-        .badge-surf        { background:#e0f7fa; color:#00838f; }
-        .badge-etc         { background:#f3e5f5; color:#7b1fa2; }
+        .badge { display: inline-block; font-size: 0.7em; font-weight: 700; padding: 2px 8px; border-radius: 5px; margin-left: 6px; vertical-align: middle; }
+        .badge-suneung { background: #ffebee; color: #e53935; }
+        .badge-pyeongwon { background: #eef0ff; color: #667eea; }
+        .badge-gyoyukchung { background: #e8f5e9; color: #2e7d32; }
+        .badge-duff { background: #fff8e1; color: #f57f17; }
+        .badge-surf { background: #e0f7fa; color: #00838f; }
+        .badge-etc { background: #f3e5f5; color: #7b1fa2; }
 
-        .footer      { text-align:center; margin-top:18px; padding-top:14px; border-top:1px solid #eee; }
-        .update-time { color:#bbb; font-size:.76em; }
-        .next-update { color:#ccc; font-size:.7em; margin-top:2px; }
+        .footer { text-align: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid #eee; }
+        .update-time { color: #bbb; font-size: 0.76em; }
+        .next-update { color: #ccc; font-size: 0.7em; margin-top: 2px; }
 
-        /* ── Responsive ────────────────────────────────────────────── */
-        @media (max-width: 860px) {
-            body { padding:10px; padding-top:56px; }
-            .fab-actions { position:absolute; top:10px; right:10px; }
-            .fab-btn { width:32px; height:32px; font-size:13px; }
-            .layout { grid-template-columns:1fr; gap:12px; }
-            .left-panel  { position:static; padding:24px 18px; border-radius:16px; }
-            .right-panel { padding:24px 18px; border-radius:16px; max-height:none; }
-            .schedule-scroll { overflow-y:visible; }
-            h1 { font-size:1.4em; }
-            .main-dday { padding:28px 20px; }
-            .main-dday-number { font-size:3.2em; }
-            .stat-value { font-size:1.4em; }
-            .filter-btn { padding:8px 16px; font-size:.85em; }
-            .schedule-item { padding:14px 16px; }
-            .schedule-name { font-size:.92em; }
-            .schedule-dday { font-size:1.3em; min-width:75px; }
-            .handwriting-box { padding:16px; }
-            .handwriting-text { font-size:1em; }
+        @media (max-width: 1024px) {
+            body { padding: 10px; padding-top: 56px; }
+            .fab-actions { position: absolute; top: 10px; right: 10px; }
+            .fab-btn { width: 32px; height: 32px; font-size: 13px; }
+            .layout { grid-template-columns: 1fr; gap: 12px; }
+            /* sticky / 독립스크롤 해제 — 태블릿에서 전체 페이지 스크롤로 통일 */
+            .left-panel { position: static; padding: 24px 18px; border-radius: 16px; }
+            .right-panel { padding: 24px 18px; border-radius: 16px; max-height: none; display: block; }
+            .schedule-scroll { overflow-y: visible; }
+            h1 { font-size: 1.4em; }
+            .main-dday { padding: 28px 20px; }
+            .main-dday-number { font-size: 3.2em; }
+            .stat-value { font-size: 1.4em; }
+            .filter-btn { padding: 8px 16px; font-size: 0.85em; }
+            .schedule-item { padding: 14px 16px; }
+            .schedule-name { font-size: 0.92em; }
+            .schedule-dday { font-size: 1.3em; min-width: 75px; }
+            .handwriting-box { padding: 16px; }
+            .handwriting-text { font-size: 1em; }
         }
         @media (max-width: 480px) {
-            .left-panel, .right-panel { padding:20px 15px; }
-            h1 { font-size:1.25em; }
-            .main-dday { padding:22px 16px; }
-            .main-dday-label  { font-size:.95em; }
-            .main-dday-number { font-size:2.8em; margin:8px 0; }
-            .main-dday-date   { font-size:.88em; }
-            .stat-card  { padding:12px 6px; }
-            .stat-label { font-size:.74em; }
-            .stat-value { font-size:1.25em; }
-            .filter-btn { padding:7px 14px; font-size:.82em; }
-            .schedule-item { padding:12px 14px; }
-            .schedule-dday { font-size:1.2em; min-width:65px; }
-            .particle { font-size:1.1em; }
+            .left-panel, .right-panel { padding: 20px 15px; }
+            h1 { font-size: 1.25em; }
+            .main-dday { padding: 22px 16px; }
+            .main-dday-label { font-size: 0.95em; }
+            .main-dday-number { font-size: 2.8em; margin: 8px 0; }
+            .main-dday-date { font-size: 0.88em; }
+            .stat-card { padding: 12px 6px; }
+            .stat-label { font-size: 0.74em; }
+            .stat-value { font-size: 1.25em; }
+            .filter-btn { padding: 7px 14px; font-size: 0.82em; }
+            .schedule-item { padding: 12px 14px; }
+            .schedule-dday { font-size: 1.2em; min-width: 65px; }
+            .particle { font-size: 1.1em; }
         }
+    
+        .nav-bar {
+            max-width: 1100px;
+            margin: 0 auto 18px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.92);
+            border-radius: 999px;
+            padding: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 2;
+        }
+        .nav-link {
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            font-size: 0.92em;
+            font-weight: 600;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .nav-link:hover { color: #333; background: rgba(102,126,234,0.08); }
+        .nav-link.active { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+        html[data-theme="dark"] .nav-bar { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .nav-link { color: #9a9aaa; }
+        html[data-theme="dark"] .nav-link:hover { color: #e8e8ea; background: rgba(154,165,234,0.12); }
+        html[data-theme="dark"] .nav-link.active { background: #667eea; color: #fff; }
+
     </style>
 </head>
 <body>
@@ -293,25 +319,22 @@
 
     <div class="fab-actions">
         <button class="fab-btn" id="themeToggle" title="다크모드 전환" aria-label="다크모드 전환">🌙</button>
-        <div style="position:relative;">
+        <div style="position: relative;">
             <button class="fab-btn" id="paletteBtn" title="테마 선택" aria-label="테마 선택">🎨</button>
             <div class="theme-menu" id="themeMenu" role="menu">
-                <button class="theme-opt" data-season="auto">    <span class="emoji">✨</span><span>자동</span></button>
-                <button class="theme-opt" data-season="default"> <span class="emoji">🎲</span><span>기본 (랜덤)</span></button>
-                <button class="theme-opt" data-season="spring">  <span class="emoji">🌸</span><span>봄</span></button>
-                <button class="theme-opt" data-season="summer">  <span class="emoji">🌊</span><span>여름</span></button>
-                <button class="theme-opt" data-season="autumn">  <span class="emoji">🍁</span><span>가을</span></button>
-                <button class="theme-opt" data-season="winter">  <span class="emoji">❄️</span><span>겨울</span></button>
+                <button class="theme-opt" data-season="auto"><span class="emoji">✨</span><span>자동</span></button>
+                <button class="theme-opt" data-season="default"><span class="emoji">🎲</span><span>기본 (랜덤)</span></button>
+                <button class="theme-opt" data-season="spring"><span class="emoji">🌸</span><span>봄</span></button>
+                <button class="theme-opt" data-season="summer"><span class="emoji">🌊</span><span>여름</span></button>
+                <button class="theme-opt" data-season="autumn"><span class="emoji">🍁</span><span>가을</span></button>
+                <button class="theme-opt" data-season="winter"><span class="emoji">❄️</span><span>겨울</span></button>
                 <button class="theme-opt" data-season="imminent"><span class="emoji">🔥</span><span>수능 임박</span></button>
             </div>
         </div>
         <button class="fab-btn" id="shareBtn" title="공유 / 링크 복사" aria-label="공유하기">🔗</button>
     </div>
 
-    <nav class="nav-bar" aria-label="주 메뉴">
-        <a href="./"      class="nav-link active">🏠 디데이</a>
-        <a href="./wall/" class="nav-link">📝 익명 게시판</a>
-    </nav>
+    <nav class="nav-bar" aria-label="주 메뉴"><a href="./" class="nav-link active">🏠 디데이</a><a href="./wall/" class="nav-link">📝 익명 게시판</a></nav>
 
     <div class="layout">
         <aside class="left-panel" role="complementary">
@@ -321,29 +344,29 @@
             </header>
 
             <div class="mode-tabs" role="tablist" aria-label="디데이 모드 선택">
-                <button class="mode-tab active" id="tab-suneung" role="tab" aria-selected="true"  data-mode="suneung">🎯 수능</button>
-                <button class="mode-tab"         id="tab-6mo"     role="tab" aria-selected="false" data-mode="6mo">📝 6모</button>
+                <button class="mode-tab active" id="tab-suneung" role="tab" aria-selected="true" onclick="switchMode('suneung')">🎯 수능</button>
+                <button class="mode-tab" id="tab-6mo" role="tab" aria-selected="false" onclick="switchMode('6mo')">📝 6모</button>
             </div>
 
             <section class="main-dday theme-coral" id="mainDdayBox" aria-label="디데이">
-                <div class="main-dday-label"  id="mainDdayLabel">2027학년도 수능까지</div>
+                <div class="main-dday-label" id="mainDdayLabel">2027학년도 수능까지</div>
                 <div class="main-dday-number" id="mainDday">D-000</div>
-                <div class="main-dday-date"   id="mainDdayDate">2026년 11월 19일 (목)</div>
+                <div class="main-dday-date" id="mainDdayDate">2026년 11월 19일 (목)</div>
             </section>
 
             <section class="stats-row" aria-label="남은 기간">
-                <div class="stat-card"><div class="stat-label">남은 일</div>  <div class="stat-value" id="daysLeft">—</div></div>
-                <div class="stat-card"><div class="stat-label">남은 주</div>  <div class="stat-value" id="weeksLeft">—</div></div>
+                <div class="stat-card"><div class="stat-label">남은 일</div><div class="stat-value" id="daysLeft">—</div></div>
+                <div class="stat-card"><div class="stat-label">남은 주</div><div class="stat-value" id="weeksLeft">—</div></div>
                 <div class="stat-card"><div class="stat-label">남은 개월</div><div class="stat-value" id="monthsLeft">—</div></div>
             </section>
 
             <section class="progress-section" aria-label="여정">
                 <div class="progress-header">
-                    <span class="progress-label"  id="progressLabel">수능까지의 여정</span>
+                    <span class="progress-label" id="progressLabel">수능까지의 여정</span>
                     <span class="progress-percent" id="progressPercent">0%</span>
                 </div>
                 <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                 </div>
                 <div class="progress-dates">
                     <span id="progressDateStart">2026 수능 (2025.11.13)</span>
@@ -353,23 +376,23 @@
 
             <section class="handwriting-box" aria-label="필적확인란">
                 <div class="handwriting-text" id="handwriting"></div>
-                <div class="handwriting-src"  id="handwritingSrc"></div>
+                <div class="handwriting-src" id="handwritingSrc"></div>
             </section>
         </aside>
 
         <main class="right-panel">
             <div class="section-header">
                 <h2 class="section-title">📝 모의고사 일정</h2>
-                <button class="past-toggle" id="pastToggle">지난 일정</button>
+                <button class="past-toggle" id="pastToggle" onclick="togglePast()">지난 일정</button>
             </div>
 
             <nav class="filter-buttons" aria-label="카테고리 필터">
-                <button class="filter-btn" data-filter="suneung">수능</button>
-                <button class="filter-btn" data-filter="pyeongwon">평가원</button>
-                <button class="filter-btn" data-filter="gyoyukchung">교육청</button>
-                <button class="filter-btn" data-filter="duff">더프</button>
-                <button class="filter-btn" data-filter="surf">서프</button>
-                <button class="filter-btn" data-filter="etc">기타</button>
+                <button class="filter-btn" id="btn-suneung" onclick="toggleFilter('suneung')">수능</button>
+                <button class="filter-btn" id="btn-pyeongwon" onclick="toggleFilter('pyeongwon')">평가원</button>
+                <button class="filter-btn" id="btn-gyoyukchung" onclick="toggleFilter('gyoyukchung')">교육청</button>
+                <button class="filter-btn" id="btn-duff" onclick="toggleFilter('duff')">더프</button>
+                <button class="filter-btn" id="btn-surf" onclick="toggleFilter('surf')">서프</button>
+                <button class="filter-btn" id="btn-etc" onclick="toggleFilter('etc')">기타</button>
             </nav>
 
             <div class="schedule-scroll">
@@ -378,7 +401,7 @@
 
             <footer class="footer">
                 <div class="update-time" id="updateTime"></div>
-                <div class="next-update"  id="nextUpdate"></div>
+                <div class="next-update" id="nextUpdate"></div>
             </footer>
         </main>
     </div>
@@ -386,426 +409,350 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script>
-    // ── Constants ────────────────────────────────────────────────────
-    const DATES = {
-        suneung: { target:'2026-11-19', progressStart:'2025-11-13', label:'2027학년도 수능까지',        dateText:'2026년 11월 19일 (목)', progressLabelText:'수능까지의 여정',  progressStartText:'2026 수능 (2025.11.13)',     progressEndText:'2027 수능 (2026.11.19)' },
-        '6mo':   { target:'2026-06-04', progressStart:'2025-11-13', label:'2027학년도 6월 모의평가까지', dateText:'2026년 6월 4일 (목)',   progressLabelText:'6모까지의 여정',   progressStartText:'2026 수능 (2025.11.13)',     progressEndText:'6월 모의평가 (2026.06.04)' }
-    };
-    const BADGE_MAP = {
-        suneung:     ['수능',  'badge-suneung'],
-        pyeongwon:   ['평가원','badge-pyeongwon'],
-        gyoyukchung: ['교육청','badge-gyoyukchung'],
-        duff:        ['더프',  'badge-duff'],
-        surf:        ['서프',  'badge-surf'],
-        etc:         ['기타',  'badge-etc'],
-    };
-    const SEASON_PARTICLES = {
-        spring:   { chars:['🌸','🌺','🌷','✿'],  count:14, type:'fall',  minDur:8,  maxDur:14 },
-        summer:   { chars:['💧','☀️','✨','🫧'],  count:12, type:'float', minDur:4,  maxDur:8  },
-        autumn:   { chars:['🍁','🍂','🍃'],        count:14, type:'fall',  minDur:7,  maxDur:13 },
-        winter:   { chars:['❄','❅','❆','✦'],      count:20, type:'fall',  minDur:9,  maxDur:16 },
-        imminent: { chars:['🔥','✦','✧'],          count:12, type:'ember', minDur:4,  maxDur:9  }
-    };
-    const THEME_LABELS = { auto:'✨ 자동', default:'🎲 기본', spring:'🌸 봄', summer:'🌊 여름', autumn:'🍁 가을', winter:'❄️겨울', imminent:'🔥 수능 임박' };
-    const RANDOM_THEMES = ['coral','lavender','sage','rose','marigold'];
-    const DEFAULT_FILTERS = ['pyeongwon','gyoyukchung'];
-    const LS = {
-        filters:  'suneung-filters',
-        past:     'suneung-show-past',
-        mode:     'suneung-mode',
-        season:   'suneung-season',
-        theme:    'ui-theme',
-        visited:  'suneung-visited',
-    };
+        var DATES = {
+            suneung: { target:'2026-11-19', progressStart:'2025-11-13', label:'2027학년도 수능까지', dateText:'2026년 11월 19일 (목)', progressLabelText:'수능까지의 여정', progressStartText:'2026 수능 (2025.11.13)', progressEndText:'2027 수능 (2026.11.19)' },
+            '6mo':    { target:'2026-06-04', progressStart:'2025-11-13', label:'2027학년도 6월 모의평가까지', dateText:'2026년 6월 4일 (목)', progressLabelText:'6모까지의 여정', progressStartText:'2026 수능 (2025.11.13)', progressEndText:'6월 모의평가 (2026.06.04)' }
+        };
+        var currentMode = 'suneung';
+        var currentTheme = 'theme-coral';
+        var seasonChoice = 'auto';
 
-    const schedules = [
-        { name:'3월 서바이벌 프로',    date:'2026-03-16', displayDate:'2026년 3월 16일 (월)', category:'surf' },
-        { name:'3월 더 프리미엄',      date:'2026-03-18', displayDate:'2026년 3월 18일 (수)', category:'duff' },
-        { name:'3월 모의고사',         date:'2026-03-24', displayDate:'2026년 3월 24일 (화)', category:'gyoyukchung', grades:'고1, 고2, 고3' },
-        { name:'4월 더 프리미엄',      date:'2026-04-17', displayDate:'2026년 4월 17일 (금)', category:'duff' },
-        { name:'4월 서바이벌 프로',    date:'2026-04-26', displayDate:'2026년 4월 26일 (일)', category:'surf' },
-        { name:'5월 모의고사',         date:'2026-05-07', displayDate:'2026년 5월 7일 (목)',  category:'gyoyukchung', grades:'고3' },
-        { name:'5월 더 프리미엄',      date:'2026-05-20', displayDate:'2026년 5월 20일 (수)', category:'duff' },
-        { name:'5월 서바이벌 프로',    date:'2026-05-25', displayDate:'2026년 5월 25일 (월)', category:'surf' },
-        { name:'6월 모의고사',         date:'2026-06-04', displayDate:'2026년 6월 4일 (목)',  category:'both', grades:{ pyeongwon:'고3', gyoyukchung:'고1, 고2' } },
-        { name:'6월 서바이벌 프로',    date:'2026-06-28', displayDate:'2026년 6월 28일 (일)', category:'surf' },
-        { name:'7월 모의고사',         date:'2026-07-08', displayDate:'2026년 7월 8일 (수)',  category:'gyoyukchung', grades:'고3' },
-        { name:'7월 더 프리미엄',      date:'2026-07-16', displayDate:'2026년 7월 16일 (목)', category:'duff' },
-        { name:'7월 서바이벌 프로',    date:'2026-07-24', displayDate:'2026년 7월 24일 (금)', category:'surf' },
-        { name:'8월 서바이벌 프로',    date:'2026-08-17', displayDate:'2026년 8월 17일 (월)', category:'surf' },
-        { name:'8월 더 프리미엄',      date:'2026-08-18', displayDate:'2026년 8월 18일 (화)', category:'duff' },
-        { name:'9월 모의고사',         date:'2026-09-02', displayDate:'2026년 9월 2일 (수)',  category:'both', grades:{ pyeongwon:'고3', gyoyukchung:'고1, 고2' } },
-        { name:'수시 원서 접수 시작',  date:'2026-09-07', displayDate:'2026년 9월 7일 (월)',  category:'etc' },
-        { name:'9월 더 프리미엄',      date:'2026-09-16', displayDate:'2026년 9월 16일 (수)', category:'duff' },
-        { name:'9월 서바이벌 프로',    date:'2026-09-24', displayDate:'2026년 9월 24일 (목)', category:'surf' },
-        { name:'10월 서바이벌 프로',   date:'2026-10-09', displayDate:'2026년 10월 9일 (금)', category:'surf' },
-        { name:'10월 더 프리미엄',     date:'2026-10-15', displayDate:'2026년 10월 15일 (목)',category:'duff' },
-        { name:'10월 모의고사',        date:'2026-10-20', displayDate:'2026년 10월 20일 (화)',category:'gyoyukchung', grades:'고1, 고2, 고3' },
-        { name:'11월 더 프리미엄',     date:'2026-11-02', displayDate:'2026년 11월 2일 (월)', category:'duff' },
-        { name:'11월 서바이벌 프로',   date:'2026-11-02', displayDate:'2026년 11월 2일 (월)', category:'surf' },
-        { name:'2027학년도 수능',      date:'2026-11-19', displayDate:'2026년 11월 19일 (목)',category:'suneung', isSuneung:true },
-        { name:'수능 성적 통지일',     date:'2026-12-11', displayDate:'2026년 12월 11일 (금)',category:'etc' },
-        { name:'정시 원서 접수 시작',  date:'2027-01-04', displayDate:'2027년 1월 4일 (월)',  category:'etc' },
-        { name:'2028학년도 수능',      date:'2027-11-18', displayDate:'2027년 11월 18일 (목)',category:'suneung', isSuneung:true }
-    ];
+        var handwritingTexts = [
+            { text: "흙에서 자란 내 마음 파란 하늘빛", src: "2006 수능" },{ text: "넓은 벌 동쪽 끝으로 옛이야기", src: "2007 수능" },{ text: "손금에 맑은 강물이 흐르고", src: "2008 수능" },{ text: "이 많은 별빛이 내린 언덕 위에", src: "2009 수능" },{ text: "맑은 강물처럼 조용하고 은근하며", src: "2010 수능" },{ text: "날마다 새로우며, 깊어지며, 넓어진다", src: "2011 수능" },{ text: "진실로 내가 그대를 사랑하는 까닭은", src: "2012 수능" },{ text: "맑은 햇빛으로 반짝반짝 물들으며", src: "2013 수능" },{ text: "꽃초롱 불 밝히듯 눈을 밝힐까", src: "2014 수능" },{ text: "햇살도 둥글둥글하게 뭉치는 맑은 날", src: "2015 수능" },{ text: "넓음과 깊음을 가슴에 채우며", src: "2016 수능" },{ text: "흙에서 자란 내 마음 파아란 하늘빛", src: "2017 수능" },{ text: "큰 바다 넓은 하늘을 우리는 가졌노라", src: "2018 수능" },{ text: "그대만큼 사랑스러운 사람을 본 일이 없다", src: "2019 수능" },{ text: "너무 맑고 초롱한 그 중 하나 별이여", src: "2020 수능" },{ text: "많고 많은 사람 중에 그대 한 사람", src: "2021 수능" },{ text: "넓은 하늘로의 비상을 꿈꾸며", src: "2022 수능" },{ text: "나의 꿈은 맑은 바람이 되어서", src: "2023 수능" },{ text: "가장 넓은 길은 언제나 내 마음속에", src: "2024 수능" },{ text: "저 넓은 세상에서 큰 꿈을 펼쳐라", src: "2025 수능" },{ text: "초록 물결이 톡톡 튀는 젊음처럼", src: "2026 수능" },
+            { text: "하늘을 우러러 한 점 부끄럼이 없기를", src: "2006 6월" },{ text: "산에는 꽃 피네 꽃이 피네 갈 봄 여름 없이", src: "2006 9월" },{ text: "맑은 햇빛으로 반짝반짝 물들으며", src: "2007 6월" },{ text: "언제나 점잖은 편 말이 없구나", src: "2007 9월" },{ text: "사뿐히 즈려 밟고 가시옵소서", src: "2008 6월" },{ text: "빈 대에 황촉불이 말없이 녹는 밤에", src: "2008 9월" },{ text: "엷은 졸음에 겨운 늙으신 아버지가", src: "2009 6월" },{ text: "기슭에는 채송화가 무더기로 피어서", src: "2009 9월" },{ text: "실어 나르지 않는 깨끗한 마음으로", src: "2010 6월" },{ text: "그 맑은 눈빛으로 나를 씻어", src: "2010 9월" },{ text: "세상이 조금씩 더 밝아지게 하소서", src: "2011 6월" },{ text: "별이 총총한 맑은 새암을 들여다본다", src: "2011 9월" },{ text: "햇빛도 그늘이 있어야 맑고 눈이 부시다", src: "2012 6월" },{ text: "세월이 흘러도 어머니의 마음은 늙지 않습니다", src: "2012 9월" },{ text: "밝고 맑게 살아가는 희망의 사람이 되게", src: "2013 6월" },{ text: "삶의 울타리 안에 평안함이 가득하다는 것이다", src: "2013 9월" },{ text: "꽃씨들은 흙을 뚫고 얼음을 뚫고", src: "2014 6월" },{ text: "푸르른 보리밭길 엷은 하늘에", src: "2014 9월" },{ text: "청노루 맑은 눈에 도는 구름", src: "2015 6월" },{ text: "눈 맑은 사람아 마음 맑은 사람아", src: "2015 9월" },{ text: "깊은 숲 속에서 나오니 유월의 햇빛이 밝다", src: "2016 6월" },{ text: "제 몫의 삶 지켜가는 청단풍 한 그루", src: "2016 9월" },{ text: "등불을 밝혀 어둠을 조금 내몰고", src: "2017 6월" },{ text: "하염없는 빛 하염없는 기쁨", src: "2017 9월" },{ text: "바람은 자도 마음은 자지 않는다", src: "2018 6월" },{ text: "달이 밝고 구름이 흐르고 하늘이 펼치고", src: "2018 9월" },{ text: "하늘빛을 닮은 그 들판 곁에 서서", src: "2019 6월" },{ text: "그대 맑은 눈을 들어 나를 보느니", src: "2019 9월" },{ text: "넓은 하늘의 수만 별을 그대로 총총", src: "2020 6월" },{ text: "맑고 아름다운 하늘을 받들어", src: "2020 9월" },{ text: "많이 사랑할수록 더 맑게 흐르는", src: "2021 6월" },{ text: "바위는 제자리에 옴찍 않노니", src: "2021 9월" },{ text: "햇볕이 유달리 맑은 하늘의 푸른 길을 밟고", src: "2022 6월" },{ text: "그것들이 내 삶의 거름이 되어", src: "2022 9월" },{ text: "젊은이여 그 길은 너의 것이다", src: "2023 6월" },{ text: "별이 더욱 밝은 빛으로 반짝일 때", src: "2023 9월" },{ text: "하늘 향해 우뚝 솟은 젊음으로", src: "2024 6월" },{ text: "맑은 웃음 머금은 네가 있었음 좋겠다", src: "2024 9월" },{ text: "희망을 속삭이는 아침이 밝아오니", src: "2025 6월" },{ text: "싱그럽고 푸르른 젊음이어라", src: "2025 9월" },{ text: "삶이란 가꿀수록 아름다운 것이라고", src: "2026 6월" },{ text: "순간들이 모여 삶은 반짝이는 보물이 된다", src: "2026 9월" }
+        ];
 
-    const handwritingTexts = [
-        {text:"흙에서 자란 내 마음 파란 하늘빛",src:"2006 수능"},{text:"넓은 벌 동쪽 끝으로 옛이야기",src:"2007 수능"},{text:"손금에 맑은 강물이 흐르고",src:"2008 수능"},{text:"이 많은 별빛이 내린 언덕 위에",src:"2009 수능"},{text:"맑은 강물처럼 조용하고 은근하며",src:"2010 수능"},{text:"날마다 새로우며, 깊어지며, 넓어진다",src:"2011 수능"},{text:"진실로 내가 그대를 사랑하는 까닭은",src:"2012 수능"},{text:"맑은 햇빛으로 반짝반짝 물들으며",src:"2013 수능"},{text:"꽃초롱 불 밝히듯 눈을 밝힐까",src:"2014 수능"},{text:"햇살도 둥글둥글하게 뭉치는 맑은 날",src:"2015 수능"},{text:"넓음과 깊음을 가슴에 채우며",src:"2016 수능"},{text:"흙에서 자란 내 마음 파아란 하늘빛",src:"2017 수능"},{text:"큰 바다 넓은 하늘을 우리는 가졌노라",src:"2018 수능"},{text:"그대만큼 사랑스러운 사람을 본 일이 없다",src:"2019 수능"},{text:"너무 맑고 초롱한 그 중 하나 별이여",src:"2020 수능"},{text:"많고 많은 사람 중에 그대 한 사람",src:"2021 수능"},{text:"넓은 하늘로의 비상을 꿈꾸며",src:"2022 수능"},{text:"나의 꿈은 맑은 바람이 되어서",src:"2023 수능"},{text:"가장 넓은 길은 언제나 내 마음속에",src:"2024 수능"},{text:"저 넓은 세상에서 큰 꿈을 펼쳐라",src:"2025 수능"},{text:"초록 물결이 톡톡 튀는 젊음처럼",src:"2026 수능"},
-        {text:"하늘을 우러러 한 점 부끄럼이 없기를",src:"2006 6월"},{text:"산에는 꽃 피네 꽃이 피네 갈 봄 여름 없이",src:"2006 9월"},{text:"맑은 햇빛으로 반짝반짝 물들으며",src:"2007 6월"},{text:"언제나 점잖은 편 말이 없구나",src:"2007 9월"},{text:"사뿐히 즈려 밟고 가시옵소서",src:"2008 6월"},{text:"빈 대에 황촉불이 말없이 녹는 밤에",src:"2008 9월"},{text:"엷은 졸음에 겨운 늙으신 아버지가",src:"2009 6월"},{text:"기슭에는 채송화가 무더기로 피어서",src:"2009 9월"},{text:"실어 나르지 않는 깨끗한 마음으로",src:"2010 6월"},{text:"그 맑은 눈빛으로 나를 씻어",src:"2010 9월"},{text:"세상이 조금씩 더 밝아지게 하소서",src:"2011 6월"},{text:"별이 총총한 맑은 새암을 들여다본다",src:"2011 9월"},{text:"햇빛도 그늘이 있어야 맑고 눈이 부시다",src:"2012 6월"},{text:"세월이 흘러도 어머니의 마음은 늙지 않습니다",src:"2012 9월"},{text:"밝고 맑게 살아가는 희망의 사람이 되게",src:"2013 6월"},{text:"삶의 울타리 안에 평안함이 가득하다는 것이다",src:"2013 9월"},{text:"꽃씨들은 흙을 뚫고 얼음을 뚫고",src:"2014 6월"},{text:"푸르른 보리밭길 엷은 하늘에",src:"2014 9월"},{text:"청노루 맑은 눈에 도는 구름",src:"2015 6월"},{text:"눈 맑은 사람아 마음 맑은 사람아",src:"2015 9월"},{text:"깊은 숲 속에서 나오니 유월의 햇빛이 밝다",src:"2016 6월"},{text:"제 몫의 삶 지켜가는 청단풍 한 그루",src:"2016 9월"},{text:"등불을 밝혀 어둠을 조금 내몰고",src:"2017 6월"},{text:"하염없는 빛 하염없는 기쁨",src:"2017 9월"},{text:"바람은 자도 마음은 자지 않는다",src:"2018 6월"},{text:"달이 밝고 구름이 흐르고 하늘이 펼치고",src:"2018 9월"},{text:"하늘빛을 닮은 그 들판 곁에 서서",src:"2019 6월"},{text:"그대 맑은 눈을 들어 나를 보느니",src:"2019 9월"},{text:"넓은 하늘의 수만 별을 그대로 총총",src:"2020 6월"},{text:"맑고 아름다운 하늘을 받들어",src:"2020 9월"},{text:"많이 사랑할수록 더 맑게 흐르는",src:"2021 6월"},{text:"바위는 제자리에 옴찍 않노니",src:"2021 9월"},{text:"햇볕이 유달리 맑은 하늘의 푸른 길을 밟고",src:"2022 6월"},{text:"그것들이 내 삶의 거름이 되어",src:"2022 9월"},{text:"젊은이여 그 길은 너의 것이다",src:"2023 6월"},{text:"별이 더욱 밝은 빛으로 반짝일 때",src:"2023 9월"},{text:"하늘 향해 우뚝 솟은 젊음으로",src:"2024 6월"},{text:"맑은 웃음 머금은 네가 있었음 좋겠다",src:"2024 9월"},{text:"희망을 속삭이는 아침이 밝아오니",src:"2025 6월"},{text:"싱그럽고 푸르른 젊음이어라",src:"2025 9월"},{text:"삶이란 가꿀수록 아름다운 것이라고",src:"2026 6월"},{text:"순간들이 모여 삶은 반짝이는 보물이 된다",src:"2026 9월"}
-    ];
+        var schedules = [
+            { name: '3월 서바이벌 프로', date: '2026-03-16', displayDate: '2026년 3월 16일 (월)', category: 'surf' },
+            { name: '3월 더 프리미엄', date: '2026-03-18', displayDate: '2026년 3월 18일 (수)', category: 'duff' },
+            { name: '3월 모의고사', date: '2026-03-24', displayDate: '2026년 3월 24일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3' },
+            { name: '4월 더 프리미엄', date: '2026-04-17', displayDate: '2026년 4월 17일 (금)', category: 'duff' },
+            { name: '4월 서바이벌 프로', date: '2026-04-26', displayDate: '2026년 4월 26일 (일)', category: 'surf' },
+            { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3' },
+            { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff' },
+            { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf' },
+            { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' } },
+            { name: '6월 서바이벌 프로', date: '2026-06-28', displayDate: '2026년 6월 28일 (일)', category: 'surf' },
+            { name: '7월 모의고사', date: '2026-07-08', displayDate: '2026년 7월 8일 (수)', category: 'gyoyukchung', grades: '고3' },
+            { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff' },
+            { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf' },
+            { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf' },
+            { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff' },
+            { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' } },
+            { name: '수시 원서 접수 시작', date: '2026-09-07', displayDate: '2026년 9월 7일 (월)', category: 'etc' },
+            { name: '9월 더 프리미엄', date: '2026-09-16', displayDate: '2026년 9월 16일 (수)', category: 'duff' },
+            { name: '9월 서바이벌 프로', date: '2026-09-24', displayDate: '2026년 9월 24일 (목)', category: 'surf' },
+            { name: '10월 서바이벌 프로', date: '2026-10-09', displayDate: '2026년 10월 9일 (금)', category: 'surf' },
+            { name: '10월 더 프리미엄', date: '2026-10-15', displayDate: '2026년 10월 15일 (목)', category: 'duff' },
+            { name: '10월 모의고사', date: '2026-10-20', displayDate: '2026년 10월 20일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3' },
+            { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff' },
+            { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf' },
+            { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true },
+            { name: '수능 성적 통지일', date: '2026-12-11', displayDate: '2026년 12월 11일 (금)', category: 'etc' },
+            { name: '정시 원서 접수 시작', date: '2027-01-04', displayDate: '2027년 1월 4일 (월)', category: 'etc' },
+            { name: '2028학년도 수능', date: '2027-11-18', displayDate: '2027년 11월 18일 (목)', category: 'suneung', isSuneung: true }
+        ];
 
-    // ── State ────────────────────────────────────────────────────────
-    let activeFilters = [];
-    let showPast      = false;
-    let currentMode   = 'suneung';
-    let currentTheme  = 'theme-coral';
-    let seasonChoice  = 'auto';
+        var activeFilters = [];
+        var showPast = false;
 
-    // ── Helpers ──────────────────────────────────────────────────────
-    const getToday  = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
-    const parseDate = s  => { const d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; };
-    const calcDday  = s  => Math.ceil((parseDate(s) - getToday()) / 86400000);
-    const getBadge  = cat => { const i = BADGE_MAP[cat]; return i ? `<span class="badge ${i[1]}">${i[0]}</span>` : ''; };
+        function getToday() { var d = new Date(); d.setHours(0,0,0,0); return d; }
+        function parseDate(s) { var d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; }
+        function calculateDday(s) { return Math.ceil((parseDate(s) - getToday()) / 86400000); }
+        function getBadge(cat) { var m = { suneung:['수능','badge-suneung'], pyeongwon:['평가원','badge-pyeongwon'], gyoyukchung:['교육청','badge-gyoyukchung'], duff:['더프','badge-duff'], surf:['서프','badge-surf'], etc:['기타','badge-etc'] }; var i = m[cat]; return i ? '<span class="badge '+i[1]+'">'+i[0]+'</span>' : ''; }
+        function saveFilters() { try { localStorage.setItem('suneung-filters', JSON.stringify(activeFilters)); } catch(e){} }
+        function savePastState() { try { localStorage.setItem('suneung-show-past', JSON.stringify(showPast)); } catch(e){} }
+        function saveMode() { try { localStorage.setItem('suneung-mode', currentMode); } catch(e){} }
 
-    const lsGet = (key, fallback) => { try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; } catch { return fallback; } };
-    const lsSet = (key, val)      => { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} };
-
-    const showToast = msg => {
-        const t = document.getElementById('toast');
-        t.textContent = msg; t.classList.add('show');
-        clearTimeout(t._timer);
-        t._timer = setTimeout(() => t.classList.remove('show'), 2200);
-    };
-
-    // ── Season / Particles ───────────────────────────────────────────
-    const getAutoSeason = () => {
-        const dday = calcDday(DATES.suneung.target);
-        if (dday >= 0 && dday <= 30) return 'imminent';
-        const m = new Date().getMonth() + 1;
-        if (m >= 3 && m <= 5) return 'spring';
-        if (m >= 6 && m <= 8) return 'summer';
-        if (m >= 9 && m <= 11) return 'autumn';
-        return 'winter';
-    };
-    const resolveSeason = () => seasonChoice === 'default' ? null : seasonChoice === 'auto' ? getAutoSeason() : seasonChoice;
-
-    const renderParticles = season => {
-        const c = document.getElementById('particles'); c.innerHTML = '';
-        const cfg = SEASON_PARTICLES[season]; if (!cfg) return;
-        for (let i = 0; i < cfg.count; i++) {
-            const p = document.createElement('span');
-            p.className   = 'particle ' + cfg.type;
-            p.textContent = cfg.chars[Math.floor(Math.random() * cfg.chars.length)];
-            const dur = cfg.minDur + Math.random() * (cfg.maxDur - cfg.minDur);
-            p.style.left              = (Math.random() * 100) + 'vw';
-            p.style.animationDuration = dur + 's';
-            p.style.animationDelay    = (Math.random() * cfg.maxDur * -1) + 's';
-            p.style.fontSize          = (0.9 + Math.random() * 1.1) + 'em';
-            p.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
-            p.style.setProperty('--spin',  (Math.random() * 720 - 360) + 'deg');
-            if (cfg.type === 'float') p.style.top = (Math.random() * 90 + 5) + 'vh';
-            c.appendChild(p);
+        function loadSavedState() {
+            try {
+                var sf = localStorage.getItem('suneung-filters');
+                if (sf) { activeFilters = JSON.parse(sf); activeFilters.forEach(function(f){ var b=document.getElementById('btn-'+f); if(b) b.classList.add('active'); }); }
+                var sp = localStorage.getItem('suneung-show-past');
+                if (sp) { showPast = JSON.parse(sp); if(showPast) document.getElementById('pastToggle').classList.add('active'); }
+                var sm = localStorage.getItem('suneung-mode');
+                if (sm && (sm === 'suneung' || sm === '6mo')) currentMode = sm;
+            } catch(e){}
         }
-    };
 
-    const applyTheme = () => {
-        const box    = document.getElementById('mainDdayBox');
-        const season = resolveSeason();
-        if (season) {
-            box.className = 'main-dday theme-' + season;
-            document.documentElement.setAttribute('data-season', season);
-        } else {
-            box.className = currentMode === '6mo' ? 'main-dday theme-6mo' : 'main-dday ' + currentTheme;
-            document.documentElement.removeAttribute('data-season');
+        function loadRandomTheme() {
+            var themes = ['coral','lavender','sage','rose','marigold'];
+            currentTheme = 'theme-' + themes[Math.floor(Math.random()*themes.length)];
         }
-        renderParticles(season);
-    };
 
-    const updateThemeMenuUI = () => {
-        document.querySelectorAll('.theme-opt').forEach(b =>
-            b.classList.toggle('selected', b.dataset.season === seasonChoice));
-    };
-
-    const setSeasonChoice = val => {
-        seasonChoice = val;
-        lsSet(LS.season, val);
-        updateThemeMenuUI();
-        applyTheme();
-    };
-
-    // ── Dark mode ────────────────────────────────────────────────────
-    const updateThemeIcon = () => {
-        document.getElementById('themeToggle').textContent =
-            document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
-    };
-
-    // ── Mode (수능 / 6모) ────────────────────────────────────────────
-    const switchMode = mode => {
-        if (currentMode === mode) return;
-        currentMode = mode;
-        lsSet(LS.mode, mode);
-
-        document.getElementById('tab-suneung').classList.toggle('active', mode === 'suneung');
-        document.getElementById('tab-6mo').classList.toggle('active',     mode === '6mo');
-        document.querySelector('[data-mode="suneung"]').setAttribute('aria-selected', mode === 'suneung');
-        document.querySelector('[data-mode="6mo"]').setAttribute('aria-selected',     mode === '6mo');
-
-        const numEl = document.getElementById('mainDday');
-        numEl.classList.remove('animating');
-        void numEl.offsetWidth;
-        numEl.classList.add('animating');
-
-        const fill  = document.getElementById('progressFill');
-        const pctEl = document.getElementById('progressPercent');
-        fill.classList.toggle('mode-6mo', mode === '6mo');
-        pctEl.style.color = mode === '6mo' ? '#11998e' : '';
-
-        applyTheme();
-        updateDday();
-    };
-
-    // ── Filter / Past ────────────────────────────────────────────────
-    const toggleFilter = filter => {
-        const btn = document.querySelector(`.filter-btn[data-filter="${filter}"]`);
-        const idx = activeFilters.indexOf(filter);
-        if (idx > -1) { activeFilters.splice(idx, 1); btn.classList.remove('active'); }
-        else          { activeFilters.push(filter);   btn.classList.add('active'); }
-        lsSet(LS.filters, activeFilters);
-        renderSchedule();
-    };
-
-    const togglePast = () => {
-        showPast = !showPast;
-        document.getElementById('pastToggle').classList.toggle('active', showPast);
-        lsSet(LS.past, showPast);
-        renderSchedule();
-    };
-
-    // ── First-visit default + load saved state ───────────────────────
-    const loadSavedState = () => {
-        const isFirst = !localStorage.getItem(LS.visited);
-        if (isFirst) {
-            activeFilters = [...DEFAULT_FILTERS];
-            lsSet(LS.visited, true);
-            lsSet(LS.filters, activeFilters);
-        } else {
-            activeFilters = lsGet(LS.filters, [...DEFAULT_FILTERS]);
+        function getAutoSeason() {
+            var dday = calculateDday(DATES.suneung.target);
+            if (dday >= 0 && dday <= 30) return 'imminent';
+            var m = new Date().getMonth() + 1;
+            if (m >= 3 && m <= 5) return 'spring';
+            if (m >= 6 && m <= 8) return 'summer';
+            if (m >= 9 && m <= 11) return 'autumn';
+            return 'winter';
         }
-        showPast    = lsGet(LS.past, false);
-        currentMode = lsGet(LS.mode, 'suneung');
-        seasonChoice = localStorage.getItem(LS.season) || 'auto';
 
-        // Sync filter buttons
-        activeFilters.forEach(f => {
-            const btn = document.querySelector(`.filter-btn[data-filter="${f}"]`);
-            if (btn) btn.classList.add('active');
+        function resolveSeason() {
+            if (seasonChoice === 'default') return null;
+            if (seasonChoice === 'auto') return getAutoSeason();
+            return seasonChoice;
+        }
+
+        /* ===== Particles ===== */
+        var SEASON_PARTICLES = {
+            spring:   { chars: ['🌸','🌺','🌷','✿'], count: 14, type: 'fall', minDur: 8, maxDur: 14 },
+            summer:   { chars: ['💧','☀️','✨','🫧'], count: 12, type: 'float', minDur: 4, maxDur: 8 },
+            autumn:   { chars: ['🍁','🍂','🍃'], count: 14, type: 'fall', minDur: 7, maxDur: 13 },
+            winter:   { chars: ['❄','❅','❆','✦'], count: 20, type: 'fall', minDur: 9, maxDur: 16 },
+            imminent: { chars: ['🔥','✦','✧'], count: 12, type: 'ember', minDur: 4, maxDur: 9 }
+        };
+
+        function renderParticles(season) {
+            var container = document.getElementById('particles');
+            container.innerHTML = '';
+            var cfg = SEASON_PARTICLES[season];
+            if (!cfg) return;
+            for (var i = 0; i < cfg.count; i++) {
+                var p = document.createElement('span');
+                p.className = 'particle ' + cfg.type;
+                p.textContent = cfg.chars[Math.floor(Math.random()*cfg.chars.length)];
+                var left = Math.random() * 100;
+                var dur = cfg.minDur + Math.random() * (cfg.maxDur - cfg.minDur);
+                var delay = Math.random() * cfg.maxDur * -1;
+                var size = 0.9 + Math.random() * 1.1;
+                var drift = (Math.random() * 120 - 60) + 'px';
+                var spin = (Math.random() * 720 - 360) + 'deg';
+                p.style.left = left + 'vw';
+                p.style.animationDuration = dur + 's';
+                p.style.animationDelay = delay + 's';
+                p.style.fontSize = size + 'em';
+                p.style.setProperty('--drift', drift);
+                p.style.setProperty('--spin', spin);
+                if (cfg.type === 'float') {
+                    p.style.top = (Math.random() * 90 + 5) + 'vh';
+                } else if (cfg.type === 'ember') {
+                    p.style.left = left + 'vw';
+                }
+                container.appendChild(p);
+            }
+        }
+
+        function applyTheme() {
+            var box = document.getElementById('mainDdayBox');
+            var season = resolveSeason();
+
+            if (season) {
+                box.className = 'main-dday theme-' + season;
+                document.documentElement.setAttribute('data-season', season);
+            } else {
+                if (currentMode === '6mo') box.className = 'main-dday theme-6mo';
+                else box.className = 'main-dday ' + currentTheme;
+                document.documentElement.removeAttribute('data-season');
+            }
+            renderParticles(season);
+        }
+
+        function updateThemeMenuUI() {
+            document.querySelectorAll('.theme-opt').forEach(function(btn){
+                btn.classList.toggle('selected', btn.getAttribute('data-season') === seasonChoice);
+            });
+        }
+
+        function setSeasonChoice(val) {
+            seasonChoice = val;
+            try { localStorage.setItem('suneung-season', val); } catch(e){}
+            updateThemeMenuUI();
+            applyTheme();
+        }
+
+        function switchMode(mode) {
+            if (currentMode === mode) return;
+            currentMode = mode; saveMode();
+            document.getElementById('tab-suneung').classList.toggle('active', mode === 'suneung');
+            document.getElementById('tab-6mo').classList.toggle('active', mode === '6mo');
+            var numEl = document.getElementById('mainDday');
+            numEl.classList.remove('animating'); void numEl.offsetWidth; numEl.classList.add('animating');
+            var fill = document.getElementById('progressFill');
+            var pctEl = document.getElementById('progressPercent');
+            if (mode === '6mo') { fill.classList.add('mode-6mo'); pctEl.style.color = '#11998e'; }
+            else { fill.classList.remove('mode-6mo'); pctEl.style.color = ''; }
+            applyTheme(); updateDday();
+        }
+
+        function displayRandomHandwriting() {
+            var item = handwritingTexts[Math.floor(Math.random()*handwritingTexts.length)];
+            document.getElementById('handwriting').textContent = item.text;
+            document.getElementById('handwritingSrc').textContent = item.src ? '— ' + item.src : '';
+        }
+
+        function toggleFilter(filter) {
+            var btn = document.getElementById('btn-'+filter);
+            var idx = activeFilters.indexOf(filter);
+            if (idx > -1) { activeFilters.splice(idx,1); btn.classList.remove('active'); }
+            else { activeFilters.push(filter); btn.classList.add('active'); }
+            saveFilters(); renderSchedule();
+        }
+
+        function togglePast() {
+            showPast = !showPast;
+            document.getElementById('pastToggle').classList.toggle('active', showPast);
+            savePastState(); renderSchedule();
+        }
+
+        function updateDday() {
+            var cfg = DATES[currentMode];
+            var dday = calculateDday(cfg.target);
+            document.getElementById('mainDdayLabel').textContent = cfg.label;
+            document.getElementById('mainDdayDate').textContent = cfg.dateText;
+            document.getElementById('progressLabel').textContent = cfg.progressLabelText;
+            document.getElementById('progressDateStart').textContent = cfg.progressStartText;
+            document.getElementById('progressDateEnd').textContent = cfg.progressEndText;
+            var el = document.getElementById('mainDday');
+            if (dday > 0) el.textContent = 'D-'+dday;
+            else if (dday === 0) el.textContent = 'D-Day!';
+            else el.textContent = 'D+'+Math.abs(dday);
+            document.getElementById('daysLeft').textContent = dday > 0 ? dday+'일' : '0일';
+            document.getElementById('weeksLeft').textContent = Math.max(0, Math.floor(dday/7))+'주';
+            document.getElementById('monthsLeft').textContent = Math.max(0, Math.floor(dday/30))+'개월';
+            var start = parseDate(cfg.progressStart), end = parseDate(cfg.target), today = getToday();
+            var pct = Math.min(100, Math.max(0, ((today - start) / (end - start)) * 100));
+            document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
+            document.getElementById('progressFill').style.width = pct + '%';
+        }
+
+        function renderSchedule() {
+            var list = document.getElementById('scheduleList');
+            list.innerHTML = '';
+            if (activeFilters.length === 0) {
+                list.innerHTML = '<div class="empty-message"><span class="empty-icon">📋</span>위 버튼을 눌러 모의고사를 선택하세요</div>';
+                return;
+            }
+            var items = [];
+            schedules.forEach(function(s) {
+                var shouldShow = false, displayName = s.name, grades = '', badgeCat = s.category;
+                if (s.category === 'both') {
+                    var hp = activeFilters.indexOf('pyeongwon') > -1, hg = activeFilters.indexOf('gyoyukchung') > -1;
+                    if (hp && hg) { shouldShow=true; grades='고1, 고2, 고3'; badgeCat='pyeongwon'; }
+                    else if (hp) { shouldShow=true; grades='고3'; badgeCat='pyeongwon'; }
+                    else if (hg) { shouldShow=true; grades='고1, 고2'; badgeCat='gyoyukchung'; }
+                } else if (activeFilters.indexOf(s.category) > -1) {
+                    shouldShow = true;
+                    if (s.grades) grades = s.grades;
+                }
+                if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:s.displayDate, category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat });
+            });
+            if (!showPast) items = items.filter(function(i){ return parseDate(i.date) >= getToday(); });
+            if (items.length === 0) {
+                list.innerHTML = '<div class="empty-message"><span class="empty-icon">🔍</span>선택한 조건에 맞는 일정이 없습니다</div>';
+                return;
+            }
+            items.forEach(function(item, idx) {
+                var dday = calculateDday(item.date);
+                var isPast = dday < 0, isToday = dday === 0, isUpcoming = dday > 0 && dday <= 7;
+                var isSuneung = item.isSuneung && item.date === '2026-11-19';
+                var el = document.createElement('div');
+                el.className = 'schedule-item';
+                if (isSuneung) el.classList.add('is-suneung');
+                else if (isUpcoming) el.classList.add('upcoming');
+                if (isPast) el.classList.add('past-item');
+                el.style.animationDelay = (idx * 0.03) + 's';
+                var ddayText, ddayClass;
+                if (isToday) { ddayText='D-Day!'; ddayClass='today'; }
+                else if (isPast) { ddayText='D+'+Math.abs(dday); ddayClass='past'; }
+                else { ddayText='D-'+dday; ddayClass='future'; }
+                var bc = item.badgeCat === 'both' ? 'pyeongwon' : item.badgeCat;
+                el.innerHTML = '<div class="schedule-info"><div class="schedule-name">'+item.displayName+getBadge(bc)+'</div><div class="schedule-date">'+item.displayDate+'</div></div><div class="schedule-dday '+ddayClass+'">'+ddayText+'</div>';
+                list.appendChild(el);
+            });
+        }
+
+        function updateFooter() {
+            var now = new Date();
+            document.getElementById('updateTime').textContent = '마지막 업데이트: ' + now.toLocaleString('ko-KR');
+            var midnight = new Date(now); midnight.setDate(midnight.getDate()+1); midnight.setHours(0,0,0,0);
+            var diff = midnight - now;
+            document.getElementById('nextUpdate').textContent = '자동 갱신까지 '+Math.floor(diff/3600000)+'시간 '+Math.floor((diff%3600000)/60000)+'분';
+        }
+
+        function scheduleMidnightRefresh() {
+            var now = new Date(), midnight = new Date(now);
+            midnight.setDate(midnight.getDate()+1); midnight.setHours(0,0,0,0);
+            setTimeout(function(){ updateAll(); applyTheme(); scheduleMidnightRefresh(); }, midnight - now + 1000);
+        }
+
+        function updateAll() { updateDday(); renderSchedule(); updateFooter(); }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg; t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+        }
+
+        (function initTheme(){
+            var saved = localStorage.getItem('ui-theme');
+            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+        function updateThemeIcon() { var t = document.documentElement.getAttribute('data-theme'); document.getElementById('themeToggle').textContent = t === 'dark' ? '☀️' : '🌙'; }
+        document.getElementById('themeToggle').addEventListener('click', function(){
+            var cur = document.documentElement.getAttribute('data-theme');
+            var next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('ui-theme', next);
+            updateThemeIcon();
+            showToast(next === 'dark' ? '🌙 다크모드 ON' : '☀️ 라이트모드 ON');
         });
-        if (showPast) document.getElementById('pastToggle').classList.add('active');
+        updateThemeIcon();
 
-        // Sync mode tabs
+        var paletteBtn = document.getElementById('paletteBtn');
+        var themeMenu = document.getElementById('themeMenu');
+        paletteBtn.addEventListener('click', function(e){ e.stopPropagation(); themeMenu.classList.toggle('open'); });
+        document.addEventListener('click', function(e){ if (!themeMenu.contains(e.target) && e.target !== paletteBtn) themeMenu.classList.remove('open'); });
+        document.querySelectorAll('.theme-opt').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                var val = btn.getAttribute('data-season');
+                if (val === 'default') loadRandomTheme();
+                setSeasonChoice(val);
+                themeMenu.classList.remove('open');
+                var labels = { auto:'✨ 자동', 'default':'🎲 기본', spring:'🌸 봄', summer:'🌊 여름', autumn:'🍁 가을', winter:'❄️ 겨울', imminent:'🔥 수능 임박' };
+                showToast(labels[val] + ' 테마 적용');
+            });
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', async function(){
+            var url = 'https://chaehun1.github.io/ksat-dday/';
+            var cfg = DATES[currentMode];
+            var dday = calculateDday(cfg.target);
+            var ddayStr = dday > 0 ? 'D-'+dday : (dday === 0 ? 'D-Day!' : 'D+'+Math.abs(dday));
+            var shareText = '2027 수능 디데이 ' + ddayStr + ' | ' + cfg.label;
+            if (navigator.share) { try { await navigator.share({ title: '2027 수능 디데이 카운터', text: shareText, url: url }); return; } catch(e) {} }
+            try { await navigator.clipboard.writeText(url); showToast('🔗 링크가 복사되었습니다'); }
+            catch(e) {
+                var ta = document.createElement('textarea');
+                ta.value = url; document.body.appendChild(ta); ta.select();
+                try { document.execCommand('copy'); showToast('🔗 링크가 복사되었습니다'); }
+                catch(err) { showToast('복사에 실패했습니다'); }
+                document.body.removeChild(ta);
+            }
+        });
+
+        displayRandomHandwriting();
+        loadRandomTheme();
+        loadSavedState();
+        try { var ss = localStorage.getItem('suneung-season'); if (ss) seasonChoice = ss; } catch(e){}
+        updateThemeMenuUI();
+
         if (currentMode === '6mo') {
             document.getElementById('tab-suneung').classList.remove('active');
             document.getElementById('tab-6mo').classList.add('active');
-            document.querySelector('[data-mode="suneung"]').setAttribute('aria-selected', 'false');
-            document.querySelector('[data-mode="6mo"]').setAttribute('aria-selected', 'true');
             document.getElementById('progressFill').classList.add('mode-6mo');
             document.getElementById('progressPercent').style.color = '#11998e';
         }
-    };
 
-    // ── D-day update ─────────────────────────────────────────────────
-    const updateDday = () => {
-        const cfg  = DATES[currentMode];
-        const dday = calcDday(cfg.target);
-
-        document.getElementById('mainDdayLabel').textContent  = cfg.label;
-        document.getElementById('mainDdayDate').textContent   = cfg.dateText;
-        document.getElementById('progressLabel').textContent  = cfg.progressLabelText;
-        document.getElementById('progressDateStart').textContent = cfg.progressStartText;
-        document.getElementById('progressDateEnd').textContent   = cfg.progressEndText;
-
-        const el = document.getElementById('mainDday');
-        el.textContent = dday > 0 ? 'D-' + dday : dday === 0 ? 'D-Day!' : 'D+' + Math.abs(dday);
-
-        document.getElementById('daysLeft').textContent   = dday > 0 ? dday + '일' : '0일';
-        document.getElementById('weeksLeft').textContent  = Math.max(0, Math.floor(dday / 7)) + '주';
-        document.getElementById('monthsLeft').textContent = Math.max(0, Math.floor(dday / 30)) + '개월';
-
-        const start = parseDate(cfg.progressStart);
-        const end   = parseDate(cfg.target);
-        const today = getToday();
-        const pct   = Math.min(100, Math.max(0, ((today - start) / (end - start)) * 100));
-        document.getElementById('progressPercent').textContent = pct.toFixed(1) + '%';
-        document.getElementById('progressFill').style.width    = pct + '%';
-    };
-
-    // ── Schedule render ──────────────────────────────────────────────
-    const renderSchedule = () => {
-        const list = document.getElementById('scheduleList');
-        list.innerHTML = '';
-
-        if (activeFilters.length === 0) {
-            list.innerHTML = '<div class="empty-message"><span class="empty-icon">📋</span>위 버튼을 눌러 모의고사를 선택하세요</div>';
-            return;
-        }
-
-        const hasPyeong = activeFilters.includes('pyeongwon');
-        const hasGyoy   = activeFilters.includes('gyoyukchung');
-
-        const items = [];
-        schedules.forEach(s => {
-            let shouldShow = false, displayGrades = '', badgeCat = s.category;
-            if (s.category === 'both') {
-                if      (hasPyeong && hasGyoy) { shouldShow = true; displayGrades = '고1, 고2, 고3'; badgeCat = 'pyeongwon'; }
-                else if (hasPyeong)            { shouldShow = true; displayGrades = '고3';           badgeCat = 'pyeongwon'; }
-                else if (hasGyoy)              { shouldShow = true; displayGrades = '고1, 고2';      badgeCat = 'gyoyukchung'; }
-            } else if (activeFilters.includes(s.category)) {
-                shouldShow = true;
-                if (s.grades) displayGrades = s.grades;
-            }
-            if (shouldShow) items.push({ ...s, displayName: displayGrades ? `${s.name} (${displayGrades})` : s.name, badgeCat });
-        });
-
-        const today = getToday();
-        const visible = showPast ? items : items.filter(i => parseDate(i.date) >= today);
-
-        if (visible.length === 0) {
-            list.innerHTML = '<div class="empty-message"><span class="empty-icon">🔍</span>선택한 조건에 맞는 일정이 없습니다</div>';
-            return;
-        }
-
-        visible.forEach((item, idx) => {
-            const dday       = calcDday(item.date);
-            const isPast     = dday < 0;
-            const isToday    = dday === 0;
-            const isUpcoming = dday > 0 && dday <= 7;
-            const isSuneung  = item.isSuneung && item.date === '2026-11-19';
-
-            const el = document.createElement('div');
-            el.className = 'schedule-item';
-            if (isSuneung)       el.classList.add('is-suneung');
-            else if (isUpcoming) el.classList.add('upcoming');
-            if (isPast)          el.classList.add('past-item');
-            el.style.animationDelay = (idx * 0.03) + 's';
-
-            let ddayText, ddayClass;
-            if      (isToday) { ddayText = 'D-Day!';            ddayClass = 'today'; }
-            else if (isPast)  { ddayText = 'D+' + Math.abs(dday); ddayClass = 'past'; }
-            else              { ddayText = 'D-' + dday;         ddayClass = 'future'; }
-
-            const bc = item.badgeCat === 'both' ? 'pyeongwon' : item.badgeCat;
-            el.innerHTML = `
-                <div class="schedule-info">
-                    <div class="schedule-name">${item.displayName}${getBadge(bc)}</div>
-                    <div class="schedule-date">${item.displayDate}</div>
-                </div>
-                <div class="schedule-dday ${ddayClass}">${ddayText}</div>`;
-            list.appendChild(el);
-        });
-    };
-
-    // ── Footer ───────────────────────────────────────────────────────
-    const updateFooter = () => {
-        const now     = new Date();
-        const midnight = new Date(now);
-        midnight.setDate(midnight.getDate() + 1);
-        midnight.setHours(0, 0, 0, 0);
-        const diff = midnight - now;
-        document.getElementById('updateTime').textContent = '마지막 업데이트: ' + now.toLocaleString('ko-KR');
-        document.getElementById('nextUpdate').textContent = '자동 갱신까지 ' + Math.floor(diff / 3600000) + '시간 ' + Math.floor((diff % 3600000) / 60000) + '분';
-    };
-
-    const scheduleMidnightRefresh = () => {
-        const now     = new Date();
-        const midnight = new Date(now);
-        midnight.setDate(midnight.getDate() + 1);
-        midnight.setHours(0, 0, 0, 0);
-        setTimeout(() => { updateAll(); applyTheme(); scheduleMidnightRefresh(); }, midnight - now + 1000);
-    };
-
-    const updateAll = () => { updateDday(); renderSchedule(); updateFooter(); };
-
-    // ── Event listeners ──────────────────────────────────────────────
-    // Dark mode toggle
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        lsSet(LS.theme, next);
-        updateThemeIcon();
-        showToast(next === 'dark' ? '🌙 다크모드 ON' : '☀️ 라이트모드 ON');
-    });
-
-    // Season palette
-    const paletteBtn = document.getElementById('paletteBtn');
-    const themeMenu  = document.getElementById('themeMenu');
-    paletteBtn.addEventListener('click', e => { e.stopPropagation(); themeMenu.classList.toggle('open'); });
-    document.addEventListener('click', e => { if (!themeMenu.contains(e.target) && e.target !== paletteBtn) themeMenu.classList.remove('open'); });
-    document.querySelectorAll('.theme-opt').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const val = btn.dataset.season;
-            if (val === 'default') currentTheme = 'theme-' + RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
-            setSeasonChoice(val);
-            themeMenu.classList.remove('open');
-            showToast((THEME_LABELS[val] || val) + ' 테마 적용');
-        });
-    });
-
-    // Mode tabs
-    document.querySelectorAll('.mode-tab').forEach(btn => {
-        btn.addEventListener('click', () => switchMode(btn.dataset.mode));
-    });
-
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => toggleFilter(btn.dataset.filter));
-    });
-
-    // Past toggle
-    document.getElementById('pastToggle').addEventListener('click', togglePast);
-
-    // Share button
-    document.getElementById('shareBtn').addEventListener('click', async () => {
-        const url     = 'https://chaehun1.github.io/ksat-dday/';
-        const cfg     = DATES[currentMode];
-        const dday    = calcDday(cfg.target);
-        const ddayStr = dday > 0 ? 'D-' + dday : dday === 0 ? 'D-Day!' : 'D+' + Math.abs(dday);
-        if (navigator.share) {
-            try { await navigator.share({ title:'2027 수능 디데이 카운터', text:`2027 수능 디데이 ${ddayStr} | ${cfg.label}`, url }); return; } catch {}
-        }
-        try {
-            await navigator.clipboard.writeText(url);
-            showToast('🔗 링크가 복사되었습니다');
-        } catch {
-            const ta = document.createElement('textarea');
-            ta.value = url; document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast('🔗 링크가 복사되었습니다'); } catch { showToast('복사에 실패했습니다'); }
-            document.body.removeChild(ta);
-        }
-    });
-
-    // ── Init ─────────────────────────────────────────────────────────
-    // Dark mode (before render to avoid flash)
-    (function initDark() {
-        const saved      = localStorage.getItem(LS.theme);
-        const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
-    })();
-    updateThemeIcon();
-
-    // Random base theme
-    currentTheme = 'theme-' + RANDOM_THEMES[Math.floor(Math.random() * RANDOM_THEMES.length)];
-
-    // Handwriting
-    const hwItem = handwritingTexts[Math.floor(Math.random() * handwritingTexts.length)];
-    document.getElementById('handwriting').textContent    = hwItem.text;
-    document.getElementById('handwritingSrc').textContent = hwItem.src ? '— ' + hwItem.src : '';
-
-    loadSavedState();
-    updateThemeMenuUI();
-    applyTheme();
-    updateAll();
-    scheduleMidnightRefresh();
-    setInterval(updateFooter, 60000);
+        applyTheme();
+        updateAll();
+        scheduleMidnightRefresh();
+        setInterval(updateFooter, 60000);
     </script>
 </body>
 </html>
