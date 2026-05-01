@@ -408,6 +408,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+    <script src="shared.js"></script>
     <script>
         var DATES = {
             suneung: { target:'2026-11-19', progressStart:'2025-11-13', label:'2027학년도 수능까지', dateText:'2026년 11월 19일 (목)', progressLabelText:'수능까지의 여정', progressStartText:'2026 수능 (2025.11.13)', progressEndText:'2027 수능 (2026.11.19)' },
@@ -459,7 +460,9 @@
         function getToday() { var d = new Date(); d.setHours(0,0,0,0); return d; }
         function parseDate(s) { var d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; }
         function calculateDday(s) { return Math.ceil((parseDate(s) - getToday()) / 86400000); }
-        function getBadge(cat) { var m = { suneung:['수능','badge-suneung'], pyeongwon:['평가원','badge-pyeongwon'], gyoyukchung:['교육청','badge-gyoyukchung'], duff:['더프','badge-duff'], surf:['서프','badge-surf'], etc:['기타','badge-etc'] }; var i = m[cat]; return i ? '<span class="badge '+i[1]+'">'+i[0]+'</span>' : ''; }
+        var BADGE_MAP = { suneung:['수능','badge-suneung'], pyeongwon:['평가원','badge-pyeongwon'], gyoyukchung:['교육청','badge-gyoyukchung'], duff:['더프','badge-duff'], surf:['서프','badge-surf'], etc:['기타','badge-etc'] };
+        function getBadge(cat) { var i = BADGE_MAP[cat]; return i ? '<span class="badge '+i[1]+'">'+i[0]+'</span>' : ''; }
+        function formatDisplayDate(s) { var d = new Date(s+'T00:00:00'); var w = ['일','월','화','수','목','금','토']; return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+w[d.getDay()]+')'; }
         function saveFilters() { try { localStorage.setItem('suneung-filters', JSON.stringify(activeFilters)); } catch(e){} }
         function savePastState() { try { localStorage.setItem('suneung-show-past', JSON.stringify(showPast)); } catch(e){} }
         function saveMode() { try { localStorage.setItem('suneung-mode', currentMode); } catch(e){} }
@@ -480,59 +483,10 @@
             currentTheme = 'theme-' + themes[Math.floor(Math.random()*themes.length)];
         }
 
-        function getAutoSeason() {
-            var dday = calculateDday(DATES.suneung.target);
-            if (dday >= 0 && dday <= 30) return 'imminent';
-            var m = new Date().getMonth() + 1;
-            if (m >= 3 && m <= 5) return 'spring';
-            if (m >= 6 && m <= 8) return 'summer';
-            if (m >= 9 && m <= 11) return 'autumn';
-            return 'winter';
-        }
-
         function resolveSeason() {
             if (seasonChoice === 'default') return null;
             if (seasonChoice === 'auto') return getAutoSeason();
             return seasonChoice;
-        }
-
-        /* ===== Particles ===== */
-        var SEASON_PARTICLES = {
-            spring:   { chars: ['🌸','🌺','🌷','✿'], count: 14, type: 'fall', minDur: 8, maxDur: 14 },
-            summer:   { chars: ['💧','☀️','✨','🫧'], count: 12, type: 'float', minDur: 4, maxDur: 8 },
-            autumn:   { chars: ['🍁','🍂','🍃'], count: 14, type: 'fall', minDur: 7, maxDur: 13 },
-            winter:   { chars: ['❄','❅','❆','✦'], count: 20, type: 'fall', minDur: 9, maxDur: 16 },
-            imminent: { chars: ['🔥','✦','✧'], count: 12, type: 'ember', minDur: 4, maxDur: 9 }
-        };
-
-        function renderParticles(season) {
-            var container = document.getElementById('particles');
-            container.innerHTML = '';
-            var cfg = SEASON_PARTICLES[season];
-            if (!cfg) return;
-            for (var i = 0; i < cfg.count; i++) {
-                var p = document.createElement('span');
-                p.className = 'particle ' + cfg.type;
-                p.textContent = cfg.chars[Math.floor(Math.random()*cfg.chars.length)];
-                var left = Math.random() * 100;
-                var dur = cfg.minDur + Math.random() * (cfg.maxDur - cfg.minDur);
-                var delay = Math.random() * cfg.maxDur * -1;
-                var size = 0.9 + Math.random() * 1.1;
-                var drift = (Math.random() * 120 - 60) + 'px';
-                var spin = (Math.random() * 720 - 360) + 'deg';
-                p.style.left = left + 'vw';
-                p.style.animationDuration = dur + 's';
-                p.style.animationDelay = delay + 's';
-                p.style.fontSize = size + 'em';
-                p.style.setProperty('--drift', drift);
-                p.style.setProperty('--spin', spin);
-                if (cfg.type === 'float') {
-                    p.style.top = (Math.random() * 90 + 5) + 'vh';
-                } else if (cfg.type === 'ember') {
-                    p.style.left = left + 'vw';
-                }
-                container.appendChild(p);
-            }
         }
 
         function applyTheme() {
@@ -637,7 +591,7 @@
                     shouldShow = true;
                     if (s.grades) grades = s.grades;
                 }
-                if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:s.displayDate, category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat });
+                if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:formatDisplayDate(s.date), category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat });
             });
             if (!showPast) items = items.filter(function(i){ return parseDate(i.date) >= getToday(); });
             if (items.length === 0) {

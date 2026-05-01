@@ -194,7 +194,7 @@
 
         <section class="compose">
             <input type="text" id="nickInput" maxlength="20" placeholder="닉네임 (비우면 '익명의 수험생')">
-            <textarea id="textInput" maxlength="220" placeholder="하고 싶은 말을 자유롭게 남겨주세요 (최대 200자)&#10;과도한 욕설, 친목, 도배 등은 삭제될 수 있습니다"></textarea>
+            <textarea id="textInput" maxlength="200" placeholder="하고 싶은 말을 자유롭게 남겨주세요 (최대 200자)&#10;과도한 욕설, 친목, 도배 등은 삭제될 수 있습니다"></textarea>
             <div class="compose-bottom">
                 <span class="char-count" id="charCount">0 / 200</span>
                 <button class="submit-btn" id="submitBtn" disabled>연결 중...</button>
@@ -214,9 +214,10 @@
 
     <div id="toast" class="toast" role="status"></div>
 
+    <script src="../shared.js"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
         const firebaseConfig = {
@@ -242,7 +243,7 @@
                 currentUid = user.uid;
                 document.getElementById('submitBtn').disabled = false;
                 document.getElementById('submitBtn').textContent = '📝 글 남기기';
-                loadPosts();
+                subscribePosts();
             }
         });
 
@@ -258,23 +259,11 @@
 
         const BADWORDS = ['씨발','시발','ㅅㅂ','ㅆㅂ','좆','존나','병신','ㅂㅅ','개새끼','새끼','fuck','shit','지랄','개같','꺼져','니미','니애미','애미','씹','썅','년아','놈아'];
         function censor(text) { let r = text; BADWORDS.forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'); r = r.replace(re, '*'.repeat(Math.max(2,w.length))); }); return r; }
-        function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
         function getVotes() { try { return JSON.parse(localStorage.getItem('wall-votes')||'{}'); } catch(e){ return {}; } }
         function saveVote(id, kind) { const v = getVotes(); v[id] = kind; localStorage.setItem('wall-votes', JSON.stringify(v)); }
         function getRevealed() { try { return JSON.parse(localStorage.getItem('wall-revealed')||'[]'); } catch(e){ return []; } }
         function revealPost(id) { const r = getRevealed(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-revealed', JSON.stringify(r)); } }
         function getAnonId() { let id = localStorage.getItem('wall-anon-id'); if (!id) { id = Math.floor(1000 + Math.random()*9000).toString(); localStorage.setItem('wall-anon-id', id); } return id; }
-
-        function timeAgo(date) {
-            if (!date) return '';
-            const diff = (Date.now() - date.getTime()) / 1000;
-            if (diff < 60) return '방금 전';
-            if (diff < 3600) return Math.floor(diff/60) + '분 전';
-            if (diff < 86400) return Math.floor(diff/3600) + '시간 전';
-            if (diff < 604800) return Math.floor(diff/86400) + '일 전';
-            return date.toLocaleDateString('ko-KR');
-        }
 
         function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(()=>t.classList.remove('show'), 2200); }
 
@@ -287,9 +276,15 @@
             charCount.classList.toggle('over', len > 200);
         });
 
+        let lastSubmitTime = 0;
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.addEventListener('click', async () => {
             if (!currentUid) { toast('인증 대기 중입니다'); return; }
+            const now = Date.now();
+            if (now - lastSubmitTime < 5000) {
+                toast(`${Math.ceil((5000 - (now - lastSubmitTime)) / 1000)}초 후 다시 작성할 수 있습니다`);
+                return;
+            }
             const text = textInput.value.trim();
             const nickRaw = document.getElementById('nickInput').value.trim();
             if (!text) { toast('내용을 입력해주세요'); return; }
@@ -311,9 +306,9 @@
                 textInput.value = '';
                 charCount.textContent = '0 / 200';
                 charCount.classList.remove('warn','over');
+                lastSubmitTime = Date.now();
                 toast('✅ 글이 등록되었습니다');
                 currentPage = 1;
-                loadPosts();
             } catch (e) {
                 console.error(e);
                 toast('등록 실패: ' + e.message);
@@ -336,31 +331,31 @@
         });
 
         let allPosts = [];
-        async function loadPosts() {
-            const status = document.getElementById('status');
-            try {
-                const q = query(msgCol, orderBy('createdAt', 'desc'), limit(200));
-                const snap = await getDocs(q);
-                allPosts = [];
-                snap.forEach(d => {
+        let unsubscribePosts = null;
+
+        function subscribePosts() {
+            if (unsubscribePosts) unsubscribePosts();
+            const q = query(msgCol, orderBy('createdAt', 'desc'), limit(200));
+            unsubscribePosts = onSnapshot(q, snap => {
+                allPosts = snap.docs.map(d => {
                     const data = d.data();
-                    allPosts.push({
-                        id: d.id,
-                        text: data.text || '',
-                        rawText: data.rawText || '',
-                        nickname: data.nickname || '익명',
+                    return {
+                        id:        d.id,
+                        text:      data.text      || '',
+                        rawText:   data.rawText   || '',
+                        nickname:  data.nickname  || '익명',
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
-                        likes: data.likes || 0,
-                        dislikes: data.dislikes || 0,
+                        likes:     data.likes     || 0,
+                        dislikes:  data.dislikes  || 0,
                         authorUid: data.authorUid || '',
-                        ipPrefix: data.ipPrefix || ''
-                    });
+                        ipPrefix:  data.ipPrefix  || ''
+                    };
                 });
                 renderPosts();
-            } catch (e) {
+            }, e => {
                 console.error(e);
-                status.textContent = '불러오기 실패: ' + e.message;
-            }
+                document.getElementById('status').textContent = '불러오기 실패: ' + e.message;
+            });
         }
 
         // 원글 보기 상태 (postId set)
@@ -586,43 +581,8 @@
         });
         updateThemeIcon();
 
-        const SUNEUNG_DATE = new Date('2026-11-19T00:00:00');
-        function getAutoSeason() {
-            const dday = Math.ceil((SUNEUNG_DATE - new Date()) / 86400000);
-            if (dday >= 0 && dday <= 30) return 'imminent';
-            const m = new Date().getMonth() + 1;
-            if (m >= 3 && m <= 5) return 'spring';
-            if (m >= 6 && m <= 8) return 'summer';
-            if (m >= 9 && m <= 11) return 'autumn';
-            return 'winter';
-        }
         let seasonChoice = localStorage.getItem('suneung-season') || 'auto';
         function resolveSeason() { if (seasonChoice === 'default') return null; if (seasonChoice === 'auto') return getAutoSeason(); return seasonChoice; }
-        const PARTICLES = {
-            spring: { chars:['🌸','🌺','🌷','✿'], count:14, type:'fall', min:8, max:14 },
-            summer: { chars:['💧','☀️','✨','🫧'], count:12, type:'float', min:4, max:8 },
-            autumn: { chars:['🍁','🍂','🍃'], count:14, type:'fall', min:7, max:13 },
-            winter: { chars:['❄','❅','❆','✦'], count:20, type:'fall', min:9, max:16 },
-            imminent: { chars:['🔥','✦','✧'], count:12, type:'ember', min:4, max:9 }
-        };
-        function renderParticles(season) {
-            const c = document.getElementById('particles'); c.innerHTML = '';
-            const cfg = PARTICLES[season]; if (!cfg) return;
-            for (let i=0; i<cfg.count; i++) {
-                const p = document.createElement('span');
-                p.className = 'particle ' + cfg.type;
-                p.textContent = cfg.chars[Math.floor(Math.random()*cfg.chars.length)];
-                const dur = cfg.min + Math.random()*(cfg.max-cfg.min);
-                p.style.left = (Math.random()*100) + 'vw';
-                p.style.animationDuration = dur + 's';
-                p.style.animationDelay = (Math.random()*cfg.max*-1) + 's';
-                p.style.fontSize = (0.9 + Math.random()*1.1) + 'em';
-                p.style.setProperty('--drift', (Math.random()*120-60)+'px');
-                p.style.setProperty('--spin', (Math.random()*720-360)+'deg');
-                if (cfg.type === 'float') p.style.top = (Math.random()*90+5)+'vh';
-                c.appendChild(p);
-            }
-        }
         function applySeason() {
             const s = resolveSeason();
             if (s) document.documentElement.setAttribute('data-season', s);
