@@ -261,6 +261,7 @@
         function censor(text) { let r = text; BADWORDS.forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'); r = r.replace(re, '*'.repeat(Math.max(2,w.length))); }); return r; }
         function getVotes() { try { return JSON.parse(localStorage.getItem('wall-votes')||'{}'); } catch(e){ return {}; } }
         function saveVote(id, kind) { const v = getVotes(); v[id] = kind; localStorage.setItem('wall-votes', JSON.stringify(v)); }
+        function clearVote(id) { const v = getVotes(); delete v[id]; localStorage.setItem('wall-votes', JSON.stringify(v)); }
         function getRevealed() { try { return JSON.parse(localStorage.getItem('wall-revealed')||'[]'); } catch(e){ return []; } }
         function revealPost(id) { const r = getRevealed(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-revealed', JSON.stringify(r)); } }
         function getAnonId() { let id = localStorage.getItem('wall-anon-id'); if (!id) { id = Math.floor(1000 + Math.random()*9000).toString(); localStorage.setItem('wall-anon-id', id); } return id; }
@@ -434,15 +435,15 @@
                     </div>
                     <div class="post-text">${escapeHtml(displayText)}</div>
                     <div class="post-actions">
-                        <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" ${voted?'disabled':''}>👍 <span>${p.likes}</span></button>
-                        <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" ${voted?'disabled':''}>👎 <span>${p.dislikes}</span></button>
+                        <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" aria-pressed="${voted==='like'}" title="${voted==='like'?'좋아요 취소':'좋아요'}">👍 <span>${p.likes}</span></button>
+                        <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" aria-pressed="${voted==='dislike'}" title="${voted==='dislike'?'싫어요 취소':'싫어요'}">👎 <span>${p.dislikes}</span></button>
                         ${rawBtnHtml}
                         ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : ''}
                     </div>`;
                 feed.appendChild(el);
             });
 
-            feed.querySelectorAll('.react-btn:not([disabled])').forEach(btn => {
+            feed.querySelectorAll('.react-btn').forEach(btn => {
                 btn.addEventListener('click', () => vote(btn.getAttribute('data-id'), btn.getAttribute('data-kind')));
             });
             feed.querySelectorAll('.delete-btn').forEach(btn => {
@@ -541,15 +542,50 @@
         }
 
         async function vote(id, kind) {
-            const votes = getVotes();
-            if (votes[id]) return;
-            saveVote(id, kind);
             const post = allPosts.find(p => p.id === id);
-            if (post) { post[kind === 'like' ? 'likes' : 'dislikes'] += 1; }
+            if (!post) return;
+            const votes = getVotes();
+            const prev = votes[id]; // 'like' | 'dislike' | undefined
+            const kField = kind === 'like' ? 'likes' : 'dislikes';
+            const pField = prev === 'like' ? 'likes' : 'dislikes';
+
+            const updates = {};
+            const rollback = {};
+
+            if (!prev) {
+                // 새 투표
+                updates[kField] = increment(1);
+                rollback[kField] = post[kField];
+                post[kField] += 1;
+                saveVote(id, kind);
+            } else if (prev === kind) {
+                // 같은 버튼 → 취소
+                updates[kField] = increment(-1);
+                rollback[kField] = post[kField];
+                post[kField] = Math.max(0, post[kField] - 1);
+                clearVote(id);
+            } else {
+                // 반대 버튼 → 전환
+                updates[kField] = increment(1);
+                updates[pField] = increment(-1);
+                rollback[kField] = post[kField];
+                rollback[pField] = post[pField];
+                post[kField] += 1;
+                post[pField] = Math.max(0, post[pField] - 1);
+                saveVote(id, kind);
+            }
             renderPosts();
             try {
-                await updateDoc(doc(db, 'messages', id), { [kind === 'like' ? 'likes' : 'dislikes']: increment(1) });
-            } catch (e) { console.error(e); toast('투표 실패'); }
+                await updateDoc(doc(db, 'messages', id), updates);
+            } catch (e) {
+                console.error(e);
+                // 실패 시 로컬 상태 롤백
+                Object.keys(rollback).forEach(k => post[k] = rollback[k]);
+                if (!prev) clearVote(id);
+                else saveVote(id, prev);
+                renderPosts();
+                toast('투표 실패');
+            }
         }
 
         async function deletePost(id) {

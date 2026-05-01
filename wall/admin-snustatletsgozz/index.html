@@ -348,17 +348,8 @@
 
     <script src="../../shared.js"></script>
     <script type="module">
-        // ── 관리자 비밀번호 게이트 ─────────────────────────────────────
-        // 아래 비밀번호를 원하는 값으로 변경하세요
-        const ADMIN_PASSWORD = 'ksat2027admin';
-        if (sessionStorage.getItem('admin-authed') !== '1') {
-            const pw = prompt('관리자 비밀번호를 입력하세요:');
-            if (pw !== ADMIN_PASSWORD) {
-                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ff8a8a;font-family:sans-serif;font-size:1.1em;">접근이 거부되었습니다.</div>';
-                throw new Error('Unauthorized');
-            }
-            sessionStorage.setItem('admin-authed', '1');
-        }
+        // 실제 권한 통제는 Firestore Rules의 관리자 UID 검증이 담당합니다.
+        // (이 페이지는 비공개 URL로만 보호되며, 클라이언트 비밀번호는 보안 효과가 없습니다.)
 
         import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
         import { getFirestore, collection, getDocs, query, orderBy, limit, doc, deleteDoc, writeBatch }
@@ -432,19 +423,53 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     match /messages/{messageId} {
-      // 누구나 읽기 가능
+
+      // ── 읽기: 누구나 가능
       allow read: if true;
 
-      // 로그인된 사용자만 글 작성 가능
-      allow create: if request.auth != null;
+      // ── 글 작성: 로그인 + 필드/길이 검증 + authorUid 위조 방지
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+             ['text','rawText','nickname','createdAt',
+              'likes','dislikes','authorUid','ipPrefix'])
+        && request.resource.data.keys().hasAll(
+             ['text','nickname','createdAt',
+              'likes','dislikes','authorUid'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 200
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 30
+        && request.resource.data.likes == 0
+        && request.resource.data.dislikes == 0
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
 
-      // 좋아요/싫어요 업데이트: 로그인된 사용자만
-      allow update: if request.auth != null;
+      // ── 좋아요/싫어요: 토글 + 전환 허용
+      //    각 카운터는 -1, 0, +1 만 변할 수 있고, 합산 변화량은 -1~+1 사이.
+      //    (text/nickname 등 본문 수정은 절대 불가, 카운터 음수 불가)
+      allow update: if request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['likes','dislikes'])
+        && request.resource.data.likes >= 0
+        && request.resource.data.dislikes >= 0
+        && (request.resource.data.likes - resource.data.likes) >= -1
+        && (request.resource.data.likes - resource.data.likes) <= 1
+        && (request.resource.data.dislikes - resource.data.dislikes) >= -1
+        && (request.resource.data.dislikes - resource.data.dislikes) <= 1
+        && (request.resource.data.likes - resource.data.likes)
+           + (request.resource.data.dislikes - resource.data.dislikes) >= -1
+        && (request.resource.data.likes - resource.data.likes)
+           + (request.resource.data.dislikes - resource.data.dislikes) <= 1
+        && !(
+          request.resource.data.likes == resource.data.likes
+          && request.resource.data.dislikes == resource.data.dislikes
+        );
 
-      // 삭제: 본인 글 또는 관리자만
+      // ── 삭제: 본인 글 또는 관리자만
       allow delete: if request.auth != null
-                    && (request.auth.uid == resource.data.authorUid
-                        || request.auth.uid == "${uid}");
+        && (request.auth.uid == resource.data.authorUid
+            || request.auth.uid == "${uid}");
     }
   }
 }`;
