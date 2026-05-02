@@ -16,39 +16,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'IBM Plex Sans KR', 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; min-height: 100vh; padding: 20px; transition: background 0.6s ease; position: relative; overflow-x: hidden; }
-        html[data-season="spring"] body { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 50%, #a8e6cf 100%); }
-        html[data-season="summer"] body { background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%); }
-        html[data-season="autumn"] body { background: linear-gradient(135deg, #f2994a 0%, #c0392b 100%); }
-        html[data-season="winter"] body { background: linear-gradient(135deg, #8ec5fc 0%, #4b6cb7 50%, #182848 100%); }
-        html[data-season="imminent"] body { background: linear-gradient(135deg, #232526 0%, #7b0000 50%, #c31432 100%); }
+        /* wall 페이지는 컨테이너가 좁아서 nav-bar 너비를 줄임 */
+        .nav-bar { max-width: 680px; }
 
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-        .particle { position: absolute; top: -10%; font-size: 1.4em; opacity: 0.85; will-change: transform; user-select: none; }
-        @keyframes pfall { 0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { transform: translate3d(var(--drift,40px), 110vh, 0) rotate(var(--spin,360deg)); opacity: 0; } }
-        @keyframes pfloat { 0%,100% { transform: translate3d(0,0,0) scale(1); opacity: 0.6; } 50% { transform: translate3d(var(--drift,20px), -30px, 0) scale(1.15); opacity: 1; } }
-        @keyframes pember { 0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate3d(var(--drift,-30px), -110vh, 0) scale(1.3); opacity: 0; } }
-        .particle.fall { animation: pfall linear infinite; }
-        .particle.float { animation: pfloat ease-in-out infinite; top: auto; }
-        .particle.ember { animation: pember linear infinite; top: auto; bottom: -5%; }
-        @media (prefers-reduced-motion: reduce) { .particles { display: none; } }
-
-        .nav-bar { max-width: 680px; margin: 0 auto 18px; display: flex; justify-content: center; gap: 6px; background: rgba(255,255,255,0.92); border-radius: 999px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); backdrop-filter: blur(8px); position: relative; z-index: 2; }
-        .nav-link { padding: 10px 22px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.92em; font-weight: 600; color: #666; text-decoration: none; transition: all 0.25s ease; }
-        .nav-link:hover { color: #333; background: rgba(102,126,234,0.08); }
-        .nav-link.active { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
-
-        html[data-theme="dark"] body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #e8e8ea; }
-        html[data-theme="dark"][data-season="spring"] body { background: linear-gradient(135deg, #3a1f2b 0%, #2d1a24 50%, #1f2a28 100%); }
-        html[data-theme="dark"][data-season="summer"] body { background: linear-gradient(135deg, #0e3a34 0%, #0a1f3d 100%); }
-        html[data-theme="dark"][data-season="autumn"] body { background: linear-gradient(135deg, #3d1f0a 0%, #2d0e0a 100%); }
-        html[data-theme="dark"][data-season="winter"] body { background: linear-gradient(135deg, #1a2540 0%, #0d1628 100%); }
-        html[data-theme="dark"][data-season="imminent"] body { background: linear-gradient(135deg, #1a0a0a 0%, #3d0000 50%, #5c0a14 100%); }
-        html[data-theme="dark"] .nav-bar { background: rgba(30,32,48,0.92); }
-        html[data-theme="dark"] .nav-link { color: #9a9aaa; }
-        html[data-theme="dark"] .nav-link:hover { color: #e8e8ea; background: rgba(154,165,234,0.12); }
+        /* Dark mode (페이지 고유 컴포넌트만) */
         html[data-theme="dark"] .panel, html[data-theme="dark"] .compose, html[data-theme="dark"] .post { background: #1e2030; color: #e8e8ea; }
         html[data-theme="dark"] .post-nick { color: #e8e8ea; }
         html[data-theme="dark"] .post-text { color: #d0d0d8; }
@@ -61,25 +34,6 @@
         html[data-theme="dark"] .react-btn.voted { background: #2d3566; color: #9aa5ea; }
         html[data-theme="dark"] .hidden-toggle { background: #2a2d40; color: #8a8a9a; }
         html[data-theme="dark"] h1 { color: #e8e8ea; }
-
-        .fab-actions { position: fixed; top: 16px; right: 16px; display: flex; gap: 6px; z-index: 100; }
-        .fab-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); cursor: pointer; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; padding: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(6px); position: relative; }
-        .fab-btn:hover { transform: scale(1.08); background: #fff; }
-        html[data-theme="dark"] .fab-btn { background: rgba(42,45,64,0.92); color: #e8e8ea; }
-        html[data-theme="dark"] .fab-btn:hover { background: #2a2d40; }
-        .theme-menu { position: absolute; top: 46px; right: 0; background: #fff; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 8px; min-width: 170px; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all 0.2s ease; }
-        .theme-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        html[data-theme="dark"] .theme-menu { background: #2a2d40; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .theme-opt { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 12px; border: none; background: transparent; border-radius: 9px; cursor: pointer; font-size: 0.88em; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 500; color: #333; text-align: left; }
-        html[data-theme="dark"] .theme-opt { color: #e8e8ea; }
-        .theme-opt:hover { background: #f0f0f5; }
-        html[data-theme="dark"] .theme-opt:hover { background: #3a3d55; }
-        .theme-opt.selected { background: #eef0ff; color: #667eea; font-weight: 700; }
-        html[data-theme="dark"] .theme-opt.selected { background: #2d3566; color: #9aa5ea; }
-
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: #fff; padding: 12px 22px; border-radius: 24px; font-size: 0.88em; opacity: 0; transition: all 0.3s ease; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        html[data-theme="dark"] .toast { background: #e8e8ea; color: #1e2030; }
 
         .container { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
         .header { text-align: center; margin-bottom: 18px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
@@ -155,7 +109,6 @@
         @media (max-width: 640px) {
             body { padding: 10px; padding-top: 56px; }
             .fab-actions { position: absolute; top: 10px; right: 10px; }
-            .fab-btn { width: 32px; height: 32px; font-size: 13px; }
             h1 { font-size: 1.5em; }
             .compose, .post { padding: 14px 16px; }
             .nav-link { padding: 8px 16px; font-size: 0.85em; }
@@ -212,7 +165,7 @@
         <div class="pagination" id="pagination"></div>
     </div>
 
-    <div id="toast" class="toast" role="status"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="../shared.js"></script>
     <script type="module">
