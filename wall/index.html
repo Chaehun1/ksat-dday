@@ -362,20 +362,10 @@
             const revealed   = getRevealed();
             const reportedBy = getReports();
 
-            pagePosts.forEach(p => {
-                // 신고 누적 (3회 이상): 관리자 검토 대기 — 사용자가 펼칠 수 없음
-                if (p.reports >= 3) {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'post hidden-post';
-                    const div = document.createElement('div');
-                    div.className = 'hidden-toggle';
-                    div.style.cursor = 'default';
-                    div.textContent = `🚨 신고가 누적된 글입니다 · 관리자 검토 대기 중`;
-                    wrap.appendChild(div);
-                    feed.appendChild(wrap);
-                    return;
-                }
+            // 신고한 글은 신고자 본인 화면에서만 숨김
+            const visiblePosts = pagePosts.filter(p => !reportedBy.includes(p.id));
 
+            visiblePosts.forEach(p => {
                 // 싫어요 누적 (5개 이상): 사용자가 펼쳐 볼 수 있음
                 const hidden = p.dislikes >= 5 && !revealed.includes(p.id);
                 if (hidden) {
@@ -399,10 +389,9 @@
 
                 const el = document.createElement('article');
                 el.className = 'post';
-                const voted    = votes[p.id];
-                const reported = reportedBy.includes(p.id);
-                const isMine   = currentUid && p.authorUid === currentUid;
-                const ipLabel  = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
+                const voted   = votes[p.id];
+                const isMine  = currentUid && p.authorUid === currentUid;
+                const ipLabel = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
                 el.innerHTML = `
                     <div class="post-head">
                         <div class="post-nick-wrap">
@@ -416,8 +405,7 @@
                         <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" aria-pressed="${voted==='like'}" aria-label="좋아요 ${p.likes}개${voted==='like'?', 다시 누르면 취소':''}" title="${voted==='like'?'좋아요 취소':'좋아요'}">👍 <span>${p.likes}</span></button>
                         <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" aria-pressed="${voted==='dislike'}" aria-label="싫어요 ${p.dislikes}개${voted==='dislike'?', 다시 누르면 취소':''}" title="${voted==='dislike'?'싫어요 취소':'싫어요'}">👎 <span>${p.dislikes}</span></button>
                         ${rawBtnHtml}
-                        ${isMine ? '' : `<button class="report-btn ${reported?'reported':''}" data-report="${p.id}" ${reported?'disabled':''} aria-label="신고하기" title="${reported?'신고 완료':'신고하기'}">${reported?'🚨 신고됨':'🚨 신고'}</button>`}
-                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : ''}
+                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : `<button class="report-btn" data-report="${p.id}" aria-label="신고하고 숨기기" title="신고하고 숨기기">🚨 신고</button>`}
                     </div>`;
                 feed.appendChild(el);
             });
@@ -436,7 +424,7 @@
                     renderPosts();
                 });
             });
-            feed.querySelectorAll('.report-btn:not([disabled])').forEach(btn => {
+            feed.querySelectorAll('.report-btn').forEach(btn => {
                 btn.addEventListener('click', () => reportPost(btn.getAttribute('data-report')));
             });
 
@@ -575,13 +563,13 @@
             if (reportedBy.includes(id)) return;
             const post = allPosts.find(p => p.id === id);
             if (!post) return;
-            if (!confirm('이 글을 신고하시겠어요?\n신고가 누적되면 관리자 검토를 위해 가려집니다.')) return;
+            if (!confirm('이 글을 신고하고 숨기시겠어요?\n신고 후 이 글은 본인 화면에서 보이지 않습니다.')) return;
             markReported(id);
             post.reports = (post.reports || 0) + 1;
             renderPosts();
             try {
                 await updateDoc(doc(db, 'messages', id), { reports: increment(1) });
-                toast('🚨 신고가 접수되었습니다');
+                toast('🚨 신고 접수 — 더 이상 보이지 않습니다');
             } catch (e) {
                 console.error(e);
                 post.reports = Math.max(0, (post.reports || 1) - 1);
