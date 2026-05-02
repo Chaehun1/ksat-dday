@@ -493,7 +493,7 @@
             items.forEach(function(item, idx) {
                 var dday = calculateDday(item.date);
                 var isPast = dday < 0, isToday = dday === 0, isUpcoming = dday > 0 && dday <= 7;
-                var isSuneung = item.isSuneung && item.date === '2026-11-19';
+                var isSuneung = item.isSuneung && item.date === getActiveSuneung().date;
                 var el = document.createElement('div');
                 el.className = 'schedule-item';
                 if (isSuneung) el.classList.add('is-suneung');
