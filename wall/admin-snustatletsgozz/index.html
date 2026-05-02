@@ -327,7 +327,8 @@
             <div class="toolbar">
                 <button class="toolbar-btn active" data-sort="new" id="sortNewBtn">⏰ 최신순</button>
                 <button class="toolbar-btn" data-sort="hot" id="sortHotBtn">🔥 인기순</button>
-                <button class="toolbar-btn" data-sort="reported" id="sortReportBtn">👎 싫어요순</button>
+                <button class="toolbar-btn" data-sort="reports" id="sortReportsBtn">🚨 신고순</button>
+                <button class="toolbar-btn" data-sort="dislikes" id="sortDislikesBtn">👎 싫어요순</button>
                 <button class="toolbar-btn" id="refreshBtn">🔄 새로고침</button>
                 <span class="post-count" id="postCount"></span>
             </div>
@@ -352,7 +353,7 @@
         // (이 페이지는 비공개 URL로만 보호되며, 클라이언트 비밀번호는 보안 효과가 없습니다.)
 
         import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, deleteDoc, writeBatch }
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, deleteDoc, updateDoc, writeBatch }
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged }
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -430,11 +431,11 @@ service cloud.firestore {
       // ── 글 작성: 로그인 + 필드/길이 검증 + authorUid 위조 방지
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(
-             ['text','rawText','nickname','createdAt',
-              'likes','dislikes','authorUid','ipPrefix'])
+             ['text','nickname','createdAt',
+              'likes','dislikes','reports','authorUid','ipPrefix'])
         && request.resource.data.keys().hasAll(
              ['text','nickname','createdAt',
-              'likes','dislikes','authorUid'])
+              'likes','dislikes','reports','authorUid'])
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 200
@@ -442,29 +443,39 @@ service cloud.firestore {
         && request.resource.data.nickname.size() <= 30
         && request.resource.data.likes == 0
         && request.resource.data.dislikes == 0
+        && request.resource.data.reports == 0
         && request.resource.data.authorUid == request.auth.uid
         && request.resource.data.createdAt == request.time;
 
-      // ── 좋아요/싫어요: 토글 + 전환 허용
-      //    각 카운터는 -1, 0, +1 만 변할 수 있고, 합산 변화량은 -1~+1 사이.
-      //    (text/nickname 등 본문 수정은 절대 불가, 카운터 음수 불가)
-      allow update: if request.auth != null
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['likes','dislikes'])
-        && request.resource.data.likes >= 0
-        && request.resource.data.dislikes >= 0
-        && (request.resource.data.likes - resource.data.likes) >= -1
-        && (request.resource.data.likes - resource.data.likes) <= 1
-        && (request.resource.data.dislikes - resource.data.dislikes) >= -1
-        && (request.resource.data.dislikes - resource.data.dislikes) <= 1
-        && (request.resource.data.likes - resource.data.likes)
-           + (request.resource.data.dislikes - resource.data.dislikes) >= -1
-        && (request.resource.data.likes - resource.data.likes)
-           + (request.resource.data.dislikes - resource.data.dislikes) <= 1
-        && !(
-          request.resource.data.likes == resource.data.likes
-          && request.resource.data.dislikes == resource.data.dislikes
-        );
+      // ── 업데이트: 좋아요/싫어요 토글, 신고 +1, 관리자의 신고 리셋
+      allow update: if request.auth != null && (
+        // (1) 좋아요/싫어요 토글·전환 (각 -1~+1, 합산 -1~+1, 변화 없음 금지)
+        (request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['likes','dislikes'])
+         && request.resource.data.likes >= 0
+         && request.resource.data.dislikes >= 0
+         && (request.resource.data.likes - resource.data.likes) >= -1
+         && (request.resource.data.likes - resource.data.likes) <= 1
+         && (request.resource.data.dislikes - resource.data.dislikes) >= -1
+         && (request.resource.data.dislikes - resource.data.dislikes) <= 1
+         && (request.resource.data.likes - resource.data.likes)
+            + (request.resource.data.dislikes - resource.data.dislikes) >= -1
+         && (request.resource.data.likes - resource.data.likes)
+            + (request.resource.data.dislikes - resource.data.dislikes) <= 1
+         && !(request.resource.data.likes == resource.data.likes
+              && request.resource.data.dislikes == resource.data.dislikes))
+        ||
+        // (2) 신고 +1
+        (request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['reports'])
+         && request.resource.data.reports == resource.data.reports + 1)
+        ||
+        // (3) 관리자: 신고 무시(0으로 리셋)
+        (request.auth.uid == "${uid}"
+         && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['reports'])
+         && request.resource.data.reports == 0)
+      );
 
       // ── 삭제: 본인 글 또는 관리자만
       allow delete: if request.auth != null
@@ -488,6 +499,7 @@ service cloud.firestore {
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
                         likes:     data.likes     || 0,
                         dislikes:  data.dislikes  || 0,
+                        reports:   data.reports   || 0,
                         authorUid: data.authorUid || '',
                         ipPrefix:  data.ipPrefix  || ''
                     };
@@ -505,7 +517,8 @@ service cloud.firestore {
             const posts = [...allPosts];
             if (currentSort === 'new')      return posts; // already newest first
             if (currentSort === 'hot')      return posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes));
-            if (currentSort === 'reported') return posts.sort((a,b) => b.dislikes - a.dislikes);
+            if (currentSort === 'reports')  return posts.sort((a,b) => b.reports - a.reports);
+            if (currentSort === 'dislikes') return posts.sort((a,b) => b.dislikes - a.dislikes);
             return posts;
         };
 
@@ -525,6 +538,12 @@ service cloud.firestore {
                 el.className = 'post-item' + (selected.has(p.id) ? ' selected' : '');
                 el.dataset.id = p.id;
 
+                const reportBadge = p.reports > 0
+                    ? `<span style="background:rgba(229,57,53,0.18);color:#ff8a8a;padding:1px 7px;border-radius:6px;font-weight:700;">🚨 ${p.reports}</span>`
+                    : '';
+                const ignoreBtn = p.reports > 0
+                    ? `<button class="del-btn" data-ignore="${p.id}" style="border-color:rgba(102,126,234,0.4);color:#9aa5ea;margin-bottom:6px;">신고 무시</button>`
+                    : '';
                 el.innerHTML = `
                     <input type="checkbox" class="post-check" data-id="${p.id}" ${selected.has(p.id) ? 'checked' : ''}>
                     <div class="post-body">
@@ -537,10 +556,14 @@ service cloud.firestore {
                         <div class="post-stats">
                             <span>👍 ${p.likes}</span>
                             <span>👎 ${p.dislikes}</span>
+                            ${reportBadge}
                             <span style="font-family:monospace;font-size:0.9em;color:#444;">${p.id.slice(0,8)}...</span>
                         </div>
                     </div>
-                    <button class="del-btn" data-id="${p.id}">삭제</button>`;
+                    <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+                        ${ignoreBtn}
+                        <button class="del-btn" data-id="${p.id}">삭제</button>
+                    </div>`;
                 list.appendChild(el);
             });
 
@@ -556,9 +579,27 @@ service cloud.firestore {
             });
 
             // Single delete events
-            list.querySelectorAll('.del-btn').forEach(btn => {
+            list.querySelectorAll('.del-btn[data-id]').forEach(btn => {
                 btn.addEventListener('click', () => deleteSingle(btn.dataset.id));
             });
+            // Ignore report events
+            list.querySelectorAll('.del-btn[data-ignore]').forEach(btn => {
+                btn.addEventListener('click', () => ignoreReports(btn.dataset.ignore));
+            });
+        };
+
+        const ignoreReports = async id => {
+            if (!confirm('이 글의 신고를 무시하시겠어요?\n신고 횟수가 0으로 초기화되어 다시 노출됩니다.')) return;
+            try {
+                await updateDoc(doc(db, 'messages', id), { reports: 0 });
+                const p = allPosts.find(x => x.id === id);
+                if (p) p.reports = 0;
+                renderPosts();
+                showToast('✅ 신고가 초기화되었습니다');
+            } catch (e) {
+                console.error(e);
+                showToast('실패: ' + e.message);
+            }
         };
 
         // ── Bulk bar ──────────────────────────────────────────────────

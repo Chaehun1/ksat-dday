@@ -11,6 +11,8 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://chaehun1.github.io/ksat-dday/wall/">
     <meta property="og:image" content="https://chaehun1.github.io/ksat-dday/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ko_KR">
     <link rel="canonical" href="https://chaehun1.github.io/ksat-dday/wall/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,6 +80,12 @@
         .delete-btn { margin-left: auto; background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.82em; padding: 5px 8px; border-radius: 6px; font-family: 'IBM Plex Sans KR', sans-serif; }
         .delete-btn:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
+        .report-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; background: transparent; border: 1px solid #f5c5c5; border-radius: 999px; font-size: 0.82em; font-weight: 600; color: #c75050; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
+        .report-btn:hover { background: #fff0f0; border-color: #e57373; }
+        .report-btn.reported { background: #ffebee; color: #999; border-color: #ddd; cursor: default; }
+        html[data-theme="dark"] .report-btn { color: #ff8a8a; border-color: #5a2c2c; }
+        html[data-theme="dark"] .report-btn:hover { background: rgba(229,57,53,0.12); border-color: #c25555; }
+        html[data-theme="dark"] .report-btn.reported { background: #2a1f1f; color: #666; border-color: #3a3d55; }
         .raw-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0f0f5; border: 1px solid #ddd; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #888; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
         .raw-btn:hover { background: #e5e5ea; color: #555; }
         .raw-btn.active { background: #fff3e0; border-color: #ffb74d; color: #e65100; }
@@ -210,11 +218,11 @@
             })
             .catch(() => { ipPrefix = '?.?'; });
 
-        const BADWORDS = ['씨발','시발','ㅅㅂ','ㅆㅂ','좆','존나','병신','ㅂㅅ','개새끼','새끼','fuck','shit','지랄','개같','꺼져','니미','니애미','애미','씹','썅','년아','놈아'];
-        function censor(text) { let r = text; BADWORDS.forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'); r = r.replace(re, '*'.repeat(Math.max(2,w.length))); }); return r; }
         function getVotes() { try { return JSON.parse(localStorage.getItem('wall-votes')||'{}'); } catch(e){ return {}; } }
         function saveVote(id, kind) { const v = getVotes(); v[id] = kind; localStorage.setItem('wall-votes', JSON.stringify(v)); }
         function clearVote(id) { const v = getVotes(); delete v[id]; localStorage.setItem('wall-votes', JSON.stringify(v)); }
+        function getReports() { try { return JSON.parse(localStorage.getItem('wall-reports')||'[]'); } catch(e){ return []; } }
+        function markReported(id) { const r = getReports(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-reports', JSON.stringify(r)); } }
         function getRevealed() { try { return JSON.parse(localStorage.getItem('wall-revealed')||'[]'); } catch(e){ return []; } }
         function revealPost(id) { const r = getRevealed(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-revealed', JSON.stringify(r)); } }
         function getAnonId() { let id = localStorage.getItem('wall-anon-id'); if (!id) { id = Math.floor(1000 + Math.random()*9000).toString(); localStorage.setItem('wall-anon-id', id); } return id; }
@@ -248,12 +256,12 @@
             submitBtn.textContent = '전송 중...';
             try {
                 await addDoc(msgCol, {
-                    text: censor(text),
-                    rawText: text,
-                    nickname: censor(nickname).slice(0, 20),
+                    text: text,
+                    nickname: nickname.slice(0, 30),
                     createdAt: serverTimestamp(),
                     likes: 0,
                     dislikes: 0,
+                    reports: 0,
                     authorUid: currentUid,
                     ipPrefix: ipPrefix
                 });
@@ -301,6 +309,7 @@
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
                         likes:     data.likes     || 0,
                         dislikes:  data.dislikes  || 0,
+                        reports:   data.reports   || 0,
                         authorUid: data.authorUid || '',
                         ipPrefix:  data.ipPrefix  || ''
                     };
@@ -349,10 +358,25 @@
             const start = (currentPage - 1) * PAGE_SIZE;
             const pagePosts = posts.slice(start, start + PAGE_SIZE);
 
-            const votes    = getVotes();
-            const revealed = getRevealed();
+            const votes      = getVotes();
+            const revealed   = getRevealed();
+            const reportedBy = getReports();
 
             pagePosts.forEach(p => {
+                // 신고 누적 (3회 이상): 관리자 검토 대기 — 사용자가 펼칠 수 없음
+                if (p.reports >= 3) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'post hidden-post';
+                    const div = document.createElement('div');
+                    div.className = 'hidden-toggle';
+                    div.style.cursor = 'default';
+                    div.textContent = `🚨 신고가 누적된 글입니다 · 관리자 검토 대기 중`;
+                    wrap.appendChild(div);
+                    feed.appendChild(wrap);
+                    return;
+                }
+
+                // 싫어요 누적 (5개 이상): 사용자가 펼쳐 볼 수 있음
                 const hidden = p.dislikes >= 5 && !revealed.includes(p.id);
                 if (hidden) {
                     const wrap = document.createElement('div');
@@ -375,9 +399,10 @@
 
                 const el = document.createElement('article');
                 el.className = 'post';
-                const voted  = votes[p.id];
-                const isMine = currentUid && p.authorUid === currentUid;
-                const ipLabel = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
+                const voted    = votes[p.id];
+                const reported = reportedBy.includes(p.id);
+                const isMine   = currentUid && p.authorUid === currentUid;
+                const ipLabel  = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
                 el.innerHTML = `
                     <div class="post-head">
                         <div class="post-nick-wrap">
@@ -388,9 +413,10 @@
                     </div>
                     <div class="post-text">${escapeHtml(displayText)}</div>
                     <div class="post-actions">
-                        <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" aria-pressed="${voted==='like'}" title="${voted==='like'?'좋아요 취소':'좋아요'}">👍 <span>${p.likes}</span></button>
-                        <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" aria-pressed="${voted==='dislike'}" title="${voted==='dislike'?'싫어요 취소':'싫어요'}">👎 <span>${p.dislikes}</span></button>
+                        <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" aria-pressed="${voted==='like'}" aria-label="좋아요 ${p.likes}개${voted==='like'?', 다시 누르면 취소':''}" title="${voted==='like'?'좋아요 취소':'좋아요'}">👍 <span>${p.likes}</span></button>
+                        <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" aria-pressed="${voted==='dislike'}" aria-label="싫어요 ${p.dislikes}개${voted==='dislike'?', 다시 누르면 취소':''}" title="${voted==='dislike'?'싫어요 취소':'싫어요'}">👎 <span>${p.dislikes}</span></button>
                         ${rawBtnHtml}
+                        ${isMine ? '' : `<button class="report-btn ${reported?'reported':''}" data-report="${p.id}" ${reported?'disabled':''} aria-label="신고하기" title="${reported?'신고 완료':'신고하기'}">${reported?'🚨 신고됨':'🚨 신고'}</button>`}
                         ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : ''}
                     </div>`;
                 feed.appendChild(el);
@@ -409,6 +435,9 @@
                     else rawViewing.add(id);
                     renderPosts();
                 });
+            });
+            feed.querySelectorAll('.report-btn:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', () => reportPost(btn.getAttribute('data-report')));
             });
 
             renderPagination(posts.length);
@@ -541,6 +570,28 @@
             }
         }
 
+        async function reportPost(id) {
+            const reportedBy = getReports();
+            if (reportedBy.includes(id)) return;
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+            if (!confirm('이 글을 신고하시겠어요?\n신고가 누적되면 관리자 검토를 위해 가려집니다.')) return;
+            markReported(id);
+            post.reports = (post.reports || 0) + 1;
+            renderPosts();
+            try {
+                await updateDoc(doc(db, 'messages', id), { reports: increment(1) });
+                toast('🚨 신고가 접수되었습니다');
+            } catch (e) {
+                console.error(e);
+                post.reports = Math.max(0, (post.reports || 1) - 1);
+                const r = getReports().filter(x => x !== id);
+                localStorage.setItem('wall-reports', JSON.stringify(r));
+                renderPosts();
+                toast('신고 실패: ' + e.message);
+            }
+        }
+
         async function deletePost(id) {
             if (!confirm('이 글을 삭제하시겠어요?')) return;
             try {
@@ -555,43 +606,44 @@
         }
 
         /* Theme system */
-        (function initTheme(){
-            const saved = localStorage.getItem('ui-theme');
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
-        })();
-        const themeBtn = document.getElementById('themeToggle');
-        function updateThemeIcon() { themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
-        themeBtn.addEventListener('click', () => {
-            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('ui-theme', next);
-            updateThemeIcon();
-        });
-        updateThemeIcon();
+        initDarkTheme();
+        setupDarkToggle('themeToggle');
+        setupPaletteMenu('paletteBtn', 'themeMenu');
 
-        let seasonChoice = localStorage.getItem('suneung-season') || 'auto';
-        function resolveSeason() { if (seasonChoice === 'default') return null; if (seasonChoice === 'auto') return getAutoSeason(); return seasonChoice; }
+        let seasonChoice = getSeasonChoice();
         function applySeason() {
-            const s = resolveSeason();
+            const s = resolveSeason(seasonChoice);
             if (s) document.documentElement.setAttribute('data-season', s);
             else document.documentElement.removeAttribute('data-season');
             renderParticles(s);
         }
         function updateMenuUI() { document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('selected', b.getAttribute('data-season') === seasonChoice)); }
-        const paletteBtn = document.getElementById('paletteBtn');
-        const themeMenu = document.getElementById('themeMenu');
-        paletteBtn.addEventListener('click', e => { e.stopPropagation(); themeMenu.classList.toggle('open'); });
-        document.addEventListener('click', e => { if (!themeMenu.contains(e.target) && e.target !== paletteBtn) themeMenu.classList.remove('open'); });
         document.querySelectorAll('.theme-opt').forEach(b => {
             b.addEventListener('click', () => {
                 seasonChoice = b.getAttribute('data-season');
-                localStorage.setItem('suneung-season', seasonChoice);
-                updateMenuUI(); applySeason();
-                themeMenu.classList.remove('open');
+                saveSeasonChoice(seasonChoice);
+                updateMenuUI();
+                applySeason();
+                document.getElementById('themeMenu').classList.remove('open');
             });
         });
-        updateMenuUI(); applySeason();
+        updateMenuUI();
+        applySeason();
+
+        // 오프라인 감지
+        function setOfflineUI(offline) {
+            const btn = document.getElementById('submitBtn');
+            if (offline) {
+                btn.disabled = true;
+                btn.textContent = '⚠️ 오프라인';
+            } else if (currentUid) {
+                btn.disabled = false;
+                btn.textContent = '📝 글 남기기';
+            }
+        }
+        window.addEventListener('offline', () => { setOfflineUI(true);  toast('⚠️ 인터넷 연결이 끊어졌습니다'); });
+        window.addEventListener('online',  () => { setOfflineUI(false); toast('✅ 다시 연결되었습니다'); });
+        if (!navigator.onLine) setOfflineUI(true);
     </script>
 </body>
 </html>
