@@ -225,18 +225,7 @@
         function markReported(id) { const r = getReports(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-reports', JSON.stringify(r)); } }
         function getRevealed() { try { return JSON.parse(localStorage.getItem('wall-revealed')||'[]'); } catch(e){ return []; } }
         function revealPost(id) { const r = getRevealed(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-revealed', JSON.stringify(r)); } }
-        function getAnonId() {
-            let id = localStorage.getItem('wall-anon-id');
-            if (!id) {
-                if (window.crypto && crypto.randomUUID) {
-                    id = crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
-                } else {
-                    id = (Date.now().toString(36) + Math.random().toString(36).slice(2, 6)).toUpperCase().slice(-6);
-                }
-                localStorage.setItem('wall-anon-id', id);
-            }
-            return id;
-        }
+        function getAnonId() { let id = localStorage.getItem('wall-anon-id'); if (!id) { id = Math.floor(1000 + Math.random()*9000).toString(); localStorage.setItem('wall-anon-id', id); } return id; }
 
         function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(()=>t.classList.remove('show'), 2200); }
 
