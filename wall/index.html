@@ -57,7 +57,17 @@
         .submit-btn:hover:not(:disabled) { background: #5568d3; transform: translateY(-1px); }
         .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-        .sort-row { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; }
+        .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .search-row input { flex: 1; padding: 9px 16px; border: 1px solid #ddd; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.9em; background: rgba(255,255,255,0.95); color: #333; backdrop-filter: blur(6px); }
+        .search-row input:focus { outline: none; border-color: #667eea; }
+        html[data-theme="dark"] .search-row input { background: #2a2d40; color: #e8e8ea; border-color: #3a3d55; }
+        .filter-btn { padding: 9px 14px; border: 1px solid #ddd; background: rgba(255,255,255,0.92); color: #666; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 600; font-size: 0.84em; cursor: pointer; backdrop-filter: blur(6px); transition: all 0.2s; white-space: nowrap; }
+        .filter-btn:hover { color: #333; }
+        .filter-btn[aria-pressed="true"] { background: #667eea; color: #fff; border-color: #667eea; }
+        html[data-theme="dark"] .filter-btn { background: #2a2d40; color: #9aa5ea; border-color: #3a3d55; }
+        html[data-theme="dark"] .filter-btn[aria-pressed="true"] { background: #667eea; color: #fff; border-color: #667eea; }
+
+        .sort-row { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
         .sort-btn { padding: 8px 18px; border: 1px solid #ddd; background: rgba(255,255,255,0.92); color: #666; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 600; font-size: 0.85em; cursor: pointer; backdrop-filter: blur(6px); transition: all 0.2s; }
         .sort-btn:hover { color: #333; }
         .sort-btn.active { background: #667eea; color: #fff; border-color: #667eea; }
@@ -86,6 +96,53 @@
         html[data-theme="dark"] .report-btn { color: #ff8a8a; border-color: #5a2c2c; }
         html[data-theme="dark"] .report-btn:hover { background: rgba(229,57,53,0.12); border-color: #c25555; }
         html[data-theme="dark"] .report-btn.reported { background: #2a1f1f; color: #666; border-color: #3a3d55; }
+        .bookmark-btn, .share-link-btn, .reply-toggle-btn, .edit-btn { background: #f0f0f5; border: none; padding: 5px 10px; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #666; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 3px; }
+        .bookmark-btn:hover, .share-link-btn:hover, .reply-toggle-btn:hover, .edit-btn:hover { background: #e5e5ea; color: #333; }
+        html[data-theme="dark"] .bookmark-btn, html[data-theme="dark"] .share-link-btn, html[data-theme="dark"] .reply-toggle-btn, html[data-theme="dark"] .edit-btn { background: #2a2d40; color: #9a9aaa; }
+        html[data-theme="dark"] .bookmark-btn:hover, html[data-theme="dark"] .share-link-btn:hover, html[data-theme="dark"] .reply-toggle-btn:hover, html[data-theme="dark"] .edit-btn:hover { background: #3a3d55; color: #e8e8ea; }
+        .bookmark-btn.active { background: #fff8e1; color: #f57c00; }
+        html[data-theme="dark"] .bookmark-btn.active { background: #3d2f0a; color: #ffc107; }
+        .reply-toggle-btn.active { background: #eef0ff; color: #667eea; }
+        html[data-theme="dark"] .reply-toggle-btn.active { background: #2d3566; color: #9aa5ea; }
+
+        .edited-badge { font-size: 0.74em; color: #aaa; font-weight: 500; margin-left: 4px; font-style: italic; }
+        .edit-form { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+        .edit-form textarea { width: 100%; border: 1px solid #e5e5ea; border-radius: 8px; padding: 8px 12px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.95em; background: #f8f9fa; color: #333; resize: vertical; min-height: 60px; line-height: 1.5; }
+        .edit-form textarea:focus { outline: none; border-color: #667eea; }
+        html[data-theme="dark"] .edit-form textarea { background: #2a2d40; color: #e8e8ea; border-color: #3a3d55; }
+        .edit-form-actions { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+        .edit-form-actions .char-count { font-size: 0.78em; color: #999; margin-right: auto; }
+        .edit-form-actions button { padding: 5px 14px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.84em; font-weight: 600; cursor: pointer; border: none; }
+        .edit-save-btn { background: #667eea; color: #fff; }
+        .edit-save-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .edit-cancel-btn { background: #f0f0f5; color: #666; }
+        html[data-theme="dark"] .edit-cancel-btn { background: #2a2d40; color: #9a9aaa; }
+
+        .reply-panel { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e5e5ea; }
+        html[data-theme="dark"] .reply-panel { border-top-color: #3a3d55; }
+        .reply-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .reply-item { background: #f8f9fa; padding: 8px 12px; border-radius: 8px; }
+        html[data-theme="dark"] .reply-item { background: #2a2d40; }
+        .reply-meta { display: flex; align-items: baseline; gap: 6px; font-size: 0.76em; color: #999; margin-bottom: 3px; }
+        .reply-nick { font-weight: 700; color: #555; font-size: 0.92em; }
+        html[data-theme="dark"] .reply-nick { color: #d0d0e0; }
+        .reply-text { font-size: 0.88em; color: #333; line-height: 1.5; word-break: break-word; white-space: pre-wrap; }
+        html[data-theme="dark"] .reply-text { color: #d0d0d8; }
+        .reply-del { background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.76em; margin-left: auto; padding: 2px 6px; border-radius: 4px; font-family: 'IBM Plex Sans KR', sans-serif; }
+        .reply-del:hover { background: #ffebee; color: #e53935; }
+        html[data-theme="dark"] .reply-del:hover { background: #4a1f24; color: #ff8a8a; }
+        .reply-form { display: flex; gap: 6px; }
+        .reply-form input { flex: 1; border: 1px solid #e5e5ea; border-radius: 999px; padding: 7px 14px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.88em; background: #fff; color: #333; }
+        .reply-form input:focus { outline: none; border-color: #667eea; }
+        html[data-theme="dark"] .reply-form input { background: #1e2030; color: #e8e8ea; border-color: #3a3d55; }
+        .reply-submit { background: #667eea; color: #fff; border: none; padding: 7px 16px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.84em; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .reply-submit:disabled { background: #ccc; cursor: not-allowed; }
+        .reply-empty, .reply-loading { text-align: center; padding: 10px; color: #999; font-size: 0.84em; }
+
+        .post.highlight { box-shadow: 0 0 0 3px #ffc107, 0 10px 30px rgba(0,0,0,0.18); }
+        @keyframes hlPulse { 0%,100% { box-shadow: 0 0 0 3px #ffc107, 0 10px 30px rgba(0,0,0,0.18); } 50% { box-shadow: 0 0 0 8px rgba(255,193,7,0.25), 0 10px 30px rgba(0,0,0,0.18); } }
+        .post.highlight-pulse { animation: hlPulse 1.4s ease-out 2; }
+
         .raw-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0f0f5; border: 1px solid #ddd; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #888; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
         .raw-btn:hover { background: #e5e5ea; color: #555; }
         .raw-btn.active { background: #fff3e0; border-color: #ffb74d; color: #e65100; }
@@ -162,6 +219,11 @@
             </div>
         </section>
 
+        <div class="search-row">
+            <input type="search" id="searchInput" placeholder="🔍 닉네임이나 내용 검색..." aria-label="검색">
+            <button class="filter-btn" id="bookmarkFilterBtn" aria-pressed="false" title="북마크한 글만 보기">🔖 북마크만</button>
+        </div>
+
         <div class="sort-row">
             <button class="sort-btn active" id="sortHot" data-sort="hot">🔥 오늘의 인기</button>
             <button class="sort-btn" id="sortNew" data-sort="new">⏰ 최신순</button>
@@ -178,7 +240,7 @@
     <script src="../shared.js"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
         const firebaseConfig = {
@@ -223,6 +285,13 @@
         function clearVote(id) { const v = getVotes(); delete v[id]; localStorage.setItem('wall-votes', JSON.stringify(v)); }
         function getReports() { try { return JSON.parse(localStorage.getItem('wall-reports')||'[]'); } catch(e){ return []; } }
         function markReported(id) { const r = getReports(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-reports', JSON.stringify(r)); } }
+        function getBookmarks() { try { return JSON.parse(localStorage.getItem('wall-bookmarks')||'[]'); } catch(e){ return []; } }
+        function toggleBookmark(id) {
+            const b = getBookmarks();
+            const idx = b.indexOf(id);
+            if (idx > -1) b.splice(idx, 1); else b.push(id);
+            localStorage.setItem('wall-bookmarks', JSON.stringify(b));
+        }
         function getRevealed() { try { return JSON.parse(localStorage.getItem('wall-revealed')||'[]'); } catch(e){ return []; } }
         function revealPost(id) { const r = getRevealed(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-revealed', JSON.stringify(r)); } }
         function getAnonId() { let id = localStorage.getItem('wall-anon-id'); if (!id) { id = Math.floor(1000 + Math.random()*9000).toString(); localStorage.setItem('wall-anon-id', id); } return id; }
@@ -292,6 +361,27 @@
             });
         });
 
+        // 검색
+        const searchInput = document.getElementById('searchInput');
+        let _searchDebounce = null;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(_searchDebounce);
+            _searchDebounce = setTimeout(() => {
+                searchQuery = searchInput.value.trim();
+                currentPage = 1;
+                renderPosts();
+            }, 200);
+        });
+
+        // 북마크 필터
+        const bookmarkFilterBtn = document.getElementById('bookmarkFilterBtn');
+        bookmarkFilterBtn.addEventListener('click', () => {
+            showBookmarksOnly = !showBookmarksOnly;
+            bookmarkFilterBtn.setAttribute('aria-pressed', showBookmarksOnly);
+            currentPage = 1;
+            renderPosts();
+        });
+
         let allPosts = [];
         let unsubscribePosts = null;
 
@@ -307,6 +397,7 @@
                         rawText:   data.rawText   || '',
                         nickname:  data.nickname  || '익명',
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
+                        editedAt:  data.editedAt  ? data.editedAt.toDate() : null,
                         likes:     data.likes     || 0,
                         dislikes:  data.dislikes  || 0,
                         reports:   data.reports   || 0,
@@ -323,13 +414,41 @@
 
         // 원글 보기 상태 (postId set)
         const rawViewing = new Set();
+        // 편집 중 상태 (postId set)
+        const editingPosts = new Set();
+        // 답글 패널 열림 상태 (postId set) + 캐시
+        const openReplies = new Set();
+        const repliesCache = {};
+        // 검색 + 북마크 필터 상태
+        let searchQuery = '';
+        let showBookmarksOnly = false;
+        // 딥링크 처리 상태
+        let deepLinkPostId = new URLSearchParams(location.search).get('post');
+        let deepLinkScrolled = false;
 
         function getSortedPosts() {
             let posts = allPosts.slice();
-            if (currentSort === 'hot') {
+
+            if (showBookmarksOnly) {
+                const bm = getBookmarks();
+                posts = posts.filter(p => bm.includes(p.id));
+            }
+
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                posts = posts.filter(p =>
+                    (p.text && p.text.toLowerCase().includes(q)) ||
+                    (p.nickname && p.nickname.toLowerCase().includes(q))
+                );
+            }
+
+            if (currentSort === 'hot' && !searchQuery && !showBookmarksOnly) {
                 const startToday = new Date(); startToday.setHours(0,0,0,0);
                 posts = posts.filter(p => p.createdAt && p.createdAt >= startToday);
                 posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes) || b.createdAt - a.createdAt);
+            } else if (currentSort === 'hot') {
+                // 검색·북마크 모드에서는 인기순 정렬만 적용 (오늘 필터는 제외)
+                posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes) || (b.createdAt||0) - (a.createdAt||0));
             }
             return posts;
         }
@@ -347,7 +466,11 @@
             const posts = getSortedPosts();
 
             if (posts.length === 0) {
-                feed.innerHTML = '<div class="empty">오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!</div>';
+                let msg;
+                if (searchQuery)         msg = `🔍 "${escapeHtml(searchQuery)}" 검색 결과가 없습니다.`;
+                else if (showBookmarksOnly) msg = '🔖 북마크한 글이 없습니다.';
+                else                     msg = '오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!';
+                feed.innerHTML = `<div class="empty">${msg}</div>`;
                 renderPagination(0);
                 return;
             }
@@ -361,6 +484,7 @@
             const votes      = getVotes();
             const revealed   = getRevealed();
             const reportedBy = getReports();
+            const bookmarks  = getBookmarks();
 
             // 신고한 글은 신고자 본인 화면에서만 숨김
             const visiblePosts = pagePosts.filter(p => !reportedBy.includes(p.id));
@@ -384,32 +508,95 @@
                 const hasCensored  = p.rawText && p.rawText !== p.text;
                 const displayText  = isShowingRaw && p.rawText ? p.rawText : p.text;
                 const rawBtnHtml   = hasCensored
-                    ? `<button class="raw-btn${isShowingRaw ? ' active' : ''}" data-id="${p.id}">${isShowingRaw ? '🔒 필터링 보기' : '👁️ 원글 보기'}</button>`
+                    ? `<button class="raw-btn${isShowingRaw ? ' active' : ''}" data-rawid="${p.id}">${isShowingRaw ? '🔒 필터링 보기' : '👁️ 원글 보기'}</button>`
                     : '';
 
                 const el = document.createElement('article');
                 el.className = 'post';
-                const voted   = votes[p.id];
-                const isMine  = currentUid && p.authorUid === currentUid;
-                const ipLabel = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
+                el.dataset.postId = p.id;
+                const voted        = votes[p.id];
+                const isMine       = currentUid && p.authorUid === currentUid;
+                const ipLabel      = p.ipPrefix ? `(${escapeHtml(p.ipPrefix)})` : '';
+                const isBookmarked = bookmarks.includes(p.id);
+                const isEditing    = editingPosts.has(p.id);
+                const repliesOpen  = openReplies.has(p.id);
+                const replyCache   = repliesCache[p.id];
+                const replyCount   = (replyCache && replyCache !== 'loading') ? replyCache.length : null;
+                const replyBtnText = replyCount !== null ? `💬 답글 ${replyCount}` : '💬 답글';
+                const editedBadge  = p.editedAt ? '<span class="edited-badge">(수정됨)</span>' : '';
+
+                const bodyHtml = isEditing
+                    ? `<form class="edit-form" data-editform="${p.id}">
+                           <textarea maxlength="200">${escapeHtml(p.text)}</textarea>
+                           <div class="edit-form-actions">
+                               <span class="char-count">${p.text.length} / 200</span>
+                               <button type="button" class="edit-cancel-btn" data-editcancel="${p.id}">취소</button>
+                               <button type="submit" class="edit-save-btn" data-editsave="${p.id}">저장</button>
+                           </div>
+                       </form>`
+                    : `<div class="post-text">${escapeHtml(displayText)}</div>`;
+
                 el.innerHTML = `
                     <div class="post-head">
                         <div class="post-nick-wrap">
                             <span class="post-nick">${escapeHtml(p.nickname)}</span>
                             <span class="post-ip">${ipLabel}</span>
                         </div>
-                        <span class="post-time">${timeAgo(p.createdAt)}</span>
+                        <span class="post-time">${timeAgo(p.createdAt)}${editedBadge}</span>
                     </div>
-                    <div class="post-text">${escapeHtml(displayText)}</div>
+                    ${bodyHtml}
                     <div class="post-actions">
                         <button class="react-btn like ${voted==='like'?'voted':''}" data-id="${p.id}" data-kind="like" aria-pressed="${voted==='like'}" aria-label="좋아요 ${p.likes}개${voted==='like'?', 다시 누르면 취소':''}" title="${voted==='like'?'좋아요 취소':'좋아요'}">👍 <span>${p.likes}</span></button>
                         <button class="react-btn dislike ${voted==='dislike'?'voted':''}" data-id="${p.id}" data-kind="dislike" aria-pressed="${voted==='dislike'}" aria-label="싫어요 ${p.dislikes}개${voted==='dislike'?', 다시 누르면 취소':''}" title="${voted==='dislike'?'싫어요 취소':'싫어요'}">👎 <span>${p.dislikes}</span></button>
+                        <button class="reply-toggle-btn ${repliesOpen?'active':''}" data-replytoggle="${p.id}" aria-pressed="${repliesOpen}" title="답글 보기/작성">${replyBtnText}</button>
+                        <button class="bookmark-btn ${isBookmarked?'active':''}" data-bookmark="${p.id}" aria-pressed="${isBookmarked}" title="${isBookmarked?'북마크 해제':'북마크'}">${isBookmarked?'🔖':'📑'}</button>
+                        <button class="share-link-btn" data-sharelink="${p.id}" title="이 글 링크 복사">🔗</button>
                         ${rawBtnHtml}
+                        ${isMine && !isEditing ? `<button class="edit-btn" data-edit="${p.id}" title="수정">✏️ 수정</button>` : ''}
                         ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : `<button class="report-btn" data-report="${p.id}" aria-label="신고하고 숨기기" title="신고하고 숨기기">🚨 신고</button>`}
-                    </div>`;
+                    </div>
+                    ${repliesOpen ? renderReplyPanel(p.id) : ''}`;
                 feed.appendChild(el);
             });
 
+            attachPostEventHandlers(feed);
+            renderPagination(posts.length);
+            handleDeepLinkScroll(posts);
+        }
+
+        function renderReplyPanel(postId) {
+            const replies = repliesCache[postId];
+            if (replies === 'loading') {
+                return '<div class="reply-panel"><div class="reply-loading">답글 로딩 중...</div></div>';
+            }
+            let html = '<div class="reply-panel">';
+            if (replies && replies.length > 0) {
+                html += '<div class="reply-list">';
+                replies.forEach(r => {
+                    const isMine = currentUid && r.authorUid === currentUid;
+                    html += `
+                        <div class="reply-item">
+                            <div class="reply-meta">
+                                <span class="reply-nick">${escapeHtml(r.nickname)}</span>
+                                <span>${timeAgo(r.createdAt)}</span>
+                                ${isMine ? `<button class="reply-del" data-replydel="${postId}|${r.id}">삭제</button>` : ''}
+                            </div>
+                            <div class="reply-text">${escapeHtml(r.text)}</div>
+                        </div>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<div class="reply-empty">아직 답글이 없습니다. 첫 답글을 남겨보세요!</div>';
+            }
+            html += `
+                <form class="reply-form" data-replyform="${postId}">
+                    <input type="text" maxlength="100" placeholder="답글 (최대 100자)" data-replyinput="${postId}">
+                    <button type="submit" class="reply-submit" data-replysubmit="${postId}">작성</button>
+                </form></div>`;
+            return html;
+        }
+
+        function attachPostEventHandlers(feed) {
             feed.querySelectorAll('.react-btn').forEach(btn => {
                 btn.addEventListener('click', () => vote(btn.getAttribute('data-id'), btn.getAttribute('data-kind')));
             });
@@ -418,7 +605,7 @@
             });
             feed.querySelectorAll('.raw-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const id = btn.getAttribute('data-id');
+                    const id = btn.getAttribute('data-rawid');
                     if (rawViewing.has(id)) rawViewing.delete(id);
                     else rawViewing.add(id);
                     renderPosts();
@@ -427,8 +614,181 @@
             feed.querySelectorAll('.report-btn').forEach(btn => {
                 btn.addEventListener('click', () => reportPost(btn.getAttribute('data-report')));
             });
+            feed.querySelectorAll('.bookmark-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-bookmark');
+                    toggleBookmark(id);
+                    renderPosts();
+                });
+            });
+            feed.querySelectorAll('.share-link-btn').forEach(btn => {
+                btn.addEventListener('click', () => sharePostLink(btn.getAttribute('data-sharelink')));
+            });
+            feed.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => startEdit(btn.getAttribute('data-edit')));
+            });
+            feed.querySelectorAll('[data-editcancel]').forEach(btn => {
+                btn.addEventListener('click', () => { editingPosts.delete(btn.getAttribute('data-editcancel')); renderPosts(); });
+            });
+            feed.querySelectorAll('[data-editform]').forEach(form => {
+                const id = form.getAttribute('data-editform');
+                const ta = form.querySelector('textarea');
+                const cc = form.querySelector('.char-count');
+                ta.addEventListener('input', () => { cc.textContent = ta.value.length + ' / 200'; });
+                form.addEventListener('submit', e => { e.preventDefault(); saveEdit(id, ta.value); });
+            });
+            feed.querySelectorAll('.reply-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => toggleReplies(btn.getAttribute('data-replytoggle')));
+            });
+            feed.querySelectorAll('.reply-del').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const [pid, rid] = btn.getAttribute('data-replydel').split('|');
+                    deleteReply(pid, rid);
+                });
+            });
+            feed.querySelectorAll('[data-replyform]').forEach(form => {
+                const id = form.getAttribute('data-replyform');
+                const inp = form.querySelector('input');
+                form.addEventListener('submit', e => { e.preventDefault(); submitReply(id, inp.value, inp); });
+            });
+        }
 
-            renderPagination(posts.length);
+        function handleDeepLinkScroll(currentPagePosts) {
+            if (!deepLinkPostId || deepLinkScrolled) return;
+            const idx = getSortedPosts().findIndex(p => p.id === deepLinkPostId);
+            if (idx < 0) return; // not loaded yet
+            const targetPage = Math.floor(idx / PAGE_SIZE) + 1;
+            if (currentPage !== targetPage) {
+                currentPage = targetPage;
+                renderPosts();
+                return;
+            }
+            const el = document.querySelector(`[data-post-id="${deepLinkPostId}"]`);
+            if (el) {
+                deepLinkScrolled = true;
+                setTimeout(() => {
+                    el.classList.add('highlight', 'highlight-pulse');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => el.classList.remove('highlight-pulse'), 3000);
+                }, 100);
+            }
+        }
+
+        async function sharePostLink(id) {
+            const url = `${location.origin}${location.pathname}?post=${id}`;
+            try { await navigator.clipboard.writeText(url); toast('🔗 링크가 복사되었습니다'); }
+            catch (e) {
+                const ta = document.createElement('textarea');
+                ta.value = url; document.body.appendChild(ta); ta.select();
+                try { document.execCommand('copy'); toast('🔗 링크가 복사되었습니다'); }
+                catch (err) { toast('복사 실패'); }
+                document.body.removeChild(ta);
+            }
+        }
+
+        function startEdit(id) { editingPosts.add(id); renderPosts(); }
+
+        async function saveEdit(id, newText) {
+            newText = newText.trim();
+            if (!newText) { toast('내용을 입력해주세요'); return; }
+            if (newText.length > 200) { toast('200자 이내로 입력해주세요'); return; }
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+            try {
+                await updateDoc(doc(db, 'messages', id), {
+                    text: newText,
+                    editedAt: serverTimestamp()
+                });
+                editingPosts.delete(id);
+                post.text = newText;
+                post.editedAt = new Date();
+                renderPosts();
+                toast('✏️ 수정되었습니다');
+            } catch (e) {
+                console.error(e);
+                toast('수정 실패: ' + e.message);
+            }
+        }
+
+        async function toggleReplies(postId) {
+            if (openReplies.has(postId)) {
+                openReplies.delete(postId);
+                renderPosts();
+                return;
+            }
+            openReplies.add(postId);
+            if (!repliesCache[postId]) {
+                repliesCache[postId] = 'loading';
+                renderPosts();
+                await loadReplies(postId);
+                renderPosts();
+            } else {
+                renderPosts();
+            }
+        }
+
+        async function loadReplies(postId) {
+            try {
+                const repCol = collection(db, 'messages', postId, 'replies');
+                const q = query(repCol, orderBy('createdAt', 'asc'));
+                const snap = await getDocs(q);
+                repliesCache[postId] = snap.docs.map(d => {
+                    const data = d.data();
+                    return {
+                        id: d.id,
+                        text: data.text || '',
+                        nickname: data.nickname || '익명',
+                        createdAt: data.createdAt ? data.createdAt.toDate() : null,
+                        authorUid: data.authorUid || ''
+                    };
+                });
+            } catch (e) {
+                console.error(e);
+                repliesCache[postId] = [];
+                toast('답글 로딩 실패: ' + e.message);
+            }
+        }
+
+        async function submitReply(postId, text, inputEl) {
+            if (!currentUid) { toast('인증 대기 중입니다'); return; }
+            text = text.trim();
+            if (!text) { toast('답글을 입력해주세요'); return; }
+            if (text.length > 100) { toast('100자 이내로 입력해주세요'); return; }
+            const nickRaw = document.getElementById('nickInput').value.trim();
+            const nickname = nickRaw || ('익명의 수험생 #' + getAnonId());
+            inputEl.disabled = true;
+            try {
+                const repCol = collection(db, 'messages', postId, 'replies');
+                await addDoc(repCol, {
+                    text: text,
+                    nickname: nickname.slice(0, 30),
+                    createdAt: serverTimestamp(),
+                    authorUid: currentUid,
+                    ipPrefix: ipPrefix
+                });
+                inputEl.value = '';
+                await loadReplies(postId);
+                renderPosts();
+                toast('✅ 답글이 등록되었습니다');
+            } catch (e) {
+                console.error(e);
+                toast('답글 등록 실패: ' + e.message);
+            } finally {
+                inputEl.disabled = false;
+            }
+        }
+
+        async function deleteReply(postId, replyId) {
+            if (!confirm('이 답글을 삭제하시겠어요?')) return;
+            try {
+                await deleteDoc(doc(db, 'messages', postId, 'replies', replyId));
+                repliesCache[postId] = (repliesCache[postId] || []).filter(r => r.id !== replyId);
+                renderPosts();
+                toast('🗑️ 답글이 삭제되었습니다');
+            } catch (e) {
+                console.error(e);
+                toast('삭제 실패: ' + e.message);
+            }
         }
 
         function renderPagination(total) {

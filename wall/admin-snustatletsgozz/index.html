@@ -324,6 +324,11 @@
         <!-- 게시글 관리 카드 -->
         <div class="card">
             <div class="card-title">📝 게시글 관리</div>
+            <div style="margin-bottom:12px;">
+                <input type="search" id="adminSearch"
+                    placeholder="🔍 닉네임·내용·UID 검색..."
+                    style="width:100%;padding:9px 14px;border:1px solid #3a3d55;background:#12131f;color:#e8e8ea;border-radius:10px;font-family:'IBM Plex Sans KR',sans-serif;font-size:0.9em;">
+            </div>
             <div class="toolbar">
                 <button class="toolbar-btn active" data-sort="new" id="sortNewBtn">⏰ 최신순</button>
                 <button class="toolbar-btn" data-sort="hot" id="sortHotBtn">🔥 인기순</button>
@@ -335,6 +340,7 @@
             <div class="post-list" id="postList">
                 <div class="empty-state"><span class="empty-icon">⏳</span>연결 중...</div>
             </div>
+            <div id="adminPagination" style="display:flex;gap:6px;justify-content:center;margin-top:14px;flex-wrap:wrap;"></div>
         </div>
 
         <!-- 선택 삭제 바 -->
@@ -377,6 +383,9 @@
         let allPosts    = [];
         let currentSort = 'new';
         let selected    = new Set();
+        let searchQuery = '';
+        let currentPage = 1;
+        const PAGE_SIZE = 50;
 
         // ── Helpers ───────────────────────────────────────────────────
         const showToast = msg => {
@@ -447,9 +456,9 @@ service cloud.firestore {
         && request.resource.data.authorUid == request.auth.uid
         && request.resource.data.createdAt == request.time;
 
-      // ── 업데이트: 좋아요/싫어요 토글, 신고 +1, 관리자의 신고 리셋
+      // ── 업데이트: 좋아요/싫어요 토글, 신고 +1, 본인 글 수정, 관리자의 신고 리셋
       allow update: if request.auth != null && (
-        // (1) 좋아요/싫어요 토글·전환 (각 -1~+1, 합산 -1~+1, 변화 없음 금지)
+        // (1) 좋아요/싫어요 토글·전환
         (request.resource.data.diff(resource.data).affectedKeys()
            .hasOnly(['likes','dislikes'])
          && request.resource.data.likes >= 0
@@ -475,12 +484,43 @@ service cloud.firestore {
          && request.resource.data.diff(resource.data).affectedKeys()
               .hasOnly(['reports'])
          && request.resource.data.reports == 0)
+        ||
+        // (4) 본인 글 수정 (text + editedAt 만)
+        (request.auth.uid == resource.data.authorUid
+         && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['text','editedAt'])
+         && request.resource.data.text is string
+         && request.resource.data.text.size() > 0
+         && request.resource.data.text.size() <= 200
+         && request.resource.data.editedAt == request.time)
       );
 
       // ── 삭제: 본인 글 또는 관리자만
       allow delete: if request.auth != null
         && (request.auth.uid == resource.data.authorUid
             || request.auth.uid == "${uid}");
+
+      // ── 답글 서브컬렉션 ──────────────────────────────────────
+      match /replies/{replyId} {
+        allow read: if true;
+
+        allow create: if request.auth != null
+          && request.resource.data.keys().hasOnly(
+               ['text','nickname','createdAt','authorUid','ipPrefix'])
+          && request.resource.data.keys().hasAll(
+               ['text','nickname','createdAt','authorUid'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 100
+          && request.resource.data.nickname is string
+          && request.resource.data.nickname.size() <= 30
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+
+        allow delete: if request.auth != null
+          && (request.auth.uid == resource.data.authorUid
+              || request.auth.uid == "${uid}");
+      }
     }
   }
 }`;
@@ -514,21 +554,38 @@ service cloud.firestore {
 
         // ── Render posts ──────────────────────────────────────────────
         const sortedPosts = () => {
-            const posts = [...allPosts];
-            if (currentSort === 'new')      return posts; // already newest first
-            if (currentSort === 'hot')      return posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes));
-            if (currentSort === 'reports')  return posts.sort((a,b) => b.reports - a.reports);
-            if (currentSort === 'dislikes') return posts.sort((a,b) => b.dislikes - a.dislikes);
+            let posts = [...allPosts];
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                posts = posts.filter(p =>
+                    (p.text     && p.text.toLowerCase().includes(q)) ||
+                    (p.nickname && p.nickname.toLowerCase().includes(q)) ||
+                    (p.authorUid && p.authorUid.toLowerCase().includes(q)) ||
+                    (p.id       && p.id.toLowerCase().includes(q))
+                );
+            }
+            if (currentSort === 'hot')      posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes));
+            else if (currentSort === 'reports')  posts.sort((a,b) => b.reports - a.reports);
+            else if (currentSort === 'dislikes') posts.sort((a,b) => b.dislikes - a.dislikes);
             return posts;
         };
 
         const renderPosts = () => {
-            const list  = document.getElementById('postList');
-            const posts = sortedPosts();
-            document.getElementById('postCount').textContent = `총 ${posts.length}개`;
+            const list      = document.getElementById('postList');
+            const allFiltered = sortedPosts();
+            const totalPages = Math.max(1, Math.ceil(allFiltered.length / PAGE_SIZE));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const posts = allFiltered.slice(start, start + PAGE_SIZE);
 
-            if (posts.length === 0) {
-                list.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span>게시글이 없습니다</div>';
+            document.getElementById('postCount').textContent =
+                searchQuery
+                    ? `검색 결과 ${allFiltered.length}개 (전체 ${allPosts.length}개)`
+                    : `총 ${allPosts.length}개`;
+
+            if (allFiltered.length === 0) {
+                list.innerHTML = `<div class="empty-state"><span class="empty-icon">📭</span>${searchQuery ? '검색 결과가 없습니다' : '게시글이 없습니다'}</div>`;
+                renderAdminPagination(0);
                 return;
             }
 
@@ -586,6 +643,35 @@ service cloud.firestore {
             list.querySelectorAll('.del-btn[data-ignore]').forEach(btn => {
                 btn.addEventListener('click', () => ignoreReports(btn.dataset.ignore));
             });
+
+            renderAdminPagination(allFiltered.length);
+        };
+
+        const renderAdminPagination = (total) => {
+            const container = document.getElementById('adminPagination');
+            container.innerHTML = '';
+            const totalPages = Math.ceil(total / PAGE_SIZE);
+            if (totalPages <= 1) return;
+
+            const mkBtn = (label, page, opts = {}) => {
+                const b = document.createElement('button');
+                b.className = 'toolbar-btn' + (opts.active ? ' active' : '');
+                b.textContent = label;
+                b.disabled = !!opts.disabled;
+                if (!opts.disabled) b.addEventListener('click', () => { currentPage = page; renderPosts(); document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'}); });
+                return b;
+            };
+
+            container.appendChild(mkBtn('←', currentPage - 1, { disabled: currentPage === 1 }));
+
+            const W = 2;
+            const start = Math.max(1, currentPage - W);
+            const end   = Math.min(totalPages, currentPage + W);
+            if (start > 1) { container.appendChild(mkBtn('1', 1)); if (start > 2) { const dot = document.createElement('span'); dot.textContent = '…'; dot.style.color = '#666'; dot.style.padding = '0 6px'; container.appendChild(dot); } }
+            for (let i = start; i <= end; i++) container.appendChild(mkBtn(String(i), i, { active: i === currentPage }));
+            if (end < totalPages) { if (end < totalPages - 1) { const dot = document.createElement('span'); dot.textContent = '…'; dot.style.color = '#666'; dot.style.padding = '0 6px'; container.appendChild(dot); } container.appendChild(mkBtn(String(totalPages), totalPages)); }
+
+            container.appendChild(mkBtn('→', currentPage + 1, { disabled: currentPage === totalPages }));
         };
 
         const ignoreReports = async id => {
@@ -666,9 +752,22 @@ service cloud.firestore {
         document.querySelectorAll('[data-sort]').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentSort = btn.dataset.sort;
+                currentPage = 1;
                 document.querySelectorAll('[data-sort]').forEach(b => b.classList.toggle('active', b === btn));
                 renderPosts();
             });
+        });
+
+        // ── Search ────────────────────────────────────────────────────
+        const adminSearch = document.getElementById('adminSearch');
+        let _adminSearchDebounce = null;
+        adminSearch.addEventListener('input', () => {
+            clearTimeout(_adminSearchDebounce);
+            _adminSearchDebounce = setTimeout(() => {
+                searchQuery = adminSearch.value.trim();
+                currentPage = 1;
+                renderPosts();
+            }, 200);
         });
 
         // ── Refresh ───────────────────────────────────────────────────
