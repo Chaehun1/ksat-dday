@@ -20,6 +20,9 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../shared.css">
     <style>
+        /* 모바일 가로 스크롤 방지 */
+        html, body { overflow-x: hidden; max-width: 100%; }
+
         /* wall 페이지는 컨테이너가 좁아서 nav-bar 너비를 줄임 */
         .nav-bar { max-width: 680px; }
 
@@ -57,8 +60,8 @@
         .submit-btn:hover:not(:disabled) { background: #5568d3; transform: translateY(-1px); }
         .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-        .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .search-row input { flex: 1; padding: 9px 16px; border: 1px solid #ddd; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.9em; background: rgba(255,255,255,0.95); color: #333; backdrop-filter: blur(6px); }
+        .search-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .search-row input { flex: 1 1 140px; min-width: 0; padding: 9px 14px; border: 1px solid #ddd; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.9em; background: rgba(255,255,255,0.95); color: #333; backdrop-filter: blur(6px); }
         .search-row input:focus { outline: none; border-color: #667eea; }
         html[data-theme="dark"] .search-row input { background: #2a2d40; color: #e8e8ea; border-color: #3a3d55; }
         .filter-btn { padding: 9px 14px; border: 1px solid #ddd; background: rgba(255,255,255,0.92); color: #666; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 600; font-size: 0.84em; cursor: pointer; backdrop-filter: blur(6px); transition: all 0.2s; white-space: nowrap; }
@@ -81,8 +84,8 @@
         .post-ip { font-size: 0.78em; color: #aaa; font-family: ui-monospace, monospace; }
         .post-time { font-size: 0.78em; color: #999; white-space: nowrap; }
         .post-text { font-size: 0.98em; line-height: 1.55; color: #333; white-space: pre-wrap; word-break: break-word; }
-        .post-actions { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
-        .react-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #f0f0f5; border: none; border-radius: 999px; font-size: 0.84em; font-weight: 600; color: #666; cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans KR', sans-serif; }
+        .post-actions { display: flex; gap: 6px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+        .react-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #f0f0f5; border: none; border-radius: 999px; font-size: 0.84em; font-weight: 600; color: #666; cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans KR', sans-serif; white-space: nowrap; }
         .react-btn:hover { background: #e5e5ea; }
         .react-btn.voted.like { background: #fff0f3; color: #e53935; }
         .react-btn.voted.dislike { background: #eef0ff; color: #667eea; }
@@ -90,13 +93,13 @@
         .delete-btn { margin-left: auto; background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.82em; padding: 5px 8px; border-radius: 6px; font-family: 'IBM Plex Sans KR', sans-serif; }
         .delete-btn:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
-        .report-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; background: transparent; border: 1px solid #f5c5c5; border-radius: 999px; font-size: 0.82em; font-weight: 600; color: #c75050; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
+        .report-btn { display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; background: transparent; border: 1px solid #f5c5c5; border-radius: 999px; font-size: 0.9em; font-weight: 600; color: #c75050; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; white-space: nowrap; }
         .report-btn:hover { background: #fff0f0; border-color: #e57373; }
         .report-btn.reported { background: #ffebee; color: #999; border-color: #ddd; cursor: default; }
         html[data-theme="dark"] .report-btn { color: #ff8a8a; border-color: #5a2c2c; }
         html[data-theme="dark"] .report-btn:hover { background: rgba(229,57,53,0.12); border-color: #c25555; }
         html[data-theme="dark"] .report-btn.reported { background: #2a1f1f; color: #666; border-color: #3a3d55; }
-        .bookmark-btn, .share-link-btn, .reply-toggle-btn, .edit-btn { background: #f0f0f5; border: none; padding: 5px 10px; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #666; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 3px; }
+        .bookmark-btn, .share-link-btn, .reply-toggle-btn, .edit-btn { background: #f0f0f5; border: none; padding: 5px 10px; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #666; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
         .bookmark-btn:hover, .share-link-btn:hover, .reply-toggle-btn:hover, .edit-btn:hover { background: #e5e5ea; color: #333; }
         html[data-theme="dark"] .bookmark-btn, html[data-theme="dark"] .share-link-btn, html[data-theme="dark"] .reply-toggle-btn, html[data-theme="dark"] .edit-btn { background: #2a2d40; color: #9a9aaa; }
         html[data-theme="dark"] .bookmark-btn:hover, html[data-theme="dark"] .share-link-btn:hover, html[data-theme="dark"] .reply-toggle-btn:hover, html[data-theme="dark"] .edit-btn:hover { background: #3a3d55; color: #e8e8ea; }
@@ -220,8 +223,9 @@
         </section>
 
         <div class="search-row">
-            <input type="search" id="searchInput" placeholder="🔍 닉네임이나 내용 검색..." aria-label="검색">
-            <button class="filter-btn" id="bookmarkFilterBtn" aria-pressed="false" title="북마크한 글만 보기">🔖 북마크만</button>
+            <input type="search" id="nickSearchInput" placeholder="🔍 닉네임" aria-label="닉네임 검색">
+            <input type="search" id="textSearchInput" placeholder="🔍 내용" aria-label="내용 검색">
+            <button class="filter-btn" id="bookmarkFilterBtn" aria-pressed="false" title="북마크한 글만 보기" aria-label="북마크한 글만 보기">🔖</button>
         </div>
 
         <div class="sort-row">
@@ -361,17 +365,21 @@
             });
         });
 
-        // 검색
-        const searchInput = document.getElementById('searchInput');
+        // 검색 (닉네임/내용 분리)
+        const nickSearchInput = document.getElementById('nickSearchInput');
+        const textSearchInput = document.getElementById('textSearchInput');
         let _searchDebounce = null;
-        searchInput.addEventListener('input', () => {
+        function onSearchInput() {
             clearTimeout(_searchDebounce);
             _searchDebounce = setTimeout(() => {
-                searchQuery = searchInput.value.trim();
+                nickQuery = nickSearchInput.value.trim();
+                textQuery = textSearchInput.value.trim();
                 currentPage = 1;
                 renderPosts();
             }, 200);
-        });
+        }
+        nickSearchInput.addEventListener('input', onSearchInput);
+        textSearchInput.addEventListener('input', onSearchInput);
 
         // 북마크 필터
         const bookmarkFilterBtn = document.getElementById('bookmarkFilterBtn');
@@ -420,7 +428,8 @@
         const openReplies = new Set();
         const repliesCache = {};
         // 검색 + 북마크 필터 상태
-        let searchQuery = '';
+        let nickQuery = '';
+        let textQuery = '';
         let showBookmarksOnly = false;
         // 딥링크 처리 상태
         let deepLinkPostId = new URLSearchParams(location.search).get('post');
@@ -434,15 +443,18 @@
                 posts = posts.filter(p => bm.includes(p.id));
             }
 
-            if (searchQuery) {
-                const q = searchQuery.toLowerCase();
-                posts = posts.filter(p =>
-                    (p.text && p.text.toLowerCase().includes(q)) ||
-                    (p.nickname && p.nickname.toLowerCase().includes(q))
-                );
+            if (nickQuery) {
+                const q = nickQuery.toLowerCase();
+                posts = posts.filter(p => p.nickname && p.nickname.toLowerCase().includes(q));
             }
 
-            if (currentSort === 'hot' && !searchQuery && !showBookmarksOnly) {
+            if (textQuery) {
+                const q = textQuery.toLowerCase();
+                posts = posts.filter(p => p.text && p.text.toLowerCase().includes(q));
+            }
+
+            const isFiltering = nickQuery || textQuery || showBookmarksOnly;
+            if (currentSort === 'hot' && !isFiltering) {
                 const startToday = new Date(); startToday.setHours(0,0,0,0);
                 posts = posts.filter(p => p.createdAt && p.createdAt >= startToday);
                 posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes) || b.createdAt - a.createdAt);
@@ -467,9 +479,11 @@
 
             if (posts.length === 0) {
                 let msg;
-                if (searchQuery)         msg = `🔍 "${escapeHtml(searchQuery)}" 검색 결과가 없습니다.`;
-                else if (showBookmarksOnly) msg = '🔖 북마크한 글이 없습니다.';
-                else                     msg = '오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!';
+                if (nickQuery && textQuery)  msg = `🔍 닉네임 "${escapeHtml(nickQuery)}" + 내용 "${escapeHtml(textQuery)}" 검색 결과가 없습니다.`;
+                else if (nickQuery)          msg = `🔍 닉네임 "${escapeHtml(nickQuery)}" 검색 결과가 없습니다.`;
+                else if (textQuery)          msg = `🔍 내용 "${escapeHtml(textQuery)}" 검색 결과가 없습니다.`;
+                else if (showBookmarksOnly)  msg = '🔖 북마크한 글이 없습니다.';
+                else                         msg = '오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!';
                 feed.innerHTML = `<div class="empty">${msg}</div>`;
                 renderPagination(0);
                 return;
@@ -553,7 +567,7 @@
                         <button class="share-link-btn" data-sharelink="${p.id}" title="이 글 링크 복사">🔗</button>
                         ${rawBtnHtml}
                         ${isMine && !isEditing ? `<button class="edit-btn" data-edit="${p.id}" title="수정">✏️ 수정</button>` : ''}
-                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : `<button class="report-btn" data-report="${p.id}" aria-label="신고하고 숨기기" title="신고하고 숨기기">🚨 신고</button>`}
+                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : `<button class="report-btn" data-report="${p.id}" aria-label="신고하고 숨기기" title="신고하고 숨기기">🚨</button>`}
                     </div>
                     ${repliesOpen ? renderReplyPanel(p.id) : ''}`;
                 feed.appendChild(el);
