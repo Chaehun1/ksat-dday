@@ -223,8 +223,7 @@
         </section>
 
         <div class="search-row">
-            <input type="search" id="nickSearchInput" placeholder="🔍 닉네임" aria-label="닉네임 검색">
-            <input type="search" id="textSearchInput" placeholder="🔍 내용" aria-label="내용 검색">
+            <input type="search" id="searchInput" placeholder="🔍 닉네임 또는 내용 검색" aria-label="닉네임 또는 내용 검색">
             <button class="filter-btn" id="bookmarkFilterBtn" aria-pressed="false" title="북마크한 글만 보기" aria-label="북마크한 글만 보기">🔖</button>
         </div>
 
@@ -365,21 +364,17 @@
             });
         });
 
-        // 검색 (닉네임/내용 분리)
-        const nickSearchInput = document.getElementById('nickSearchInput');
-        const textSearchInput = document.getElementById('textSearchInput');
+        // 검색 (닉네임 OR 내용)
+        const searchInput = document.getElementById('searchInput');
         let _searchDebounce = null;
-        function onSearchInput() {
+        searchInput.addEventListener('input', () => {
             clearTimeout(_searchDebounce);
             _searchDebounce = setTimeout(() => {
-                nickQuery = nickSearchInput.value.trim();
-                textQuery = textSearchInput.value.trim();
+                searchQuery = searchInput.value.trim();
                 currentPage = 1;
                 renderPosts();
             }, 200);
-        }
-        nickSearchInput.addEventListener('input', onSearchInput);
-        textSearchInput.addEventListener('input', onSearchInput);
+        });
 
         // 북마크 필터
         const bookmarkFilterBtn = document.getElementById('bookmarkFilterBtn');
@@ -428,8 +423,7 @@
         const openReplies = new Set();
         const repliesCache = {};
         // 검색 + 북마크 필터 상태
-        let nickQuery = '';
-        let textQuery = '';
+        let searchQuery = '';
         let showBookmarksOnly = false;
         // 딥링크 처리 상태
         let deepLinkPostId = new URLSearchParams(location.search).get('post');
@@ -443,18 +437,15 @@
                 posts = posts.filter(p => bm.includes(p.id));
             }
 
-            if (nickQuery) {
-                const q = nickQuery.toLowerCase();
-                posts = posts.filter(p => p.nickname && p.nickname.toLowerCase().includes(q));
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                posts = posts.filter(p =>
+                    (p.nickname && p.nickname.toLowerCase().includes(q)) ||
+                    (p.text && p.text.toLowerCase().includes(q))
+                );
             }
 
-            if (textQuery) {
-                const q = textQuery.toLowerCase();
-                posts = posts.filter(p => p.text && p.text.toLowerCase().includes(q));
-            }
-
-            const isFiltering = nickQuery || textQuery || showBookmarksOnly;
-            if (currentSort === 'hot' && !isFiltering) {
+            if (currentSort === 'hot' && !searchQuery && !showBookmarksOnly) {
                 const startToday = new Date(); startToday.setHours(0,0,0,0);
                 posts = posts.filter(p => p.createdAt && p.createdAt >= startToday);
                 posts.sort((a,b) => (b.likes - b.dislikes) - (a.likes - a.dislikes) || b.createdAt - a.createdAt);
@@ -479,9 +470,7 @@
 
             if (posts.length === 0) {
                 let msg;
-                if (nickQuery && textQuery)  msg = `🔍 닉네임 "${escapeHtml(nickQuery)}" + 내용 "${escapeHtml(textQuery)}" 검색 결과가 없습니다.`;
-                else if (nickQuery)          msg = `🔍 닉네임 "${escapeHtml(nickQuery)}" 검색 결과가 없습니다.`;
-                else if (textQuery)          msg = `🔍 내용 "${escapeHtml(textQuery)}" 검색 결과가 없습니다.`;
+                if (searchQuery)             msg = `🔍 "${escapeHtml(searchQuery)}" 검색 결과가 없습니다.`;
                 else if (showBookmarksOnly)  msg = '🔖 북마크한 글이 없습니다.';
                 else                         msg = '오늘 올라온 글이 아직 없어요. 최신순으로 보거나 첫 글을 남겨주세요!';
                 feed.innerHTML = `<div class="empty">${msg}</div>`;
