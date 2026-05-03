@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>익명 게시판 | 수능 디데이 카운터</title>
     <meta name="description" content="수험생들이 서로에게 익명으로 응원을 남기는 공간. 2027 수능을 준비하는 모두를 위한 익명 게시판.">
+    <meta name="keywords" content="수능 익명 게시판, 수험생 익명, 수능 응원, 익명 게시판, 수능생 게시판, 수험생 커뮤니티, 2027 수능, 익명 글, 수능 공부 응원">
     <meta name="theme-color" content="#667eea">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"익명 게시판 | 수능 디데이","url":"https://chaehun1.github.io/ksat-dday/wall/","description":"수험생들이 서로 익명으로 이야기 나누는 공간","inLanguage":"ko-KR","isPartOf":{"@type":"WebSite","name":"2027 수능 디데이 카운터","url":"https://chaehun1.github.io/ksat-dday/"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://chaehun1.github.io/ksat-dday/"},{"@type":"ListItem","position":2,"name":"익명 게시판","item":"https://chaehun1.github.io/ksat-dday/wall/"}]}</script>
     <meta property="og:title" content="익명 게시판 | 수능 디데이 카운터">
     <meta property="og:description" content="수험생들이 서로에게 익명으로 응원을 남기는 공간">
     <meta property="og:type" content="website">
@@ -93,12 +96,6 @@
         .delete-btn { margin-left: auto; background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.82em; padding: 5px 8px; border-radius: 6px; font-family: 'IBM Plex Sans KR', sans-serif; }
         .delete-btn:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
-        .report-btn { display: inline-flex; align-items: center; justify-content: center; padding: 5px 10px; background: transparent; border: 1px solid #f5c5c5; border-radius: 999px; font-size: 0.9em; font-weight: 600; color: #c75050; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; white-space: nowrap; }
-        .report-btn:hover { background: #fff0f0; border-color: #e57373; }
-        .report-btn.reported { background: #ffebee; color: #999; border-color: #ddd; cursor: default; }
-        html[data-theme="dark"] .report-btn { color: #ff8a8a; border-color: #5a2c2c; }
-        html[data-theme="dark"] .report-btn:hover { background: rgba(229,57,53,0.12); border-color: #c25555; }
-        html[data-theme="dark"] .report-btn.reported { background: #2a1f1f; color: #666; border-color: #3a3d55; }
         .bookmark-btn, .share-link-btn, .reply-toggle-btn, .edit-btn { background: #f0f0f5; border: none; padding: 5px 10px; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #666; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
         .bookmark-btn:hover, .share-link-btn:hover, .reply-toggle-btn:hover, .edit-btn:hover { background: #e5e5ea; color: #333; }
         html[data-theme="dark"] .bookmark-btn, html[data-theme="dark"] .share-link-btn, html[data-theme="dark"] .reply-toggle-btn, html[data-theme="dark"] .edit-btn { background: #2a2d40; color: #9a9aaa; }
@@ -134,24 +131,36 @@
         .reply-del { background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 0.76em; margin-left: auto; padding: 2px 6px; border-radius: 4px; font-family: 'IBM Plex Sans KR', sans-serif; }
         .reply-del:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .reply-del:hover { background: #4a1f24; color: #ff8a8a; }
-        .reply-form { display: flex; gap: 6px; }
-        .reply-form input { flex: 1; border: 1px solid #e5e5ea; border-radius: 999px; padding: 7px 14px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.88em; background: #fff; color: #333; }
+        .reply-form { display: flex; gap: 6px; align-items: center; }
+        .reply-form input { flex: 1 1 0; min-width: 0; border: 1px solid #e5e5ea; border-radius: 999px; padding: 7px 14px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.88em; background: #fff; color: #333; }
         .reply-form input:focus { outline: none; border-color: #667eea; }
         html[data-theme="dark"] .reply-form input { background: #1e2030; color: #e8e8ea; border-color: #3a3d55; }
-        .reply-submit { background: #667eea; color: #fff; border: none; padding: 7px 16px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.84em; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .reply-submit { background: #667eea; color: #fff; border: none; padding: 7px 16px; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.84em; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         .reply-submit:disabled { background: #ccc; cursor: not-allowed; }
         .reply-empty, .reply-loading { text-align: center; padding: 10px; color: #999; font-size: 0.84em; }
+        .reply-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+        .reply-react { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: #fff; border: 1px solid #e5e5ea; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #666; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; white-space: nowrap; }
+        .reply-react:hover { background: #f0f0f5; }
+        .reply-react.voted.like { background: #fff0f3; color: #e53935; border-color: #ffb3c0; }
+        .reply-react.voted.dislike { background: #eef0ff; color: #667eea; border-color: #b8c0f5; }
+        html[data-theme="dark"] .reply-react { background: #1e2030; color: #9a9aaa; border-color: #3a3d55; }
+        html[data-theme="dark"] .reply-react:hover { background: #2a2d40; color: #e8e8ea; }
+        html[data-theme="dark"] .reply-react.voted.like { background: #4a1f24; color: #ff8a8a; border-color: #6a2d35; }
+        html[data-theme="dark"] .reply-react.voted.dislike { background: #2d3566; color: #9aa5ea; border-color: #3a4577; }
+
+        /* 검색어 하이라이트 */
+        mark { background: #fff3a0; color: inherit; padding: 0 2px; border-radius: 3px; }
+        html[data-theme="dark"] mark { background: #5d4d1a; color: #ffeaa7; }
+
+        /* 새 글 알림 배너 */
+        .new-posts-banner { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #667eea; color: #fff; padding: 10px 20px; border-radius: 999px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px rgba(102,126,234,0.45); opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; z-index: 200; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.88em; border: none; }
+        .new-posts-banner.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .new-posts-banner:hover { background: #5568d3; }
 
         .post.highlight { box-shadow: 0 0 0 3px #ffc107, 0 10px 30px rgba(0,0,0,0.18); }
         @keyframes hlPulse { 0%,100% { box-shadow: 0 0 0 3px #ffc107, 0 10px 30px rgba(0,0,0,0.18); } 50% { box-shadow: 0 0 0 8px rgba(255,193,7,0.25), 0 10px 30px rgba(0,0,0,0.18); } }
         .post.highlight-pulse { animation: hlPulse 1.4s ease-out 2; }
 
-        .raw-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0f0f5; border: 1px solid #ddd; border-radius: 999px; font-size: 0.78em; font-weight: 600; color: #888; cursor: pointer; font-family: 'IBM Plex Sans KR', sans-serif; transition: all 0.15s; }
-        .raw-btn:hover { background: #e5e5ea; color: #555; }
-        .raw-btn.active { background: #fff3e0; border-color: #ffb74d; color: #e65100; }
-        html[data-theme="dark"] .raw-btn { background: #2a2d40; border-color: #3a3d55; color: #9a9aaa; }
-        html[data-theme="dark"] .raw-btn:hover { background: #3a3d55; color: #e8e8ea; }
-        html[data-theme="dark"] .raw-btn.active { background: #3d2a0a; border-color: #c87941; color: #ffb74d; }
         .delete-btn:hover { background: #ffebee; color: #e53935; }
         html[data-theme="dark"] .delete-btn:hover { background: #4a1f24; color: #ff8a8a; }
 
@@ -238,6 +247,8 @@
         <div class="pagination" id="pagination"></div>
     </div>
 
+    <button id="newPostsBanner" class="new-posts-banner" aria-live="polite" hidden>🆕 새 글 보기</button>
+
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="../shared.js"></script>
@@ -286,8 +297,6 @@
         function getVotes() { try { return JSON.parse(localStorage.getItem('wall-votes')||'{}'); } catch(e){ return {}; } }
         function saveVote(id, kind) { const v = getVotes(); v[id] = kind; localStorage.setItem('wall-votes', JSON.stringify(v)); }
         function clearVote(id) { const v = getVotes(); delete v[id]; localStorage.setItem('wall-votes', JSON.stringify(v)); }
-        function getReports() { try { return JSON.parse(localStorage.getItem('wall-reports')||'[]'); } catch(e){ return []; } }
-        function markReported(id) { const r = getReports(); if (!r.includes(id)) { r.push(id); localStorage.setItem('wall-reports', JSON.stringify(r)); } }
         function getBookmarks() { try { return JSON.parse(localStorage.getItem('wall-bookmarks')||'[]'); } catch(e){ return []; } }
         function toggleBookmark(id) {
             const b = getBookmarks();
@@ -333,10 +342,10 @@
                     createdAt: serverTimestamp(),
                     likes: 0,
                     dislikes: 0,
-                    reports: 0,
                     authorUid: currentUid,
                     ipPrefix: ipPrefix
                 });
+                _justSubmittedByMe = true;
                 textInput.value = '';
                 charCount.textContent = '0 / 200';
                 charCount.classList.remove('warn','over');
@@ -352,10 +361,13 @@
             }
         });
 
-        let currentSort = 'hot';
+        // 딥링크로 들어오면 인기글 필터(오늘 글만)에 가려질 수 있어 자동으로 최신순 시작
+        const _initialDeepLinkPostId = new URLSearchParams(location.search).get('post');
+        let currentSort = _initialDeepLinkPostId ? 'new' : 'hot';
         let currentPage = 1;
         const PAGE_SIZE = 10;
         document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-sort') === currentSort);
             btn.addEventListener('click', () => {
                 currentSort = btn.getAttribute('data-sort');
                 currentPage = 1;
@@ -387,36 +399,92 @@
 
         let allPosts = [];
         let unsubscribePosts = null;
+        let _initialSnapshotLoaded = false;
+        let _seenPostIds = new Set();
+        let _justSubmittedByMe = false;
+        let _pendingNewCount = 0;
 
         function subscribePosts() {
             if (unsubscribePosts) unsubscribePosts();
             const q = query(msgCol, orderBy('createdAt', 'desc'), limit(200));
             unsubscribePosts = onSnapshot(q, snap => {
-                allPosts = snap.docs.map(d => {
+                const newPosts = snap.docs.map(d => {
                     const data = d.data();
                     return {
                         id:        d.id,
                         text:      data.text      || '',
-                        rawText:   data.rawText   || '',
                         nickname:  data.nickname  || '익명',
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
                         editedAt:  data.editedAt  ? data.editedAt.toDate() : null,
                         likes:     data.likes     || 0,
                         dislikes:  data.dislikes  || 0,
-                        reports:   data.reports   || 0,
                         authorUid: data.authorUid || '',
                         ipPrefix:  data.ipPrefix  || ''
                     };
                 });
-                renderPosts();
+
+                if (!_initialSnapshotLoaded) {
+                    allPosts = newPosts;
+                    _seenPostIds = new Set(newPosts.map(p => p.id));
+                    _initialSnapshotLoaded = true;
+                    renderPosts();
+                    return;
+                }
+
+                // 새로 들어온 글 (본인 글은 제외)
+                const freshFromOthers = newPosts.filter(p => !_seenPostIds.has(p.id) && p.authorUid !== currentUid);
+                allPosts = newPosts;
+
+                if (_justSubmittedByMe) {
+                    // 내가 방금 올린 글: 1페이지로 가서 보여주고 배너는 띄우지 않음
+                    _justSubmittedByMe = false;
+                    _pendingNewCount = 0;
+                    hideNewPostsBanner();
+                    _seenPostIds = new Set(newPosts.map(p => p.id));
+                    renderPosts();
+                    return;
+                }
+
+                // 사용자가 1페이지 + 상단 근처에 있고 정렬이 최신순/오늘인기면 자동으로 보여줌
+                const userIsAtTop = currentPage === 1 && window.scrollY < 240;
+                if (freshFromOthers.length > 0 && !userIsAtTop) {
+                    _pendingNewCount += freshFromOthers.length;
+                    showNewPostsBanner();
+                    // _seenPostIds는 배너 닫힐 때 갱신 (계속 누적되지 않도록 여기서 갱신)
+                    _seenPostIds = new Set(newPosts.map(p => p.id));
+                    // 화면은 다시 그리되 1페이지가 아닐 경우 영향 없음
+                    renderPosts();
+                } else {
+                    _pendingNewCount = 0;
+                    hideNewPostsBanner();
+                    _seenPostIds = new Set(newPosts.map(p => p.id));
+                    renderPosts();
+                }
             }, e => {
                 console.error(e);
                 document.getElementById('status').textContent = '불러오기 실패: ' + e.message;
             });
         }
 
-        // 원글 보기 상태 (postId set)
-        const rawViewing = new Set();
+        function showNewPostsBanner() {
+            const b = document.getElementById('newPostsBanner');
+            b.hidden = false;
+            b.textContent = `🆕 새 글 ${_pendingNewCount}개 — 클릭하여 보기`;
+            b.classList.add('show');
+        }
+        function hideNewPostsBanner() {
+            const b = document.getElementById('newPostsBanner');
+            b.classList.remove('show');
+            b.hidden = true;
+        }
+        document.getElementById('newPostsBanner').addEventListener('click', () => {
+            _pendingNewCount = 0;
+            hideNewPostsBanner();
+            currentPage = 1;
+            renderPosts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
         // 편집 중 상태 (postId set)
         const editingPosts = new Set();
         // 답글 패널 열림 상태 (postId set) + 캐시
@@ -426,8 +494,21 @@
         let searchQuery = '';
         let showBookmarksOnly = false;
         // 딥링크 처리 상태
-        let deepLinkPostId = new URLSearchParams(location.search).get('post');
+        let deepLinkPostId = _initialDeepLinkPostId;
         let deepLinkScrolled = false;
+
+        // 검색어 하이라이트 (escapeHtml 후 mark 감싸기)
+        function highlightMatch(rawText, query) {
+            const safe = escapeHtml(rawText);
+            if (!query) return safe;
+            const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            try {
+                const re = new RegExp(escapedQuery, 'gi');
+                return safe.replace(re, m => `<mark>${m}</mark>`);
+            } catch (e) {
+                return safe;
+            }
+        }
 
         function getSortedPosts() {
             let posts = allPosts.slice();
@@ -486,13 +567,9 @@
 
             const votes      = getVotes();
             const revealed   = getRevealed();
-            const reportedBy = getReports();
             const bookmarks  = getBookmarks();
 
-            // 신고한 글은 신고자 본인 화면에서만 숨김
-            const visiblePosts = pagePosts.filter(p => !reportedBy.includes(p.id));
-
-            visiblePosts.forEach(p => {
+            pagePosts.forEach(p => {
                 // 싫어요 누적 (5개 이상): 사용자가 펼쳐 볼 수 있음
                 const hidden = p.dislikes >= 5 && !revealed.includes(p.id);
                 if (hidden) {
@@ -507,13 +584,6 @@
                     return;
                 }
 
-                const isShowingRaw = rawViewing.has(p.id);
-                const hasCensored  = p.rawText && p.rawText !== p.text;
-                const displayText  = isShowingRaw && p.rawText ? p.rawText : p.text;
-                const rawBtnHtml   = hasCensored
-                    ? `<button class="raw-btn${isShowingRaw ? ' active' : ''}" data-rawid="${p.id}">${isShowingRaw ? '🔒 필터링 보기' : '👁️ 원글 보기'}</button>`
-                    : '';
-
                 const el = document.createElement('article');
                 el.className = 'post';
                 el.dataset.postId = p.id;
@@ -525,7 +595,7 @@
                 const repliesOpen  = openReplies.has(p.id);
                 const replyCache   = repliesCache[p.id];
                 const replyCount   = (replyCache && replyCache !== 'loading') ? replyCache.length : null;
-                const replyBtnText = replyCount !== null ? `💬 답글 ${replyCount}` : '💬 답글';
+                const replyBtnText = (replyCount !== null && replyCount > 0) ? `💬 답글 ${replyCount}` : '💬 답글';
                 const editedBadge  = p.editedAt ? '<span class="edited-badge">(수정됨)</span>' : '';
 
                 const bodyHtml = isEditing
@@ -537,12 +607,12 @@
                                <button type="submit" class="edit-save-btn" data-editsave="${p.id}">저장</button>
                            </div>
                        </form>`
-                    : `<div class="post-text">${escapeHtml(displayText)}</div>`;
+                    : `<div class="post-text">${highlightMatch(p.text, searchQuery)}</div>`;
 
                 el.innerHTML = `
                     <div class="post-head">
                         <div class="post-nick-wrap">
-                            <span class="post-nick">${escapeHtml(p.nickname)}</span>
+                            <span class="post-nick">${highlightMatch(p.nickname, searchQuery)}</span>
                             <span class="post-ip">${ipLabel}</span>
                         </div>
                         <span class="post-time">${timeAgo(p.createdAt)}${editedBadge}</span>
@@ -554,11 +624,10 @@
                         <button class="reply-toggle-btn ${repliesOpen?'active':''}" data-replytoggle="${p.id}" aria-pressed="${repliesOpen}" title="답글 보기/작성">${replyBtnText}</button>
                         <button class="bookmark-btn ${isBookmarked?'active':''}" data-bookmark="${p.id}" aria-pressed="${isBookmarked}" title="${isBookmarked?'북마크 해제':'북마크'}">${isBookmarked?'🔖':'📑'}</button>
                         <button class="share-link-btn" data-sharelink="${p.id}" title="이 글 링크 복사">🔗</button>
-                        ${rawBtnHtml}
                         ${isMine && !isEditing ? `<button class="edit-btn" data-edit="${p.id}" title="수정">✏️ 수정</button>` : ''}
-                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : `<button class="report-btn" data-report="${p.id}" aria-label="신고하고 숨기기" title="신고하고 숨기기">🚨</button>`}
+                        ${isMine ? `<button class="delete-btn" data-del="${p.id}">🗑️ 삭제</button>` : ''}
                     </div>
-                    ${repliesOpen ? renderReplyPanel(p.id) : ''}`;
+                    <div class="reply-mount" data-replymount="${p.id}">${repliesOpen ? renderReplyPanel(p.id) : ''}</div>`;
                 feed.appendChild(el);
             });
 
@@ -572,11 +641,16 @@
             if (replies === 'loading') {
                 return '<div class="reply-panel"><div class="reply-loading">답글 로딩 중...</div></div>';
             }
+            const votes = getVotes();
             let html = '<div class="reply-panel">';
             if (replies && replies.length > 0) {
                 html += '<div class="reply-list">';
                 replies.forEach(r => {
                     const isMine = currentUid && r.authorUid === currentUid;
+                    const voteKey = `r:${postId}:${r.id}`;
+                    const voted = votes[voteKey];
+                    const likes = r.likes || 0;
+                    const dislikes = r.dislikes || 0;
                     html += `
                         <div class="reply-item">
                             <div class="reply-meta">
@@ -585,6 +659,10 @@
                                 ${isMine ? `<button class="reply-del" data-replydel="${postId}|${r.id}">삭제</button>` : ''}
                             </div>
                             <div class="reply-text">${escapeHtml(r.text)}</div>
+                            <div class="reply-actions">
+                                <button class="reply-react like ${voted==='like'?'voted':''}" data-replyvote="${postId}|${r.id}|like" aria-pressed="${voted==='like'}">👍 ${likes}</button>
+                                <button class="reply-react dislike ${voted==='dislike'?'voted':''}" data-replyvote="${postId}|${r.id}|dislike" aria-pressed="${voted==='dislike'}">👎 ${dislikes}</button>
+                            </div>
                         </div>`;
                 });
                 html += '</div>';
@@ -599,23 +677,57 @@
             return html;
         }
 
+        // 답글 패널만 부분 갱신 (전체 피드 다시 그리지 않음 → 깜빡임 제거)
+        function rerenderReplyPanelFor(postId) {
+            const article = document.querySelector(`[data-post-id="${postId}"]`);
+            if (!article) return;
+            const mount = article.querySelector('.reply-mount');
+            if (!mount) return;
+            mount.innerHTML = openReplies.has(postId) ? renderReplyPanel(postId) : '';
+            attachReplyHandlers(article);
+            updateReplyToggleBtn(article, postId);
+        }
+
+        function updateReplyToggleBtn(article, postId) {
+            const btn = article.querySelector('.reply-toggle-btn');
+            if (!btn) return;
+            const replies = repliesCache[postId];
+            const replyCount = (replies && replies !== 'loading') ? replies.length : null;
+            btn.textContent = (replyCount !== null && replyCount > 0) ? `💬 답글 ${replyCount}` : '💬 답글';
+            const open = openReplies.has(postId);
+            btn.classList.toggle('active', open);
+            btn.setAttribute('aria-pressed', open);
+        }
+
+        function attachReplyHandlers(scope) {
+            scope.querySelectorAll('.reply-del').forEach(btn => {
+                if (btn._wired) return; btn._wired = true;
+                btn.addEventListener('click', () => {
+                    const [pid, rid] = btn.getAttribute('data-replydel').split('|');
+                    deleteReply(pid, rid);
+                });
+            });
+            scope.querySelectorAll('[data-replyform]').forEach(form => {
+                if (form._wired) return; form._wired = true;
+                const id = form.getAttribute('data-replyform');
+                const inp = form.querySelector('input');
+                form.addEventListener('submit', e => { e.preventDefault(); submitReply(id, inp.value, inp); });
+            });
+            scope.querySelectorAll('[data-replyvote]').forEach(btn => {
+                if (btn._wired) return; btn._wired = true;
+                btn.addEventListener('click', () => {
+                    const [pid, rid, kind] = btn.getAttribute('data-replyvote').split('|');
+                    voteReply(pid, rid, kind);
+                });
+            });
+        }
+
         function attachPostEventHandlers(feed) {
             feed.querySelectorAll('.react-btn').forEach(btn => {
                 btn.addEventListener('click', () => vote(btn.getAttribute('data-id'), btn.getAttribute('data-kind')));
             });
             feed.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', () => deletePost(btn.getAttribute('data-del')));
-            });
-            feed.querySelectorAll('.raw-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.getAttribute('data-rawid');
-                    if (rawViewing.has(id)) rawViewing.delete(id);
-                    else rawViewing.add(id);
-                    renderPosts();
-                });
-            });
-            feed.querySelectorAll('.report-btn').forEach(btn => {
-                btn.addEventListener('click', () => reportPost(btn.getAttribute('data-report')));
             });
             feed.querySelectorAll('.bookmark-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -643,16 +755,9 @@
             feed.querySelectorAll('.reply-toggle-btn').forEach(btn => {
                 btn.addEventListener('click', () => toggleReplies(btn.getAttribute('data-replytoggle')));
             });
-            feed.querySelectorAll('.reply-del').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const [pid, rid] = btn.getAttribute('data-replydel').split('|');
-                    deleteReply(pid, rid);
-                });
-            });
-            feed.querySelectorAll('[data-replyform]').forEach(form => {
-                const id = form.getAttribute('data-replyform');
-                const inp = form.querySelector('input');
-                form.addEventListener('submit', e => { e.preventDefault(); submitReply(id, inp.value, inp); });
+            // 이미 열린 답글 패널의 핸들러도 부여 (initial render)
+            feed.querySelectorAll('.reply-mount').forEach(mount => {
+                if (mount.children.length > 0) attachReplyHandlers(mount.parentElement);
             });
         }
 
@@ -716,17 +821,17 @@
         async function toggleReplies(postId) {
             if (openReplies.has(postId)) {
                 openReplies.delete(postId);
-                renderPosts();
+                rerenderReplyPanelFor(postId);
                 return;
             }
             openReplies.add(postId);
             if (!repliesCache[postId]) {
                 repliesCache[postId] = 'loading';
-                renderPosts();
+                rerenderReplyPanelFor(postId);
                 await loadReplies(postId);
-                renderPosts();
+                rerenderReplyPanelFor(postId);
             } else {
-                renderPosts();
+                rerenderReplyPanelFor(postId);
             }
         }
 
@@ -742,7 +847,9 @@
                         text: data.text || '',
                         nickname: data.nickname || '익명',
                         createdAt: data.createdAt ? data.createdAt.toDate() : null,
-                        authorUid: data.authorUid || ''
+                        authorUid: data.authorUid || '',
+                        likes: data.likes || 0,
+                        dislikes: data.dislikes || 0
                     };
                 });
             } catch (e) {
@@ -767,11 +874,13 @@
                     nickname: nickname.slice(0, 30),
                     createdAt: serverTimestamp(),
                     authorUid: currentUid,
-                    ipPrefix: ipPrefix
+                    ipPrefix: ipPrefix,
+                    likes: 0,
+                    dislikes: 0
                 });
                 inputEl.value = '';
                 await loadReplies(postId);
-                renderPosts();
+                rerenderReplyPanelFor(postId);
                 toast('✅ 답글이 등록되었습니다');
             } catch (e) {
                 console.error(e);
@@ -786,11 +895,60 @@
             try {
                 await deleteDoc(doc(db, 'messages', postId, 'replies', replyId));
                 repliesCache[postId] = (repliesCache[postId] || []).filter(r => r.id !== replyId);
-                renderPosts();
+                rerenderReplyPanelFor(postId);
                 toast('🗑️ 답글이 삭제되었습니다');
             } catch (e) {
                 console.error(e);
                 toast('삭제 실패: ' + e.message);
+            }
+        }
+
+        async function voteReply(postId, replyId, kind) {
+            const replies = repliesCache[postId];
+            if (!Array.isArray(replies)) return;
+            const reply = replies.find(r => r.id === replyId);
+            if (!reply) return;
+            const votes = getVotes();
+            const voteKey = `r:${postId}:${replyId}`;
+            const prev = votes[voteKey];
+            const kField = kind === 'like' ? 'likes' : 'dislikes';
+            const pField = prev === 'like' ? 'likes' : 'dislikes';
+
+            const updates = {};
+            const rollback = {};
+
+            if (!prev) {
+                updates[kField] = increment(1);
+                rollback[kField] = reply[kField] || 0;
+                reply[kField] = (reply[kField] || 0) + 1;
+                votes[voteKey] = kind;
+            } else if (prev === kind) {
+                updates[kField] = increment(-1);
+                rollback[kField] = reply[kField] || 0;
+                reply[kField] = Math.max(0, (reply[kField] || 0) - 1);
+                delete votes[voteKey];
+            } else {
+                updates[kField] = increment(1);
+                updates[pField] = increment(-1);
+                rollback[kField] = reply[kField] || 0;
+                rollback[pField] = reply[pField] || 0;
+                reply[kField] = (reply[kField] || 0) + 1;
+                reply[pField] = Math.max(0, (reply[pField] || 0) - 1);
+                votes[voteKey] = kind;
+            }
+            localStorage.setItem('wall-votes', JSON.stringify(votes));
+            rerenderReplyPanelFor(postId);
+            try {
+                await updateDoc(doc(db, 'messages', postId, 'replies', replyId), updates);
+            } catch (e) {
+                console.error(e);
+                Object.keys(rollback).forEach(k => reply[k] = rollback[k]);
+                const v = getVotes();
+                if (!prev) delete v[voteKey];
+                else v[voteKey] = prev;
+                localStorage.setItem('wall-votes', JSON.stringify(v));
+                rerenderReplyPanelFor(postId);
+                toast('답글 투표 실패');
             }
         }
 
@@ -918,28 +1076,6 @@
                 else saveVote(id, prev);
                 renderPosts();
                 toast('투표 실패');
-            }
-        }
-
-        async function reportPost(id) {
-            const reportedBy = getReports();
-            if (reportedBy.includes(id)) return;
-            const post = allPosts.find(p => p.id === id);
-            if (!post) return;
-            if (!confirm('이 글을 신고하고 숨기시겠어요?\n신고 후 이 글은 본인 화면에서 보이지 않습니다.')) return;
-            markReported(id);
-            post.reports = (post.reports || 0) + 1;
-            renderPosts();
-            try {
-                await updateDoc(doc(db, 'messages', id), { reports: increment(1) });
-                toast('🚨 신고 접수 — 더 이상 보이지 않습니다');
-            } catch (e) {
-                console.error(e);
-                post.reports = Math.max(0, (post.reports || 1) - 1);
-                const r = getReports().filter(x => x !== id);
-                localStorage.setItem('wall-reports', JSON.stringify(r));
-                renderPosts();
-                toast('신고 실패: ' + e.message);
             }
         }
 
