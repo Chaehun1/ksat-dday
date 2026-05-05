@@ -1,30 +1,27 @@
 {
-  "_comment": "수능/모의고사 등급컷 아카이브. verified=true는 공식 발표(평가원/교육청), false는 사설/추정.",
-  "_schema_version": 1,
-  "_todo": "실제 등급컷 데이터를 채워넣을 것. 아래 entry는 구조 참고용 sample.",
+  "_schema_version": 2,
+  "_comment": "통합수능 22~27학년도 + 평가원/교육청 모의고사 등급컷 아카이브.",
+  "_engines": {
+    "table_raw": "영어/한국사 절대평가. cuts_raw[8] + grade_pct[9] (등급별 비율, 누적은 표시 시 계산)",
+    "linear": "통합수능 국·수. params.{a,b,c} 선형식 std = a*공통 + b*선택 + c. + grade_cuts_std + std_to_pct",
+    "named": "비선형 시험. JS 등록된 함수 호출 (named:foo)",
+    "table_full": "탐구 등 1대1 매칭. table[{raw, std, pct, grade}]"
+  },
   "exams": [
     {
-      "id": "sample-template",
+      "id": "2026-suneung",
       "year": 2026,
-      "type": "pyeongga",
+      "type": "suneung",
       "date": "2025-11-13",
-      "name": "2026학년도 대학수학능력시험 (샘플)",
+      "name": "2026학년도 대학수학능력시험",
       "source": "한국교육과정평가원",
-      "verified": false,
-      "_note": "샘플 데이터입니다. 실제 등급컷이 아닙니다.",
-      "cuts": {
-        "korean": {
-          "language-and-media": [0, 0, 0, 0, 0, 0, 0, 0],
-          "speech-and-writing": [0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        "math": {
-          "calculus": [0, 0, 0, 0, 0, 0, 0, 0],
-          "geometry": [0, 0, 0, 0, 0, 0, 0, 0],
-          "probability-statistics": [0, 0, 0, 0, 0, 0, 0, 0]
-        },
-        "english": [90, 80, 70, 60, 50, 40, 30, 20],
-        "korean-history": [40, 35, 30, 25, 20, 15, 10, 5],
-        "explore": {}
+      "verified": true,
+      "subjects": {
+        "english": {
+          "engine": "table_raw",
+          "cuts_raw":  [90, 80, 70, 60, 50, 40, 30, 20],
+          "grade_pct": [3.11, 14.35, 26.30, 24.53, 13.28, 8.02, 5.64, 3.65, 1.13]
+        }
       }
     }
   ]

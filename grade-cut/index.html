@@ -434,11 +434,11 @@
                     <h3>📋 작업 로드맵</h3>
                     <ul class="roadmap-list">
                         <li><span class="check">✓</span> 페이지 스캐폴드 + 공개/개발 두 모드</li>
-                        <li><span class="check">✓</span> cuts.json 스키마 정의 + 샘플</li>
-                        <li><span class="pend">○</span> 실제 등급컷 데이터 입력 (최근 3~5년)</li>
-                        <li><span class="pend">○</span> 연도/시험종류/과목 필터 동작</li>
-                        <li><span class="pend">○</span> 빠른 등급 조회 (원점수 → 등급)</li>
-                        <li><span class="pend">○</span> 연도별 변동 추이 그래프 (Chart.js)</li>
+                        <li><span class="check">✓</span> 스키마 v2 (engine 분기) + table_raw 엔진</li>
+                        <li><span class="pend">○</span> 영어/한국사 22~26 데이터 입력</li>
+                        <li><span class="pend">○</span> 통합수능 국·수 linear 엔진 + 22~26 데이터</li>
+                        <li><span class="pend">○</span> 탐구 table_full 엔진 + 22~26 데이터</li>
+                        <li><span class="pend">○</span> 평가원/교육청 모의고사 데이터</li>
                         <li><span class="pend">○</span> 사이트맵 등록 + 공개 전환</li>
                     </ul>
                 </div>
@@ -471,19 +471,10 @@
                             <label>시험</label>
                             <select id="lookupExam"></select>
                             <label>과목</label>
-                            <select id="lookupSubject">
-                                <option value="korean.language-and-media">국어 / 언어와매체</option>
-                                <option value="korean.speech-and-writing">국어 / 화법과작문</option>
-                                <option value="math.calculus">수학 / 미적분</option>
-                                <option value="math.geometry">수학 / 기하</option>
-                                <option value="math.probability-statistics">수학 / 확률과통계</option>
-                                <option value="english">영어 (절대평가)</option>
-                                <option value="korean-history">한국사 (절대평가)</option>
-                            </select>
-                            <label>원점수</label>
-                            <input type="number" id="lookupScore" min="0" max="200" placeholder="80">
+                            <select id="lookupSubject"></select>
                         </div>
-                        <div class="lookup-result" id="lookupResult">시험과 과목을 선택하고 원점수를 입력하세요.</div>
+                        <div class="lookup-row" id="lookupInputs"></div>
+                        <div class="lookup-result" id="lookupResult">시험과 과목을 선택하세요.</div>
                     </div>
                 </div>
 
@@ -549,25 +540,121 @@
             initDevPanel();
         }
 
-        // ── 개발자 패널 ──────────────────────────
-        const SUBJECT_LABELS = {
-            'korean.language-and-media':     '국어 / 언어와매체',
-            'korean.speech-and-writing':     '국어 / 화법과작문',
-            'math.calculus':                 '수학 / 미적분',
-            'math.geometry':                 '수학 / 기하',
-            'math.probability-statistics':   '수학 / 확률과통계',
-            'english':                       '영어',
-            'korean-history':                '한국사'
+        // ── 개발자 패널 (schema v2: engine 분기) ──────────
+        const SUBJECT_KEYS = {
+            'english':        { label: '영어' },
+            'korean-history': { label: '한국사' },
+            'korean':         { label: '국어' },
+            'math':           { label: '수학' },
+            'explore':        { label: '탐구' }
         };
         const TYPE_LABELS = {
             suneung: '수능',
             pyeongga: '평가원 모의평가',
-            gyoyukcheong: '교육청 모의고사',
-            private: '사설'
+            gyoyukcheong: '교육청 모의고사'
         };
 
         let cutsData = null;
 
+        // ── 엔진 정의 ──────────────────────────────
+        // 각 엔진은 { inputs(subject), lookup(subject, vals), archive(subjectKey, subject) } 구현
+        const ENGINES = {
+            // 영어/한국사: 절대평가. cuts_raw[8] + grade_pct[9].
+            table_raw: {
+                inputs(subject) {
+                    return [{ key: 'raw', label: '원점수', min: 0, max: 100, placeholder: '0~100' }];
+                },
+                lookup(subject, vals) {
+                    const score = Number(vals.raw);
+                    if (Number.isNaN(score)) return null;
+                    const grade = cutsToGrade(score, subject.cuts_raw);
+                    const cum = cumulativeFromPer(subject.grade_pct);
+                    return {
+                        primary: `${grade}등급`,
+                        details: [
+                            `원점수 ${score}`,
+                            cum && cum[grade-1] != null ? `누적 비율 ${cum[grade-1].toFixed(2)}%` : null
+                        ].filter(Boolean)
+                    };
+                },
+                archive(subjectKey, subject) {
+                    const label = SUBJECT_KEYS[subjectKey]?.label || subjectKey;
+                    const cuts = subject.cuts_raw || [];
+                    const per  = subject.grade_pct || [];
+                    const cum  = cumulativeFromPer(per);
+                    const rows = [];
+                    rows.push(`<tr>
+                        <th>등급</th><th>원점수</th>
+                        <th>비율</th><th>누적</th>
+                    </tr>`);
+                    for (let g = 1; g <= 9; g++) {
+                        const range = gradeRangeLabel(g, cuts);
+                        const p     = per[g-1] != null ? per[g-1].toFixed(2) + '%' : '-';
+                        const c     = cum && cum[g-1] != null ? cum[g-1].toFixed(2) + '%' : '-';
+                        rows.push(`<tr>
+                            <td class="subject">${g}등급</td>
+                            <td>${range}</td>
+                            <td>${p}</td>
+                            <td>${c}</td>
+                        </tr>`);
+                    }
+                    return `<div style="margin-top:12px;">
+                        <div style="font-weight:600; margin-bottom:6px;">${label} (절대평가)</div>
+                        <table class="cuts-table">${rows.join('')}</table>
+                    </div>`;
+                }
+            },
+
+            // 통합수능 국·수: 선형 표점식 (TODO)
+            linear: {
+                inputs() { return []; },
+                lookup() { return { primary: '미구현', details: ['linear 엔진은 아직 구현 안 됨'] }; },
+                archive(subjectKey, subject) {
+                    return `<div style="margin-top:12px; color:#888; font-size:0.88em;">⚙ ${SUBJECT_KEYS[subjectKey]?.label || subjectKey} (linear 엔진 — 구현 대기)</div>`;
+                }
+            },
+
+            // 탐구 등 1대1 매칭 (TODO)
+            table_full: {
+                inputs() { return []; },
+                lookup() { return { primary: '미구현', details: ['table_full 엔진은 아직 구현 안 됨'] }; },
+                archive(subjectKey, subject) {
+                    return `<div style="margin-top:12px; color:#888; font-size:0.88em;">⚙ ${SUBJECT_KEYS[subjectKey]?.label || subjectKey} (table_full 엔진 — 구현 대기)</div>`;
+                }
+            }
+        };
+
+        function getEngine(subject) {
+            return ENGINES[subject?.engine] || null;
+        }
+
+        function cutsToGrade(score, cuts) {
+            if (!Array.isArray(cuts)) return 9;
+            for (let i = 0; i < cuts.length; i++) {
+                if (score >= cuts[i]) return i + 1;
+            }
+            return cuts.length + 1; // 9
+        }
+
+        function cumulativeFromPer(per) {
+            if (!Array.isArray(per)) return null;
+            const out = [];
+            let acc = 0;
+            for (const p of per) { acc += p; out.push(acc); }
+            return out;
+        }
+
+        function gradeRangeLabel(grade, cuts) {
+            if (!Array.isArray(cuts) || cuts.length < 8) return '-';
+            if (grade === 1) return `${cuts[0]} 이상`;
+            if (grade === 9) return `${cuts[7]} 미만`;
+            // 2~8: cuts[grade-1] ~ cuts[grade-2]-1
+            const lo = cuts[grade - 1];
+            const hi = cuts[grade - 2] - 1;
+            return `${lo} ~ ${hi}`;
+        }
+
+        // ── 부트 + 이벤트 ──────────────────────────
         async function initDevPanel() {
             document.getElementById('devLogoutBtn').addEventListener('click', () => {
                 try { localStorage.removeItem(DEV_KEY); } catch (e) {}
@@ -576,13 +663,19 @@
 
             await loadCuts();
 
-            document.getElementById('filterYear').addEventListener('change', renderTable);
-            document.getElementById('filterType').addEventListener('change', renderTable);
-            document.getElementById('filterSubject').addEventListener('change', renderTable);
+            document.getElementById('filterYear').addEventListener('change', renderArchive);
+            document.getElementById('filterType').addEventListener('change', renderArchive);
+            document.getElementById('filterSubject').addEventListener('change', renderArchive);
 
-            document.getElementById('lookupExam').addEventListener('change', runLookup);
-            document.getElementById('lookupSubject').addEventListener('change', runLookup);
-            document.getElementById('lookupScore').addEventListener('input', runLookup);
+            document.getElementById('lookupExam').addEventListener('change', () => {
+                populateLookupSubjects();
+                renderLookupInputs();
+                runLookup();
+            });
+            document.getElementById('lookupSubject').addEventListener('change', () => {
+                renderLookupInputs();
+                runLookup();
+            });
 
             document.getElementById('reloadBtn').addEventListener('click', loadCuts);
             document.getElementById('applyBtn').addEventListener('click', applyEditorJson);
@@ -607,7 +700,9 @@
         function refreshAllUi() {
             populateYearFilter();
             populateExamSelect();
-            renderTable();
+            populateLookupSubjects();
+            renderLookupInputs();
+            renderArchive();
             runLookup();
         }
 
@@ -627,7 +722,78 @@
             ).join('');
         }
 
-        function getFiltered() {
+        function populateLookupSubjects() {
+            const sel  = document.getElementById('lookupSubject');
+            const cur  = sel.value;
+            const exam = cutsData.exams.find(e => e.id === document.getElementById('lookupExam').value);
+            if (!exam || !exam.subjects) {
+                sel.innerHTML = '<option value="">(과목 없음)</option>';
+                return;
+            }
+            const opts = [];
+            for (const [key, subj] of Object.entries(exam.subjects)) {
+                const label = SUBJECT_KEYS[key]?.label || key;
+                opts.push(`<option value="${key}">${label}</option>`);
+            }
+            sel.innerHTML = opts.length ? opts.join('') : '<option value="">(과목 없음)</option>';
+            if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+        }
+
+        function getCurrentLookupSubject() {
+            const exam = cutsData.exams.find(e => e.id === document.getElementById('lookupExam').value);
+            const key  = document.getElementById('lookupSubject').value;
+            if (!exam || !exam.subjects || !key) return null;
+            return exam.subjects[key] || null;
+        }
+
+        function renderLookupInputs() {
+            const wrap = document.getElementById('lookupInputs');
+            const subj = getCurrentLookupSubject();
+            const eng  = subj ? getEngine(subj) : null;
+            if (!subj || !eng) {
+                wrap.innerHTML = '';
+                return;
+            }
+            const inputs = eng.inputs(subj);
+            wrap.innerHTML = inputs.map(inp => `
+                <label>${inp.label}</label>
+                <input type="number" data-key="${inp.key}" min="${inp.min ?? 0}" max="${inp.max ?? 200}" placeholder="${inp.placeholder || ''}">
+            `).join('');
+            wrap.querySelectorAll('input').forEach(el => el.addEventListener('input', runLookup));
+        }
+
+        function runLookup() {
+            const out  = document.getElementById('lookupResult');
+            const exam = cutsData.exams.find(e => e.id === document.getElementById('lookupExam').value);
+            const subj = getCurrentLookupSubject();
+            const eng  = subj ? getEngine(subj) : null;
+            if (!exam || !subj || !eng) {
+                out.textContent = '시험과 과목을 선택하세요.';
+                return;
+            }
+            const inputs = eng.inputs(subj);
+            const vals = {};
+            const wrap = document.getElementById('lookupInputs');
+            for (const inp of inputs) {
+                const el = wrap.querySelector(`input[data-key="${inp.key}"]`);
+                vals[inp.key] = el ? el.value : '';
+                if (vals[inp.key] === '') {
+                    out.textContent = '점수를 입력하세요.';
+                    return;
+                }
+            }
+            const result = eng.lookup(subj, vals);
+            if (!result) { out.textContent = '값을 확인하세요.'; return; }
+            const verified = exam.verified ? '' : ' <span class="verified-no">⚠ 추정</span>';
+            const subjLabel = SUBJECT_KEYS[document.getElementById('lookupSubject').value]?.label || '';
+            out.innerHTML = `
+                ${exam.year} · ${subjLabel} ${verified}<br>
+                ${result.details.join(' · ')}
+                <span class="grade-pill">${result.primary}</span>
+            `;
+        }
+
+        function getFilteredExams() {
             const y = document.getElementById('filterYear').value;
             const t = document.getElementById('filterType').value;
             return cutsData.exams.filter(e => {
@@ -637,97 +803,37 @@
             });
         }
 
-        function renderTable() {
+        function renderArchive() {
             const wrap = document.getElementById('cutsTableWrap');
             const subjectFilter = document.getElementById('filterSubject').value;
-            const exams = getFiltered();
+            const exams = getFilteredExams();
             if (exams.length === 0) {
                 wrap.innerHTML = '<div class="empty">조건에 맞는 시험이 없습니다.</div>';
                 return;
             }
-            const rows = [];
+            const blocks = [];
             for (const exam of exams) {
-                const subjects = collectSubjectRows(exam, subjectFilter);
-                if (subjects.length === 0) continue;
-                rows.push(`<tr><th colspan="10" style="text-align:left; background:transparent; padding-top:14px;">
-                    ${exam.year} · ${exam.name}
-                    ${exam.verified ? '' : '<span class="verified-no">⚠ 추정</span>'}
-                </th></tr>`);
-                rows.push(`<tr>
-                    <th style="text-align:left;">과목</th>
-                    <th>1등급</th><th>2등급</th><th>3등급</th><th>4등급</th>
-                    <th>5등급</th><th>6등급</th><th>7등급</th><th>8등급</th>
-                </tr>`);
-                for (const s of subjects) {
-                    rows.push(`<tr>
-                        <td class="subject">${s.label}</td>
-                        ${s.cuts.map(c => `<td>${c ?? '-'}</td>`).join('')}
-                    </tr>`);
+                if (!exam.subjects) continue;
+                const renderedSubjects = [];
+                for (const [key, subj] of Object.entries(exam.subjects)) {
+                    if (subjectFilter && key !== subjectFilter) continue;
+                    const eng = getEngine(subj);
+                    if (!eng) continue;
+                    renderedSubjects.push(eng.archive(key, subj));
                 }
+                if (renderedSubjects.length === 0) continue;
+                blocks.push(`
+                    <div style="margin-top:18px;">
+                        <div style="font-weight:700; font-size:1.02em;">
+                            ${exam.year} · ${exam.name}
+                            ${exam.verified ? '' : '<span class="verified-no" style="margin-left:8px;">⚠ 추정</span>'}
+                        </div>
+                        <div style="font-size:0.78em; color:#888; margin-bottom:4px;">${TYPE_LABELS[exam.type] || exam.type} · ${exam.date || ''}</div>
+                        ${renderedSubjects.join('')}
+                    </div>
+                `);
             }
-            wrap.innerHTML = `<table class="cuts-table">${rows.join('')}</table>`;
-        }
-
-        function collectSubjectRows(exam, filter) {
-            const out = [];
-            const c = exam.cuts || {};
-            function take(key, label, arr) {
-                if (!arr) return;
-                if (filter && !key.startsWith(filter)) return;
-                out.push({ label, cuts: arr });
-            }
-            if (c.korean) {
-                take('korean', '국어 / 언어와매체', c.korean['language-and-media']);
-                take('korean', '국어 / 화법과작문', c.korean['speech-and-writing']);
-            }
-            if (c.math) {
-                take('math', '수학 / 미적분',     c.math.calculus);
-                take('math', '수학 / 기하',       c.math.geometry);
-                take('math', '수학 / 확률과통계', c.math['probability-statistics']);
-            }
-            take('english',        '영어 (절대)',   c.english);
-            take('korean-history', '한국사 (절대)', c['korean-history']);
-            if (c.explore && filter !== 'korean' && filter !== 'math' && filter !== 'english' && filter !== 'korean-history') {
-                for (const [k, arr] of Object.entries(c.explore)) {
-                    take('explore', '탐구 / ' + k, arr);
-                }
-            }
-            return out;
-        }
-
-        function runLookup() {
-            const examId = document.getElementById('lookupExam').value;
-            const subjectKey = document.getElementById('lookupSubject').value;
-            const scoreStr = document.getElementById('lookupScore').value;
-            const out = document.getElementById('lookupResult');
-            if (!examId || !subjectKey || scoreStr === '') {
-                out.textContent = '시험과 과목을 선택하고 원점수를 입력하세요.';
-                return;
-            }
-            const score = Number(scoreStr);
-            if (Number.isNaN(score)) { out.textContent = '원점수를 숫자로 입력하세요.'; return; }
-            const exam = cutsData.exams.find(e => e.id === examId);
-            if (!exam) { out.textContent = '시험을 찾을 수 없습니다.'; return; }
-            const cuts = resolveCutsByKey(exam, subjectKey);
-            if (!cuts) { out.textContent = '이 시험에는 해당 과목 데이터가 없습니다.'; return; }
-            const grade = scoreToGrade(score, cuts);
-            const verifiedNote = exam.verified ? '' : '<span class="verified-no"> · ⚠ 추정 데이터</span>';
-            out.innerHTML = `${exam.year} · ${SUBJECT_LABELS[subjectKey]} · 원점수 ${score} → <span class="grade-pill">${grade}등급</span>${verifiedNote}`;
-        }
-
-        function resolveCutsByKey(exam, key) {
-            const parts = key.split('.');
-            let v = exam.cuts;
-            for (const p of parts) { if (!v) return null; v = v[p]; }
-            return Array.isArray(v) ? v : null;
-        }
-
-        function scoreToGrade(score, cuts) {
-            // cuts: [1등급컷, 2등급컷, ..., 8등급컷] — 등급컷 이상이면 해당 등급
-            for (let i = 0; i < cuts.length; i++) {
-                if (score >= cuts[i]) return i + 1;
-            }
-            return 9;
+            wrap.innerHTML = blocks.length ? blocks.join('') : '<div class="empty">표시할 데이터가 없습니다.</div>';
         }
 
         function applyEditorJson() {
