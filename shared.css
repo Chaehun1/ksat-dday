@@ -180,10 +180,11 @@ html[data-theme="dark"] .nav-link.active      { background: #667eea; color: #fff
 @media (max-width: 640px) {
     .fab-btn { width: 32px; height: 32px; font-size: 13px; }
     .particle { font-size: 1.1em; }
-    .nav-bar  { gap: 4px; padding: 5px; }
+    .nav-bar  { gap: 4px; padding: 5px; margin-top: 44px; }
     .nav-link { padding: 8px 14px; font-size: 0.86em; }
+    .theme-menu { right: 0; min-width: 150px; }
 }
 @media (max-width: 420px) {
-    .nav-bar  { gap: 3px; padding: 4px; }
+    .nav-bar  { gap: 3px; padding: 4px; margin-top: 42px; }
     .nav-link { padding: 7px 11px; font-size: 0.8em; }
 }

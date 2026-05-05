@@ -369,6 +369,26 @@
         html[data-theme="dark"] .roadmap-list li { border-bottom-color: #2a2d40; }
         .roadmap-list .check { color: #20bf6b; flex-shrink: 0; }
         .roadmap-list .pend { color: #aaa; flex-shrink: 0; }
+
+        /* ── Mobile tuning ── */
+        @media (max-width: 640px) {
+            .coming-soon { padding: 36px 20px 32px; border-radius: 18px; }
+            .cs-icon  { font-size: 2.6em; margin-bottom: 8px; }
+            .cs-title { font-size: 1.5em; }
+            .cs-subtitle { font-size: 0.92em; }
+            .cs-features { gap: 10px; }
+            .cs-feature  { padding: 12px 14px; font-size: 0.86em; }
+            .cs-feature .em { font-size: 1.1em; }
+            .cs-back { padding: 11px 22px; font-size: 0.88em; }
+            .dev-panel  { padding: 22px 18px; border-radius: 16px; }
+            .dev-title  { font-size: 1.15em; }
+            .filter-row select, .filter-row input { flex: 1 1 100%; }
+            .lookup-row { gap: 6px; }
+            .lookup-row label { width: 100%; }
+            .lookup-row input[type="number"] { width: 100%; }
+            .cuts-table { font-size: 0.78em; }
+            .cuts-table th, .cuts-table td { padding: 6px 4px; }
+        }
     </style>
 </head>
 <body>
@@ -376,6 +396,18 @@
 
     <div class="fab-actions">
         <button class="fab-btn" id="darkBtn" aria-label="다크모드 전환" title="다크모드 전환">🌙</button>
+        <div style="position: relative;">
+            <button class="fab-btn" id="paletteBtn" title="테마 선택" aria-label="테마 선택">🎨</button>
+            <div class="theme-menu" id="themeMenu" role="menu">
+                <button class="theme-opt" data-season="auto"><span class="emoji">✨</span><span>자동</span></button>
+                <button class="theme-opt" data-season="default"><span class="emoji">🎲</span><span>기본</span></button>
+                <button class="theme-opt" data-season="spring"><span class="emoji">🌸</span><span>봄</span></button>
+                <button class="theme-opt" data-season="summer"><span class="emoji">🌊</span><span>여름</span></button>
+                <button class="theme-opt" data-season="autumn"><span class="emoji">🍁</span><span>가을</span></button>
+                <button class="theme-opt" data-season="winter"><span class="emoji">❄️</span><span>겨울</span></button>
+                <button class="theme-opt" data-season="imminent"><span class="emoji">🔥</span><span>수능 임박</span></button>
+            </div>
+        </div>
     </div>
 
     <nav class="nav-bar" aria-label="주 메뉴">
@@ -506,9 +538,37 @@
     <script>
         // ── 다크모드 + 시즌 ─────────────────────────
         initDarkTheme();
-        document.documentElement.setAttribute('data-season', getAutoSeason());
+        let seasonChoice = getSeasonChoice();
+        applySeason(resolveSeason(seasonChoice));
         setupDarkToggle('darkBtn');
-        renderParticles(getAutoSeason());
+        setupPaletteMenu('paletteBtn', 'themeMenu');
+        updateThemeMenuUI();
+
+        document.querySelectorAll('.theme-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                seasonChoice = btn.dataset.season;
+                saveSeasonChoice(seasonChoice);
+                applySeason(resolveSeason(seasonChoice));
+                updateThemeMenuUI();
+                document.getElementById('themeMenu').classList.remove('open');
+            });
+        });
+
+        function applySeason(s) {
+            if (s) {
+                document.documentElement.setAttribute('data-season', s);
+                renderParticles(s);
+            } else {
+                document.documentElement.removeAttribute('data-season');
+                const c = document.getElementById('particles'); if (c) c.innerHTML = '';
+            }
+        }
+
+        function updateThemeMenuUI() {
+            document.querySelectorAll('.theme-opt').forEach(o => {
+                o.classList.toggle('selected', o.dataset.season === seasonChoice);
+            });
+        }
 
         // ── 개발자 모드 게이트 ──────────────────────
         const DEV_SECRET = 'snustatletsgozz';
