@@ -1,0 +1,31 @@
+{
+  "_comment": "수능/모의고사 등급컷 아카이브. verified=true는 공식 발표(평가원/교육청), false는 사설/추정.",
+  "_schema_version": 1,
+  "_todo": "실제 등급컷 데이터를 채워넣을 것. 아래 entry는 구조 참고용 sample.",
+  "exams": [
+    {
+      "id": "sample-template",
+      "year": 2026,
+      "type": "pyeongga",
+      "date": "2025-11-13",
+      "name": "2026학년도 대학수학능력시험 (샘플)",
+      "source": "한국교육과정평가원",
+      "verified": false,
+      "_note": "샘플 데이터입니다. 실제 등급컷이 아닙니다.",
+      "cuts": {
+        "korean": {
+          "language-and-media": [0, 0, 0, 0, 0, 0, 0, 0],
+          "speech-and-writing": [0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "math": {
+          "calculus": [0, 0, 0, 0, 0, 0, 0, 0],
+          "geometry": [0, 0, 0, 0, 0, 0, 0, 0],
+          "probability-statistics": [0, 0, 0, 0, 0, 0, 0, 0]
+        },
+        "english": [90, 80, 70, 60, 50, 40, 30, 20],
+        "korean-history": [40, 35, 30, 25, 20, 15, 10, 5],
+        "explore": {}
+      }
+    }
+  ]
+}
