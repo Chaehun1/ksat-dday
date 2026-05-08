@@ -180,11 +180,9 @@
         .scope-grade-section { margin-bottom: 16px; }
         .scope-grade-section:last-child { margin-bottom: 0; }
         .scope-grade-label { font-size: 0.85em; font-weight: 700; color: #667eea; margin-bottom: 8px; }
-        .scope-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
-        .scope-table th { text-align: left; padding: 8px 10px; background: #f8f9fa; font-weight: 700; color: #444; width: 90px; vertical-align: top; }
-        .scope-table td { padding: 8px 10px; color: #333; font-weight: 500; line-height: 1.6; vertical-align: top; white-space: pre-line; }
-        .scope-table tr { border-bottom: 1px solid #eee; }
-        .scope-table tr:last-child { border-bottom: none; }
+        .scope-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; font-size: 0.95em; }
+        .scope-table th { text-align: left; padding: 9px 12px; background: #f1f3f8; font-weight: 700; color: #444; width: 90px; vertical-align: top; border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        .scope-table td { padding: 9px 12px; color: #333; font-weight: 500; line-height: 1.6; vertical-align: top; white-space: pre-line; background: #f8f9fa; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
         .scope-empty { text-align: center; padding: 24px 16px; color: #aaa; font-size: 0.92em; }
 
         html[data-theme="dark"] .scope-modal { background: #1e2030; color: #e8e8ea; }
@@ -193,9 +191,8 @@
         html[data-theme="dark"] .scope-modal-close { color: #888; }
         html[data-theme="dark"] .scope-modal-close:hover { color: #ddd; }
         html[data-theme="dark"] .scope-grade-label { color: #9aa5ea; }
-        html[data-theme="dark"] .scope-table th { background: #2a2d40; color: #c0c0d0; }
-        html[data-theme="dark"] .scope-table td { color: #d0d0d8; }
-        html[data-theme="dark"] .scope-table tr { border-bottom-color: #333; }
+        html[data-theme="dark"] .scope-table th { background: #2a2e44; color: #c0c0d0; }
+        html[data-theme="dark"] .scope-table td { background: #232636; color: #d0d0d8; }
         html[data-theme="dark"] .scope-empty { color: #777; }
 
         @media (max-width: 860px) {
