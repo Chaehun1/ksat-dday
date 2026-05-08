@@ -366,8 +366,13 @@
         ];
 
         // scope 작성 형식 (옵션):
-        //   단일 학년: scope: [ { subject: '국어', range: '...' }, ... ]
-        //   복수 학년: scope: { '고3': [{subject,range},...], '고2': [...] }
+        //   단일/공통: scope: [ { subject: '국어', range: '...' }, ... ]
+        //   학년 섹션: 활성화된 필터(source)와 일치하는 섹션만 표시, 정렬은 grade 내림차순 (고3 → 고2 → 고1)
+        //     scope: [
+        //       { grade: 3, source: 'pyeongwon',   label: '고3 (평가원)',  rows: [...] },
+        //       { grade: 2, source: 'gyoyukchung', label: '고2 (교육청)',  rows: [...] },
+        //       { grade: 1, source: 'gyoyukchung', label: '고1 (교육청)',  rows: [...] }
+        //     ]
         // scope 미지정 시 모달에 "곧 업데이트" 안내가 뜸
         var schedules = [
             { name: '3월 서바이벌 프로', date: '2026-03-16', displayDate: '2026년 3월 16일 (월)', category: 'surf' },
@@ -378,8 +383,8 @@
             { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3' },
             { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff' },
             { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf' },
-            { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: {
-                '고3 (평가원)': [
+            { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
+                { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
                     { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률\n[미적분] Ⅱ. 미분법\n[기하] Ⅱ. 평면벡터' },
                     { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
@@ -388,8 +393,9 @@
                     { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅳ. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환' },
                     { subject: '직업탐구', range: '6과목 전 범위\n(성공적인 직업 생활, 농업 기초 기술, 공업 일반,\n 상업 경제, 수산·해운 산업 기초, 인간 발달)' },
                     { subject: '제2외국어/한문', range: '9과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 베트남어Ⅰ, 아랍어Ⅰ, 한문Ⅰ)' }
-                ]
-            } },
+                ] }
+                // 고2/고1 (교육청 6월 학평) 출제 범위 데이터 도착 시 같은 형식으로 추가
+            ] },
             { name: '6월 서바이벌 프로', date: '2026-06-28', displayDate: '2026년 6월 28일 (일)', category: 'surf' },
             { name: '7월 모의고사', date: '2026-07-08', displayDate: '2026년 7월 8일 (수)', category: 'gyoyukchung', grades: '고3' },
             { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff' },
@@ -608,9 +614,24 @@
             var hasData = scope && (Array.isArray(scope) ? scope.length > 0 : Object.keys(scope).length > 0);
             if (!hasData) {
                 body.innerHTML = '<div class="scope-empty">📋 출제 범위가 곧 업데이트될 예정이에요</div>';
-            } else if (Array.isArray(scope)) {
+            } else if (Array.isArray(scope) && scope[0] && scope[0].subject) {
+                // 단순 형식: [{subject, range}]
                 body.innerHTML = renderScopeTable(scope);
+            } else if (Array.isArray(scope)) {
+                // 섹션 형식: [{grade, source, label, rows}]
+                var sections = scope.filter(function(s){ return !s.source || activeFilters.indexOf(s.source) > -1; });
+                sections.sort(function(a,b){ return (b.grade||0) - (a.grade||0); });
+                if (!sections.length) {
+                    body.innerHTML = '<div class="scope-empty">📋 선택한 필터에 해당하는 출제 범위가 없어요</div>';
+                } else {
+                    var html = '';
+                    sections.forEach(function(s){
+                        html += '<div class="scope-grade-section"><div class="scope-grade-label">'+s.label+'</div>'+renderScopeTable(s.rows)+'</div>';
+                    });
+                    body.innerHTML = html;
+                }
             } else {
+                // 레거시 객체 형식: {label: rows}
                 var html = '';
                 Object.keys(scope).forEach(function(grade){
                     html += '<div class="scope-grade-section"><div class="scope-grade-label">'+grade+'</div>'+renderScopeTable(scope[grade])+'</div>';
