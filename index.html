@@ -182,7 +182,7 @@
         .scope-grade-label { font-size: 0.85em; font-weight: 700; color: #667eea; margin-bottom: 8px; }
         .scope-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
         .scope-table th { text-align: left; padding: 8px 10px; background: #f8f9fa; font-weight: 700; color: #444; width: 90px; vertical-align: top; border-radius: 6px; }
-        .scope-table td { padding: 8px 10px; color: #333; font-weight: 500; line-height: 1.6; vertical-align: top; }
+        .scope-table td { padding: 8px 10px; color: #333; font-weight: 500; line-height: 1.6; vertical-align: top; white-space: pre-line; }
         .scope-table tr { border-bottom: 1px solid #eee; }
         .scope-table tr:last-child { border-bottom: none; }
         .scope-empty { text-align: center; padding: 24px 16px; color: #aaa; font-size: 0.92em; }
@@ -378,7 +378,18 @@
             { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3' },
             { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff' },
             { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf' },
-            { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' } },
+            { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: {
+                '고3 (평가원)': [
+                    { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                    { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률 [12확통02-07]\n[미적분] Ⅱ. 미분법 [12미적02-14]\n[기하] Ⅱ. 평면벡터 [12기하02-05]' },
+                    { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                    { subject: '한국사', range: '전 범위' },
+                    { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                    { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장 [12물리Ⅱ02-08]\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매 [12화학Ⅱ03-03]\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅳ. 유전자 발현의 조절 [12생과Ⅱ04-06]\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환 [12지과Ⅱ05-06]' },
+                    { subject: '직업탐구', range: '6과목 전 범위\n(성공적인 직업 생활, 농업 기초 기술, 공업 일반,\n 상업 경제, 수산·해운 산업 기초, 인간 발달)' },
+                    { subject: '제2외국어/한문', range: '9과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 베트남어Ⅰ, 아랍어Ⅰ, 한문Ⅰ)' }
+                ]
+            } },
             { name: '6월 서바이벌 프로', date: '2026-06-28', displayDate: '2026년 6월 28일 (일)', category: 'surf' },
             { name: '7월 모의고사', date: '2026-07-08', displayDate: '2026년 7월 8일 (수)', category: 'gyoyukchung', grades: '고3' },
             { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff' },
