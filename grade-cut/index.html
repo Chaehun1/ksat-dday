@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EQF5D05DY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9EQF5D05DY');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>등급컷 아카이브 (준비 중) | 2027 수능 디데이</title>
@@ -919,6 +927,14 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        // nav-bar 페이지 이동 추적
+        document.querySelectorAll('.nav-link').forEach(function(a){
+            a.addEventListener('click', function(){
+                var dest = a.getAttribute('href') || '';
+                if (typeof gtag === 'function') gtag('event', 'page_navigate', { destination: dest });
+            });
+        });
     </script>
 </body>
 </html>

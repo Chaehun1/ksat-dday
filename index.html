@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EQF5D05DY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9EQF5D05DY');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>수능 디데이 카운터 | 2027 수능 D-day | 6모 디데이 | 모의고사 일정</title>
@@ -579,6 +587,7 @@
         function switchMode(mode) {
             if (currentMode === mode) return;
             currentMode = mode; saveMode();
+            if (typeof gtag === 'function') gtag('event', 'tab_switch', { tab_name: mode });
             document.getElementById('tab-suneung').classList.toggle('active', mode === 'suneung');
             document.getElementById('tab-6mo').classList.toggle('active', mode === '6mo');
             var numEl = document.getElementById('mainDday');
@@ -708,6 +717,7 @@
         }
 
         function openScopeModal(item) {
+            if (typeof gtag === 'function') gtag('event', 'exam_click', { exam_name: item.name });
             var modal = document.getElementById('scopeModal');
             document.getElementById('scopeModalTitle').textContent = item.displayName || item.name;
             document.getElementById('scopeModalDate').textContent = item.displayDate;
@@ -763,6 +773,7 @@
         initDarkTheme();
         setupDarkToggle('themeToggle', function(next){
             showToast(next === 'dark' ? '🌙 다크모드 ON' : '☀️ 라이트모드 ON');
+            if (typeof gtag === 'function') gtag('event', 'theme_change', { theme: next });
         });
         setupPaletteMenu('paletteBtn', 'themeMenu');
         var themeMenu = document.getElementById('themeMenu');
@@ -774,6 +785,7 @@
                 themeMenu.classList.remove('open');
                 var labels = { auto:'✨ 자동', 'default':'🎲 기본', spring:'🌸 봄', summer:'🌊 여름', autumn:'🍁 가을', winter:'❄️ 겨울', imminent:'🔥 수능 임박' };
                 showToast(labels[val] + ' 테마 적용');
+                if (typeof gtag === 'function') gtag('event', 'theme_change', { theme: val });
             });
         });
 
@@ -789,6 +801,14 @@
             document.getElementById('progressFill').classList.add('mode-6mo');
             document.getElementById('progressPercent').style.color = '#11998e';
         }
+
+        // nav-bar 페이지 이동 추적
+        document.querySelectorAll('.nav-link').forEach(function(a){
+            a.addEventListener('click', function(){
+                var dest = a.getAttribute('href') || '';
+                if (typeof gtag === 'function') gtag('event', 'page_navigate', { destination: dest });
+            });
+        });
 
         applyTheme();
         updateAll();

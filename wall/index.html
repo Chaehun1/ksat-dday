@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EQF5D05DY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9EQF5D05DY');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>익명 게시판 | 수능 디데이 카운터</title>
@@ -1128,6 +1136,14 @@
         window.addEventListener('offline', () => { setOfflineUI(true);  toast('⚠️ 인터넷 연결이 끊어졌습니다'); });
         window.addEventListener('online',  () => { setOfflineUI(false); toast('✅ 다시 연결되었습니다'); });
         if (!navigator.onLine) setOfflineUI(true);
+
+        // nav-bar 페이지 이동 추적
+        document.querySelectorAll('.nav-link').forEach(function(a){
+            a.addEventListener('click', function(){
+                var dest = a.getAttribute('href') || '';
+                if (typeof gtag === 'function') gtag('event', 'page_navigate', { destination: dest });
+            });
+        });
     </script>
 </body>
 </html>
