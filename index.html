@@ -377,15 +377,26 @@
         //       { grade: 1, source: 'gyoyukchung', label: '고1 (교육청)',  rows: [...] }
         //     ]
         // scope 미지정 시 모달에 "곧 업데이트" 안내가 뜸
+
+        // 사설 모의고사(서프/더프 등) 공통 scope: 직업탐구·제2외국어/한문 미시행, 나머지 전 범위
+        var SURF_SCOPE = [
+            { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+            { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] 전 범위\n[미적분] 전 범위\n[기하] 전 범위' },
+            { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+            { subject: '한국사', range: '전 범위' },
+            { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+            { subject: '과학탐구', range: '8과목 전 범위\n(물리학Ⅰ, 물리학Ⅱ, 화학Ⅰ, 화학Ⅱ,\n 생명과학Ⅰ, 생명과학Ⅱ, 지구과학Ⅰ, 지구과학Ⅱ)' }
+        ];
+
         var schedules = [
-            { name: '3월 서바이벌 프로', date: '2026-03-16', displayDate: '2026년 3월 16일 (월)', category: 'surf' },
+            { name: '3월 서바이벌 프로', date: '2026-03-16', displayDate: '2026년 3월 16일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '3월 더 프리미엄', date: '2026-03-18', displayDate: '2026년 3월 18일 (수)', category: 'duff' },
             { name: '3월 모의고사', date: '2026-03-24', displayDate: '2026년 3월 24일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3' },
             { name: '4월 더 프리미엄', date: '2026-04-17', displayDate: '2026년 4월 17일 (금)', category: 'duff' },
-            { name: '4월 서바이벌 프로', date: '2026-04-26', displayDate: '2026년 4월 26일 (일)', category: 'surf' },
+            { name: '4월 서바이벌 프로', date: '2026-04-26', displayDate: '2026년 4월 26일 (일)', category: 'surf', scope: SURF_SCOPE },
             { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3' },
             { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff' },
-            { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf' },
+            { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
                 { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
@@ -399,7 +410,7 @@
                 ] }
                 // 고2/고1 (교육청 6월 학평) 출제 범위 데이터 도착 시 같은 형식으로 추가
             ] },
-            { name: '6월 서바이벌 프로', date: '2026-06-28', displayDate: '2026년 6월 28일 (일)', category: 'surf' },
+            { name: '6월 서바이벌 프로', date: '2026-06-28', displayDate: '2026년 6월 28일 (일)', category: 'surf', scope: SURF_SCOPE },
             { name: '7월 모의고사', date: '2026-07-08', displayDate: '2026년 7월 8일 (수)', category: 'gyoyukchung', grades: '고3', scope: [
                 { grade: 3, source: 'gyoyukchung', label: '고3 (교육청)', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
@@ -411,8 +422,8 @@
                 ] }
             ] },
             { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff' },
-            { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf' },
-            { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf' },
+            { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf', scope: SURF_SCOPE },
+            { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff' },
             { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
                 { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
@@ -428,8 +439,8 @@
             ] },
             { name: '수시 원서 접수 시작', date: '2026-09-07', displayDate: '2026년 9월 7일 (월)', category: 'etc' },
             { name: '9월 더 프리미엄', date: '2026-09-16', displayDate: '2026년 9월 16일 (수)', category: 'duff' },
-            { name: '9월 서바이벌 프로', date: '2026-09-24', displayDate: '2026년 9월 24일 (목)', category: 'surf' },
-            { name: '10월 서바이벌 프로', date: '2026-10-09', displayDate: '2026년 10월 9일 (금)', category: 'surf' },
+            { name: '9월 서바이벌 프로', date: '2026-09-24', displayDate: '2026년 9월 24일 (목)', category: 'surf', scope: SURF_SCOPE },
+            { name: '10월 서바이벌 프로', date: '2026-10-09', displayDate: '2026년 10월 9일 (금)', category: 'surf', scope: SURF_SCOPE },
             { name: '10월 더 프리미엄', date: '2026-10-15', displayDate: '2026년 10월 15일 (목)', category: 'duff' },
             { name: '10월 모의고사', date: '2026-10-20', displayDate: '2026년 10월 20일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3', scope: [
                 { grade: 3, source: 'gyoyukchung', label: '고3 (교육청)', rows: [
@@ -444,7 +455,7 @@
                 ] }
             ] },
             { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff' },
-            { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf' },
+            { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true, scope: [
                 { grade: 3, source: 'suneung', label: '고3', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
