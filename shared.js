@@ -49,25 +49,10 @@ function getActiveSixMo() {
 }
 
 function renderParticles(season) {
+    // 파티클 효과 비활성화 (저사양·일부 환경에서 렉 발생)
+    // SEASON_PARTICLES 데이터/CSS는 유지 — 부활 시 아래 본문 복원만 하면 됨
     const container = document.getElementById('particles');
-    if (!container) return;
-    container.innerHTML = '';
-    const cfg = SEASON_PARTICLES[season];
-    if (!cfg) return;
-    for (let i = 0; i < cfg.count; i++) {
-        const p = document.createElement('span');
-        p.className = 'particle ' + cfg.type;
-        p.textContent = cfg.chars[Math.floor(Math.random() * cfg.chars.length)];
-        const dur = cfg.min + Math.random() * (cfg.max - cfg.min);
-        p.style.left = (Math.random() * 100) + 'vw';
-        p.style.animationDuration = dur + 's';
-        p.style.animationDelay = (Math.random() * cfg.max * -1) + 's';
-        p.style.fontSize = (0.9 + Math.random() * 1.1) + 'em';
-        p.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
-        p.style.setProperty('--spin',  (Math.random() * 720 - 360) + 'deg');
-        if (cfg.type === 'float') p.style.top = (Math.random() * 90 + 5) + 'vh';
-        container.appendChild(p);
-    }
+    if (container) container.innerHTML = '';
 }
 
 function getAutoSeason() {
