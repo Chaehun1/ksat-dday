@@ -390,12 +390,51 @@
 
         var schedules = [
             { name: '3월 서바이벌 프로', date: '2026-03-16', displayDate: '2026년 3월 16일 (월)', category: 'surf', scope: SURF_SCOPE },
-            { name: '3월 더 프리미엄', date: '2026-03-18', displayDate: '2026년 3월 18일 (수)', category: 'duff' },
-            { name: '3월 모의고사', date: '2026-03-24', displayDate: '2026년 3월 24일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3' },
-            { name: '4월 더 프리미엄', date: '2026-04-17', displayDate: '2026년 4월 17일 (금)', category: 'duff' },
+            { name: '3월 더 프리미엄', date: '2026-03-18', displayDate: '2026년 3월 18일 (수)', category: 'duff', scope: [
+                { subject: '국어', range: '1,2학년 전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅰ. 경우의 수 - 1. 순열과 조합\n[미적분] Ⅰ. 수열의 극한 - 1. 수열의 극한\n[기하] Ⅰ. 이차곡선 - 1. 이차곡선' },
+                { subject: '영어', range: '1,2학년 전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                { subject: '한국사', range: '전 범위' },
+                { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅰ. 역학적 상호 작용 - 2. 행성의 운동과 상대성 - 02. 행성의 운동\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅰ. 물질의 세 가지 상태와 용액\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅱ. 세포의 특성\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅰ. 고체 지구 - 2. 지구 구성 물질과 자원 - 02. 암석의 조직 및 생성 환경' }
+            ] },
+            { name: '3월 모의고사', date: '2026-03-24', displayDate: '2026년 3월 24일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3', scope: [
+                { grade: 3, source: 'gyoyukchung', label: '고3 (교육청)', rows: [
+                    { subject: '국어', range: '1,2학년 전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                    { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅰ. 경우의 수 - 1. 순열과 조합\n[미적분] Ⅰ. 수열의 극한 - 1. 수열의 극한\n[기하] Ⅰ. 이차곡선 - 1. 이차곡선' },
+                    { subject: '영어', range: '1,2학년 전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                    { subject: '한국사', range: '전 범위' },
+                    { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                    { subject: '과학탐구', range: '4과목 전 범위\n(물리학Ⅰ, 화학Ⅰ, 생명과학Ⅰ, 지구과학Ⅰ)\n※ 물리학Ⅱ·화학Ⅱ·생명과학Ⅱ·지구과학Ⅱ 미실시' }
+                ] }
+            ] },
+            { name: '4월 더 프리미엄', date: '2026-04-17', displayDate: '2026년 4월 17일 (금)', category: 'duff', scope: [
+                { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅰ. 경우의 수\n[미적분] Ⅱ. 미분법 - 1. 여러 가지 함수의 미분\n[기하] Ⅱ. 평면벡터 - 1. 벡터의 연산' },
+                { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                { subject: '한국사', range: '전 범위' },
+                { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장 - 1. 전기장과 전기력선\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅱ. 반응엔탈피와 화학 평형 - 1. 반응엔탈피와 헤스 법칙\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅲ. 세포 호흡과 광합성\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅰ. 고체 지구 - 3. 한반도의 지질' }
+            ] },
             { name: '4월 서바이벌 프로', date: '2026-04-26', displayDate: '2026년 4월 26일 (일)', category: 'surf', scope: SURF_SCOPE },
-            { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3' },
-            { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff' },
+            { name: '5월 모의고사', date: '2026-05-07', displayDate: '2026년 5월 7일 (목)', category: 'gyoyukchung', grades: '고3', scope: [
+                { grade: 3, source: 'gyoyukchung', label: '고3 (교육청)', rows: [
+                    { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                    { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률 - 1. 확률의 뜻과 활용\n[미적분] Ⅱ. 미분법 - 2. 여러 가지 미분법\n[기하] Ⅱ. 평면벡터 - 1. 벡터의 연산' },
+                    { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                    { subject: '한국사', range: '전 범위' },
+                    { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                    { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅱ. 반응엔탈피와 화학 평형 - 2. 화학 평형과 평형이동\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] IV. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 1. 해수의 운동과 순환' }
+                ] }
+            ] },
+            { name: '5월 더 프리미엄', date: '2026-05-20', displayDate: '2026년 5월 20일 (수)', category: 'duff', scope: [
+                { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률\n[미적분] Ⅱ. 미분법\n[기하] Ⅱ. 평면벡터' },
+                { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                { subject: '한국사', range: '전 범위' },
+                { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매 - 1. 반응 속도\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] IV. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환' }
+            ] },
             { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
                 { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
@@ -421,10 +460,17 @@
                     { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅲ. 파동과 물질의 성질 - 1. 전자기파의 성질과 활용\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅴ. 생물의 진화와 다양성 - 02. 생물의 분류와 다양성\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅵ. 행성의 운동' }
                 ] }
             ] },
-            { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff' },
+            { name: '7월 더 프리미엄', date: '2026-07-16', displayDate: '2026년 7월 16일 (목)', category: 'duff', scope: [
+                { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
+                { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅲ. 통계 - 1. 확률분포\n[미적분] Ⅲ. 적분법 - 1. 여러 가지 적분법\n[기하] Ⅲ. 공간도형과 공간좌표 - 1. 공간도형' },
+                { subject: '영어', range: '전 범위 (영어Ⅰ, 영어Ⅱ)' },
+                { subject: '한국사', range: '전 범위' },
+                { subject: '사회탐구', range: '9과목 전 범위\n(생활과 윤리, 윤리와 사상, 한국지리, 세계지리,\n 동아시아사, 세계사, 정치와 법, 경제, 사회·문화)' },
+                { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅲ. 파동과 물질의 성질 - 1. 전자기파의 성질과 활용\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅴ. 생물의 진화와 다양성\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅲ. 우주 - 1. 행성의 운동' }
+            ] },
             { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf', scope: SURF_SCOPE },
             { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf', scope: SURF_SCOPE },
-            { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff' },
+            { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff', scope: SURF_SCOPE },
             { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
                 { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
@@ -438,10 +484,10 @@
                 ] }
             ] },
             { name: '수시 원서 접수 시작', date: '2026-09-07', displayDate: '2026년 9월 7일 (월)', category: 'etc' },
-            { name: '9월 더 프리미엄', date: '2026-09-16', displayDate: '2026년 9월 16일 (수)', category: 'duff' },
+            { name: '9월 더 프리미엄', date: '2026-09-16', displayDate: '2026년 9월 16일 (수)', category: 'duff', scope: SURF_SCOPE },
             { name: '9월 서바이벌 프로', date: '2026-09-24', displayDate: '2026년 9월 24일 (목)', category: 'surf', scope: SURF_SCOPE },
             { name: '10월 서바이벌 프로', date: '2026-10-09', displayDate: '2026년 10월 9일 (금)', category: 'surf', scope: SURF_SCOPE },
-            { name: '10월 더 프리미엄', date: '2026-10-15', displayDate: '2026년 10월 15일 (목)', category: 'duff' },
+            { name: '10월 더 프리미엄', date: '2026-10-15', displayDate: '2026년 10월 15일 (목)', category: 'duff', scope: SURF_SCOPE },
             { name: '10월 모의고사', date: '2026-10-20', displayDate: '2026년 10월 20일 (화)', category: 'gyoyukchung', grades: '고1, 고2, 고3', scope: [
                 { grade: 3, source: 'gyoyukchung', label: '고3 (교육청)', rows: [
                     { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
@@ -454,7 +500,7 @@
                     { subject: '제2외국어/한문', range: '7과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 한문Ⅰ)\n※ 베트남어Ⅰ·아랍어Ⅰ 미실시' }
                 ] }
             ] },
-            { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff' },
+            { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff', scope: SURF_SCOPE },
             { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf', scope: SURF_SCOPE },
             { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true, scope: [
                 { grade: 3, source: 'suneung', label: '고3', rows: [
