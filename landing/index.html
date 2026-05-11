@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaehun's Projects | 2027 수능 디데이 카운터</title>
+    <meta name="description" content="2027학년도 수능 디데이 카운터, 모의고사 일정·출제 범위, 익명 게시판, 등급컷 아카이브를 제공하는 수험생 응원 사이트입니다.">
+    <meta name="keywords" content="2027 수능 디데이, 수능 카운터, 모의고사 일정, 출제 범위, 익명 게시판, 등급컷, 수험생">
+    <meta name="theme-color" content="#667eea">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="2027 수능 디데이 카운터">
+    <meta property="og:description" content="2027학년도 수능까지 남은 일수, 모의고사 일정·출제 범위, 익명 게시판">
+    <meta property="og:url" content="https://chaehun1.github.io/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://chaehun1.github.io/ksat-dday/og-image.png">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- 메타 새로고침: JS 비활성 환경·일부 크롤러 대비 -->
+    <meta http-equiv="refresh" content="3; url=/ksat-dday/">
+    <link rel="canonical" href="https://chaehun1.github.io/ksat-dday/">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'IBM Plex Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 24px;
+        }
+        .container {
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { font-size: 2em; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.02em; }
+        .subtitle { font-size: 1.02em; margin-bottom: 8px; opacity: 0.94; line-height: 1.6; }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 32px 0 20px;
+        }
+        .links a {
+            display: block;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1em;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .links a:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
+        .links a.primary {
+            background: white;
+            color: #667eea;
+        }
+        .links a.primary:hover { background: #f5f5ff; }
+        .redirect-notice {
+            margin-top: 18px;
+            font-size: 0.85em;
+            opacity: 0.75;
+        }
+        .loader {
+            display: inline-block;
+            width: 11px; height: 11px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.55em; }
+            .subtitle { font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>📚 2027 수능 디데이 카운터</h1>
+        <p class="subtitle">2027학년도 수능까지 남은 일수, 모의고사 일정과 출제 범위, 수험생 익명 게시판을 한곳에서.</p>
+
+        <nav class="links" aria-label="페이지 바로가기">
+            <a class="primary" href="/ksat-dday/">🏠 디데이 카운터</a>
+            <a href="/ksat-dday/wall/">📝 익명 게시판</a>
+            <a href="/ksat-dday/grade-cut/">🎯 등급컷 아카이브</a>
+        </nav>
+
+        <p class="redirect-notice"><span class="loader" aria-hidden="true"></span>잠시 후 디데이 카운터로 이동합니다…</p>
+    </main>
+    <script>
+        // 사용자에게는 1초 정도면 충분 — 크롤러는 meta refresh로 잡힘
+        setTimeout(function(){ window.location.replace('/ksat-dday/'); }, 1000);
+    </script>
+</body>
+</html>
