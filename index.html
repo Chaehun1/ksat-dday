@@ -353,10 +353,12 @@
     <script src="schedule-data.js"></script>
     <script>
         function buildDates() {
-            var sun = getActiveSuneung(), prev = getPreviousSuneung(), six = getActiveSixMo();
+            var sun = getActiveSuneung(), prev = getPreviousSuneung();
+            var six = getActiveSixMo(), nine = getActiveNineMo();
             var prevDot = prev.date.replace(/-/g, '.');
             var sunDot  = sun.date.replace(/-/g, '.');
             var sixDot  = six.date.replace(/-/g, '.');
+            var nineDot = nine.date.replace(/-/g, '.');
             return {
                 suneung: { target: sun.date, progressStart: prev.date,
                            label: sun.year + '학년도 수능까지', dateText: sun.dateText,
@@ -367,7 +369,12 @@
                            label: six.year + '학년도 6월 모의평가까지', dateText: six.dateText,
                            progressLabelText: '6모까지의 여정',
                            progressStartText: prev.year + ' 수능 (' + prevDot + ')',
-                           progressEndText:   '6월 모의평가 (' + sixDot + ')' }
+                           progressEndText:   '6월 모의평가 (' + sixDot + ')' },
+                '9mo':    { target: nine.date, progressStart: six.date,
+                           label: nine.year + '학년도 9월 모의평가까지', dateText: nine.dateText,
+                           progressLabelText: '9모까지의 여정',
+                           progressStartText: '6월 모의평가 (' + sixDot + ')',
+                           progressEndText:   '9월 모의평가 (' + nineDot + ')' }
             };
         }
         var DATES = buildDates();
@@ -384,7 +391,7 @@
         var activeFilters = [];
         var showPast = false;
 
-        function getToday() { var d = new Date(); d.setHours(0,0,0,0); return d; }
+        function getToday() { var d = (typeof _nowSimulated === 'function' ? _nowSimulated() : new Date()); d.setHours(0,0,0,0); return d; }
         function parseDate(s) { var d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; }
         function calculateDday(s) { return Math.ceil((parseDate(s) - getToday()) / 86400000); }
         var BADGE_MAP = { suneung:['수능','badge-suneung'], pyeongwon:['평가원','badge-pyeongwon'], gyoyukchung:['교육청','badge-gyoyukchung'], duff:['더프','badge-duff'], surf:['서프','badge-surf'], etc:['기타','badge-etc'] };
@@ -401,7 +408,11 @@
                 var sp = localStorage.getItem('suneung-show-past');
                 if (sp) { showPast = JSON.parse(sp); if(showPast) document.getElementById('pastToggle').classList.add('active'); }
                 var sm = localStorage.getItem('suneung-mode');
-                if (sm && (sm === 'suneung' || sm === '6mo')) currentMode = sm;
+                var validModes = ['suneung'];
+                var second = getSecondTab();
+                if (second) validModes.push(second);
+                if (sm && validModes.indexOf(sm) !== -1) currentMode = sm;
+                else if (sm === '6mo' || sm === '9mo') currentMode = second || 'suneung';
             } catch(e){}
         }
 
@@ -418,7 +429,7 @@
                 box.className = 'main-dday theme-' + season;
                 document.documentElement.setAttribute('data-season', season);
             } else {
-                if (currentMode === '6mo') box.className = 'main-dday theme-6mo';
+                if (currentMode === '6mo' || currentMode === '9mo') box.className = 'main-dday theme-6mo';
                 else box.className = 'main-dday ' + currentTheme;
                 document.documentElement.removeAttribute('data-season');
             }
@@ -440,15 +451,16 @@
 
         function switchMode(mode) {
             if (currentMode === mode) return;
+            if (mode !== 'suneung' && mode !== '6mo' && mode !== '9mo') return;
             currentMode = mode; saveMode();
             if (typeof gtag === 'function') gtag('event', 'tab_switch', { tab_name: mode });
             document.getElementById('tab-suneung').classList.toggle('active', mode === 'suneung');
-            document.getElementById('tab-6mo').classList.toggle('active', mode === '6mo');
+            document.getElementById('tab-6mo').classList.toggle('active', mode === '6mo' || mode === '9mo');
             var numEl = document.getElementById('mainDday');
             numEl.classList.remove('animating'); void numEl.offsetWidth; numEl.classList.add('animating');
             var fill = document.getElementById('progressFill');
             var pctEl = document.getElementById('progressPercent');
-            if (mode === '6mo') { fill.classList.add('mode-6mo'); pctEl.style.color = '#11998e'; }
+            if (mode === '6mo' || mode === '9mo') { fill.classList.add('mode-6mo'); pctEl.style.color = '#11998e'; }
             else { fill.classList.remove('mode-6mo'); pctEl.style.color = ''; }
             applyTheme(); updateDday();
         }
@@ -645,11 +657,26 @@
 
         displayRandomHandwriting();
         loadRandomTheme();
+
+        // 두 번째 탭 (6모/9모) 동적 라벨·노출 결정
+        (function initSecondTab() {
+            var second = getSecondTab(); // '6mo' | '9mo' | null
+            var el = document.getElementById('tab-6mo');
+            if (!second) {
+                el.style.display = 'none';
+                return;
+            }
+            el.textContent = (second === '9mo' ? '📝 9모' : '📝 6모');
+            el.setAttribute('aria-controls', 'tab-' + second);
+            el.removeAttribute('onclick');
+            el.onclick = function() { switchMode(second); };
+        })();
+
         loadSavedState();
         seasonChoice = getSeasonChoice();
         updateThemeMenuUI();
 
-        if (currentMode === '6mo') {
+        if (currentMode === '6mo' || currentMode === '9mo') {
             document.getElementById('tab-suneung').classList.remove('active');
             document.getElementById('tab-6mo').classList.add('active');
             document.getElementById('progressFill').classList.add('mode-6mo');

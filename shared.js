@@ -17,10 +17,35 @@ const SIXMO_LIST = [
     { year: 2027, date: '2026-06-04', dateText: '2026년 6월 4일 (목)' },
     { year: 2028, date: '2027-06-03', dateText: '2027년 6월 3일 (목)' }
 ];
+const NINEMO_LIST = [
+    { year: 2027, date: '2026-09-02', dateText: '2026년 9월 2일 (수)' },
+    { year: 2028, date: '2027-09-01', dateText: '2027년 9월 1일 (수)' }
+];
 const SUNEUNG_BASELINE = { year: 2026, date: '2025-11-13' };
 
+// 시험 종료 cutoff (탐구 영역 종료 시각, KST 16:37)
+const EXAM_END_HH = 16, EXAM_END_MM = 37;
+function _examEndKST(dateStr) {
+    const hh = String(EXAM_END_HH).padStart(2, '0');
+    const mm = String(EXAM_END_MM).padStart(2, '0');
+    return new Date(dateStr + 'T' + hh + ':' + mm + ':00+09:00');
+}
+
+// 개발자 미리보기: ?now=2026-06-05T17:00 으로 현재 시각 가상화 가능
+function _nowSimulated() {
+    try {
+        const u = new URL(window.location.href);
+        const nowParam = u.searchParams.get('now');
+        if (nowParam) {
+            const d = new Date(nowParam);
+            if (!isNaN(d.getTime())) return d;
+        }
+    } catch (e) {}
+    return new Date();
+}
+
 function _parseLocalDate(s) { return new Date(s + 'T00:00:00'); }
-function _todayLocal() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function _todayLocal() { const d = _nowSimulated(); d.setHours(0, 0, 0, 0); return d; }
 
 function getActiveSuneung() {
     const t = _todayLocal();
@@ -40,12 +65,44 @@ function getPreviousSuneung() {
     return prev;
 }
 
-function getActiveSixMo() {
-    const t = _todayLocal();
-    for (const s of SIXMO_LIST) {
-        if (_parseLocalDate(s.date) >= t) return s;
+// 시험 종료 cutoff 기반: 시행일 16:37까지는 그 회차 반환, 이후엔 다음 회차
+function _activeAfterCutoff(list) {
+    const now = _nowSimulated();
+    for (const s of list) {
+        if (_examEndKST(s.date) > now) return s;
     }
-    return SIXMO_LIST[SIXMO_LIST.length - 1];
+    return list[list.length - 1];
+}
+
+function getActiveSixMo() { return _activeAfterCutoff(SIXMO_LIST); }
+function getActiveNineMo() { return _activeAfterCutoff(NINEMO_LIST); }
+
+// 메인 페이지의 두 번째 탭 결정 — '6mo' | '9mo' | null (null이면 수능 단일 탭)
+// 일반 사용자: 현재 시각 기준 자동 결정 (6/4 16:37 → 9모, 9/2 16:37 → null)
+// 개발자: ?preview=6mo|9mo|none 으로 강제 (URL 모르면 안 보임)
+function getSecondTab() {
+    try {
+        const u = new URL(window.location.href);
+        const preview = u.searchParams.get('preview');
+        if (preview === '6mo' || preview === '9mo') return preview;
+        if (preview === 'none') return null;
+    } catch (e) {}
+
+    const now = _nowSimulated();
+    const sun = getActiveSuneung();
+    const six = getActiveSixMo();
+    const nine = getActiveNineMo();
+    const sixEnd = _examEndKST(six.date);
+    const nineEnd = _examEndKST(nine.date);
+    const candidates = [];
+    if (sixEnd > now)  candidates.push({ key: '6mo', date: six.date });
+    if (nineEnd > now) candidates.push({ key: '9mo', date: nine.date });
+    if (candidates.length === 0) return null;
+    candidates.sort((a, b) => (a.date < b.date ? -1 : 1));
+    const best = candidates[0];
+    // 수능보다 더 가까울 때만 노출 (9모 끝나면 다음 6모는 너무 멀어서 수능만 보여줌)
+    if (best.date >= sun.date) return null;
+    return best.key;
 }
 
 function renderParticles(season) {
