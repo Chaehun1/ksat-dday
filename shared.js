@@ -77,6 +77,12 @@ function _activeAfterCutoff(list) {
 function getActiveSixMo() { return _activeAfterCutoff(SIXMO_LIST); }
 function getActiveNineMo() { return _activeAfterCutoff(NINEMO_LIST); }
 
+// 특정 학년도의 6모/9모 (진행률 시작점 계산용 — cutoff 무시, year로 직접 매칭)
+function getSixMoForYear(year) {
+    for (const s of SIXMO_LIST) { if (s.year === year) return s; }
+    return null;
+}
+
 // 메인 페이지의 두 번째 탭 결정 — '6mo' | '9mo' | null (null이면 수능 단일 탭)
 // 일반 사용자: 현재 시각 기준 자동 결정 (6/4 16:37 → 9모, 9/2 16:37 → null)
 // 개발자: ?preview=6mo|9mo|none 으로 강제 (URL 모르면 안 보임)

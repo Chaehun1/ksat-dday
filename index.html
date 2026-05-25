@@ -355,10 +355,13 @@
         function buildDates() {
             var sun = getActiveSuneung(), prev = getPreviousSuneung();
             var six = getActiveSixMo(), nine = getActiveNineMo();
+            // 9모 진행률 시작점은 "같은 학년도 6모"를 직접 매칭 (cutoff 지난 6모는 getActiveSixMo가 다음 회차를 반환하므로)
+            var nineSix = getSixMoForYear(nine.year) || six;
             var prevDot = prev.date.replace(/-/g, '.');
             var sunDot  = sun.date.replace(/-/g, '.');
             var sixDot  = six.date.replace(/-/g, '.');
             var nineDot = nine.date.replace(/-/g, '.');
+            var nineSixDot = nineSix.date.replace(/-/g, '.');
             return {
                 suneung: { target: sun.date, progressStart: prev.date,
                            label: sun.year + '학년도 수능까지', dateText: sun.dateText,
@@ -370,10 +373,10 @@
                            progressLabelText: '6모까지의 여정',
                            progressStartText: prev.year + ' 수능 (' + prevDot + ')',
                            progressEndText:   '6월 모의평가 (' + sixDot + ')' },
-                '9mo':    { target: nine.date, progressStart: six.date,
+                '9mo':    { target: nine.date, progressStart: nineSix.date,
                            label: nine.year + '학년도 9월 모의평가까지', dateText: nine.dateText,
                            progressLabelText: '9모까지의 여정',
-                           progressStartText: '6월 모의평가 (' + sixDot + ')',
+                           progressStartText: '6월 모의평가 (' + nineSixDot + ')',
                            progressEndText:   '9월 모의평가 (' + nineDot + ')' }
             };
         }
