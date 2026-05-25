@@ -166,6 +166,25 @@ function setupDarkToggle(btnId, onChange) {
     updateIcon();
 }
 
+// ── Nav 햄버거 메뉴 ─────────────────────────────────────────
+function setupNavMenu() {
+    const toggle = document.getElementById('navToggle');
+    const menu = document.getElementById('navMenu');
+    if (!toggle || !menu) return;
+    function close() { menu.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+    function open()  { menu.classList.add('open');    toggle.setAttribute('aria-expanded', 'true');  }
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (menu.classList.contains('open')) close(); else open();
+    });
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    // 메뉴 안 링크 클릭 시 닫기 (페이지 이동 전)
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => close()));
+}
+
 // ── 시즌 팔레트 헬퍼 ────────────────────────────────────────
 function setupPaletteMenu(btnId, menuId) {
     const btn = document.getElementById(btnId);

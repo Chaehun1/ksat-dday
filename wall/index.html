@@ -219,9 +219,14 @@
     </div>
 
     <nav class="nav-bar" aria-label="주 메뉴">
-        <a href="../" class="nav-link">🏠 디데이</a>
-        <a href="./" class="nav-link active">📝 익명 게시판</a>
-        <a href="../grade-cut/" class="nav-link">🎯 등급컷</a>
+        <div class="nav-pill">
+            <button class="nav-toggle" id="navToggle" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu"><span class="nav-toggle-icon" aria-hidden="true">☰</span> 메뉴</button>
+            <div class="nav-menu" id="navMenu" role="menu">
+                <a href="../" class="nav-link" role="menuitem">🏠 디데이</a>
+                <a href="./" class="nav-link active" role="menuitem">📝 익명 게시판</a>
+                <a href="../grade-cut/" class="nav-link" role="menuitem">🎯 등급컷</a>
+            </div>
+        </div>
     </nav>
 
     <div class="container">
@@ -1104,6 +1109,7 @@
         initDarkTheme();
         setupDarkToggle('themeToggle');
         setupPaletteMenu('paletteBtn', 'themeMenu');
+        setupNavMenu();
 
         let seasonChoice = getSeasonChoice();
         function applySeason() {

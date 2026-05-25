@@ -265,7 +265,16 @@
         </div>
     </div>
 
-    <nav class="nav-bar" aria-label="주 메뉴"><a href="./" class="nav-link active">🏠 디데이</a><a href="./wall/" class="nav-link">📝 익명 게시판</a><a href="./grade-cut/" class="nav-link">🎯 등급컷</a></nav>
+    <nav class="nav-bar" aria-label="주 메뉴">
+        <div class="nav-pill">
+            <button class="nav-toggle" id="navToggle" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu"><span class="nav-toggle-icon" aria-hidden="true">☰</span> 메뉴</button>
+            <div class="nav-menu" id="navMenu" role="menu">
+                <a href="./" class="nav-link active" role="menuitem">🏠 디데이</a>
+                <a href="./wall/" class="nav-link" role="menuitem">📝 익명 게시판</a>
+                <a href="./grade-cut/" class="nav-link" role="menuitem">🎯 등급컷</a>
+            </div>
+        </div>
+    </nav>
 
     <div class="layout">
         <aside class="left-panel" role="complementary">
@@ -645,6 +654,7 @@
             if (typeof gtag === 'function') gtag('event', 'theme_change', { theme: next });
         });
         setupPaletteMenu('paletteBtn', 'themeMenu');
+        setupNavMenu();
         var themeMenu = document.getElementById('themeMenu');
         document.querySelectorAll('.theme-opt').forEach(function(btn){
             btn.addEventListener('click', function(){
