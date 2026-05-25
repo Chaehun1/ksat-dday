@@ -219,23 +219,6 @@ html[data-theme="dark"] .nav-link             { color: #9a9aaa; }
 html[data-theme="dark"] .nav-link:hover       { color: #e8e8ea; background: rgba(154,165,234,0.12); }
 html[data-theme="dark"] .nav-link.active      { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
 
-/* ── Desktop: nav 가로 펼침 (햄버거 숨김) ── */
-@media (min-width: 641px) {
-    .nav-toggle { display: none !important; }
-    .nav-menu {
-        display: flex !important;
-        position: static;
-        flex-direction: row;
-        padding: 0;
-        gap: 4px;
-        min-width: 0;
-        background: transparent !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        animation: none;
-    }
-}
-
 /* ── Mobile shared adjustments ── */
 @media (max-width: 640px) {
     .fab-btn { width: 32px; height: 32px; font-size: 13px; }
