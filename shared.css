@@ -55,8 +55,9 @@ html[data-theme="dark"][data-season="imminent"]  body { background: linear-gradi
 .fab-actions {
     position: fixed;
     top: 16px;
-    right: 16px;
+    right: max(16px, calc((100vw - 1100px) / 2));  /* 데스크탑: layout(1100px) 우측 끝과 정렬 */
     display: flex;
+    align-items: center;  /* 모바일에서 두 버튼 같은 높이 보장 */
     gap: 6px;
     z-index: 100;
 }
@@ -217,6 +218,23 @@ html[data-theme="dark"] .nav-menu             { background: rgba(30,32,48,0.98);
 html[data-theme="dark"] .nav-link             { color: #9a9aaa; }
 html[data-theme="dark"] .nav-link:hover       { color: #e8e8ea; background: rgba(154,165,234,0.12); }
 html[data-theme="dark"] .nav-link.active      { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+
+/* ── Desktop: nav 가로 펼침 (햄버거 숨김) ── */
+@media (min-width: 641px) {
+    .nav-toggle { display: none !important; }
+    .nav-menu {
+        display: flex !important;
+        position: static;
+        flex-direction: row;
+        padding: 0;
+        gap: 4px;
+        min-width: 0;
+        background: transparent !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        animation: none;
+    }
+}
 
 /* ── Mobile shared adjustments ── */
 @media (max-width: 640px) {
