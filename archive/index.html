@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EQF5D05DY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9EQF5D05DY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기출문제 자료실</title>
+    <!-- 비공개 작업 중: 검색엔진 색인 차단. 5회분 이상 등록 후 제거 예정 -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .page-header {
+            background: rgba(255,255,255,0.95);
+            border-radius: 22px;
+            padding: 26px 32px;
+            margin-bottom: 18px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            backdrop-filter: blur(8px);
+        }
+        .page-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-subtitle {
+            margin-top: 6px;
+            font-size: 0.92em;
+            color: #777;
+        }
+        .draft-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(229,57,53,0.12);
+            color: #c0392b;
+            border: 1px solid rgba(229,57,53,0.3);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.72em;
+            font-weight: 600;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        html[data-theme="dark"] .page-header { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .page-title  { color: #e8e8ea; }
+        html[data-theme="dark"] .page-subtitle { color: #9a9aaa; }
+        html[data-theme="dark"] .draft-badge { background: rgba(229,57,53,0.18); color: #ff8a8a; border-color: rgba(229,57,53,0.35); }
+
+        /* ── 필터 바 ── */
+        .filter-bar {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-label {
+            font-size: 0.82em;
+            color: #666;
+            font-weight: 600;
+        }
+        .filter-select {
+            padding: 7px 12px;
+            border: 1px solid #d0d4e0;
+            border-radius: 10px;
+            background: #fff;
+            color: #333;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            font-size: 0.86em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-select:hover { border-color: #667eea; }
+        .filter-select:focus-visible { outline: 2px solid #667eea; outline-offset: 1px; }
+        html[data-theme="dark"] .filter-bar    { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .filter-label  { color: #9a9aaa; }
+        html[data-theme="dark"] .filter-select { background: #1e2030; border-color: #3a3d55; color: #e8e8ea; }
+
+        /* ── 시험 카드 그리드 ── */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        .exam-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 18px 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+        }
+        .exam-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px dashed rgba(102,126,234,0.25);
+        }
+        .exam-name {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #333;
+        }
+        .exam-date {
+            font-size: 0.82em;
+            color: #888;
+        }
+        .exam-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.72em;
+            font-weight: 600;
+        }
+        .exam-tag.pyeongga    { background: rgba(102,126,234,0.15); color: #667eea; }
+        .exam-tag.gyoyukcheong { background: rgba(102,205,170,0.18); color: #2a9d7a; }
+        .exam-tag.grade        { background: rgba(243,156,18,0.18); color: #d68910; }
+
+        .subject-section {
+            margin-bottom: 12px;
+        }
+        .subject-section:last-child { margin-bottom: 0; }
+        .subject-section-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .subject-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        .subject-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(102,126,234,0.08);
+            border: 1px solid rgba(102,126,234,0.18);
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 0.82em;
+            color: #333;
+        }
+        .subject-chip-label { font-weight: 600; }
+        .subject-chip a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.84em;
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .subject-chip a:hover { background: rgba(102,126,234,0.15); }
+        .subject-chip-sep { color: #aaa; }
+
+        html[data-theme="dark"] .exam-card     { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .exam-name     { color: #e8e8ea; }
+        html[data-theme="dark"] .exam-date     { color: #9a9aaa; }
+        html[data-theme="dark"] .exam-card-header { border-bottom-color: rgba(154,165,234,0.2); }
+        html[data-theme="dark"] .subject-chip  { background: rgba(154,165,234,0.1); border-color: rgba(154,165,234,0.2); color: #e8e8ea; }
+        html[data-theme="dark"] .subject-chip a { color: #9aa5ea; }
+        html[data-theme="dark"] .subject-chip a:hover { background: rgba(154,165,234,0.18); }
+        html[data-theme="dark"] .subject-chip-sep { color: #555; }
+
+        /* ── 상태 메시지 ── */
+        .state-box {
+            background: rgba(255,255,255,0.92);
+            border-radius: 18px;
+            padding: 50px 28px;
+            text-align: center;
+            color: #777;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            backdrop-filter: blur(8px);
+        }
+        .state-icon { font-size: 2.6em; margin-bottom: 12px; }
+        .state-title { font-size: 1.1em; font-weight: 700; color: #555; margin-bottom: 6px; }
+        .state-text { font-size: 0.9em; line-height: 1.6; color: #888; }
+        html[data-theme="dark"] .state-box   { background: rgba(30,32,48,0.92); color: #9a9aaa; }
+        html[data-theme="dark"] .state-title { color: #e8e8ea; }
+        html[data-theme="dark"] .state-text  { color: #9a9aaa; }
+
+        @media (max-width: 640px) {
+            .container { padding: 0; }
+            .page-header { padding: 20px 22px; border-radius: 18px; }
+            .page-title { font-size: 1.3em; }
+            .filter-bar { padding: 12px 14px; border-radius: 14px; }
+            .exam-card { padding: 16px 18px; border-radius: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <!-- FAB (다크/팔레트) -->
+    <div class="fab-actions">
+        <button class="fab-btn" id="paletteBtn" aria-label="시즌 팔레트">🎨</button>
+        <div class="theme-menu" id="paletteMenu" role="menu" aria-label="시즌 팔레트">
+            <button class="theme-opt" data-season="auto"     role="menuitem"><span class="emoji">🤖</span> 자동</button>
+            <button class="theme-opt" data-season="default"  role="menuitem"><span class="emoji">🟣</span> 기본</button>
+            <button class="theme-opt" data-season="spring"   role="menuitem"><span class="emoji">🌸</span> 봄</button>
+            <button class="theme-opt" data-season="summer"   role="menuitem"><span class="emoji">🌊</span> 여름</button>
+            <button class="theme-opt" data-season="autumn"   role="menuitem"><span class="emoji">🍁</span> 가을</button>
+            <button class="theme-opt" data-season="winter"   role="menuitem"><span class="emoji">❄️</span> 겨울</button>
+            <button class="theme-opt" data-season="imminent" role="menuitem"><span class="emoji">🔥</span> 임박</button>
+        </div>
+        <button class="fab-btn" id="darkToggle" aria-label="다크모드 토글">🌙</button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="nav-bar" aria-label="주 메뉴">
+        <div class="nav-pill">
+            <button class="nav-toggle" id="navToggle" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu"><span class="nav-toggle-icon" aria-hidden="true">☰</span> 메뉴</button>
+            <div class="nav-menu" id="navMenu" role="menu">
+                <a href="../" class="nav-link" role="menuitem">🏠 디데이</a>
+                <a href="../wall/" class="nav-link" role="menuitem">📝 익명 게시판</a>
+                <a href="../grade-cut/" class="nav-link" role="menuitem">🎯 등급컷</a>
+                <a href="./" class="nav-link nav-link-archive active" role="menuitem">📚 기출문제</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">📚 기출문제 자료실<span class="draft-badge" id="draftBadge" style="display:none;">비공개</span></h1>
+            <p class="page-subtitle">평가원·교육청 기출문제 시험지·해설·듣기음원</p>
+        </header>
+
+        <!-- 비관리자 placeholder -->
+        <div class="state-box" id="placeholderBox">
+            <div class="state-icon">🚧</div>
+            <div class="state-title">준비 중</div>
+            <div class="state-text">기출문제 자료실은 곧 공개됩니다.</div>
+        </div>
+
+        <!-- 관리자 전용 UI (default hidden) -->
+        <div id="adminUI" style="display:none;">
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">학년도</span>
+                    <select class="filter-select" id="filterYear"><option value="">전체</option></select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">시험</span>
+                    <select class="filter-select" id="filterType">
+                        <option value="">전체</option>
+                        <option value="pyeongga">평가원</option>
+                        <option value="gyoyukcheong">교육청</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">학년</span>
+                    <select class="filter-select" id="filterGrade">
+                        <option value="">전체</option>
+                        <option value="3">고3</option>
+                        <option value="2">고2</option>
+                        <option value="1">고1</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="exam-grid" id="examGrid"></div>
+
+            <div class="state-box" id="emptyBox" style="display:none;">
+                <div class="state-icon">📭</div>
+                <div class="state-title">아직 등록된 자료가 없습니다</div>
+                <div class="state-text">관리자 페이지에서 첫 시험을 등록해보세요.</div>
+            </div>
+
+            <div class="state-box" id="loadingBox">
+                <div class="state-icon">⏳</div>
+                <div class="state-text">불러오는 중...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../shared.js"></script>
+    <script>
+        // 시즌·다크 초기화
+        initDarkTheme();
+        setupNavMenu();
+        setupDarkToggle('darkToggle');
+        setupPaletteMenu('paletteBtn', 'paletteMenu');
+
+        // 관리자 마킹 시 — placeholder 플래시 방지 (auth 확정 전 미리 표시)
+        if (isAdminMarked()) {
+            document.getElementById('placeholderBox').style.display = 'none';
+            document.getElementById('adminUI').style.display = '';
+            document.getElementById('draftBadge').style.display = '';
+        }
+
+        function applySeason() {
+            const choice = getSeasonChoice();
+            const resolved = resolveSeason(choice);
+            if (resolved) document.documentElement.setAttribute('data-season', resolved);
+            else          document.documentElement.removeAttribute('data-season');
+            document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('selected', b.dataset.season === choice));
+        }
+        applySeason();
+        document.querySelectorAll('.theme-opt').forEach(b => b.addEventListener('click', () => {
+            saveSeasonChoice(b.dataset.season);
+            applySeason();
+            document.getElementById('paletteMenu').classList.remove('open');
+        }));
+    </script>
+
+    <script type="module">
+        import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, orderBy, limit }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey:            "AIzaSyAQjIqBSTukahMjOlW7kQyigqz9Y_Tzq_Q",
+            authDomain:        "ksat-dday-bc76f.firebaseapp.com",
+            projectId:         "ksat-dday-bc76f",
+            storageBucket:     "ksat-dday-bc76f.firebasestorage.app",
+            messagingSenderId: "291375667501",
+            appId:             "1:291375667501:web:3def7360892dcfc3bf9ba4"
+        };
+        const app  = initializeApp(firebaseConfig);
+        const db   = getFirestore(app);
+        const auth = getAuth(app);
+
+        // ── 과목 표시 순서/라벨 ─────────────────────────
+        const SUBJECT_GROUPS = [
+            { key: 'korean',         label: '국어' },
+            { key: 'math',           label: '수학' },
+            { key: 'english',        label: '영어' },
+            { key: 'korean-history', label: '한국사' },
+            { key: 'social',         label: '사회탐구' },
+            { key: 'science',        label: '과학탐구' },
+            { key: 'vocational',     label: '직업탐구' },
+            { key: 'second-lang',    label: '제2외국어/한문' }
+        ];
+
+        let allExams = [];
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        // ── 인증 ────────────────────────────────────────
+        signInAnonymously(auth).catch(e => console.error('auth error', e));
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            const isAdmin = user.uid === ADMIN_UID;
+            if (isAdmin) {
+                markAdmin();
+                applyArchiveNavVisibility();
+                document.getElementById('placeholderBox').style.display = 'none';
+                document.getElementById('adminUI').style.display = '';
+                document.getElementById('draftBadge').style.display = '';
+                await loadExams();
+            } else {
+                // 마킹이 잘못 남아있을 수 있으니 해제 + placeholder 복원
+                unmarkAdmin();
+                document.getElementById('placeholderBox').style.display = '';
+                document.getElementById('adminUI').style.display = 'none';
+                document.getElementById('draftBadge').style.display = 'none';
+            }
+        });
+
+        async function loadExams() {
+            try {
+                const q    = query(collection(db, 'archive_exams'), orderBy('date', 'desc'), limit(100));
+                const snap = await getDocs(q);
+                allExams = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                buildYearFilter();
+                renderGrid();
+            } catch (e) {
+                console.error('load exams error', e);
+                document.getElementById('loadingBox').innerHTML =
+                    '<div class="state-icon">⚠️</div><div class="state-text">로드 실패: ' + escapeHtml(e.message) + '</div>';
+            }
+        }
+
+        function buildYearFilter() {
+            const years = [...new Set(allExams.map(e => e.year))].sort((a, b) => b - a);
+            const sel = document.getElementById('filterYear');
+            sel.innerHTML = '<option value="">전체</option>' +
+                years.map(y => `<option value="${y}">${y}학년도</option>`).join('');
+        }
+
+        function renderGrid() {
+            const fy = document.getElementById('filterYear').value;
+            const ft = document.getElementById('filterType').value;
+            const fg = document.getElementById('filterGrade').value;
+
+            const filtered = allExams.filter(e => {
+                if (fy && String(e.year) !== fy)      return false;
+                if (ft && e.type !== ft)              return false;
+                if (fg && String(e.grade || '') !== fg) return false;
+                return true;
+            });
+
+            const grid = document.getElementById('examGrid');
+            document.getElementById('loadingBox').style.display = 'none';
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                document.getElementById('emptyBox').style.display = '';
+                return;
+            }
+
+            document.getElementById('emptyBox').style.display = 'none';
+            grid.innerHTML = filtered.map(renderExamCard).join('');
+        }
+
+        function renderExamCard(exam) {
+            const typeLabel = exam.type === 'pyeongga' ? '평가원' :
+                              exam.type === 'gyoyukcheong' ? '교육청' : exam.type;
+            const gradeLabel = exam.grade ? `고${exam.grade}` : '';
+
+            const sections = SUBJECT_GROUPS.map(g => {
+                const grp = exam.files?.[g.key];
+                if (!grp) return '';
+
+                let rows = '';
+                // 'english' 같이 시험지/듣기 케이스도 같은 구조로 처리
+                if (typeof grp === 'string') {
+                    // 단일 URL (예: korean-history 직접 URL)
+                    rows = `<span class="subject-chip">
+                        <span class="subject-chip-label">${escapeHtml(g.label)}</span>
+                        <span class="subject-chip-sep">·</span>
+                        <a href="${escapeHtml(grp)}" target="_blank" rel="noopener">다운로드</a>
+                    </span>`;
+                } else if (grp && typeof grp === 'object') {
+                    rows = Object.entries(grp).map(([subjName, entry]) => {
+                        const links = [];
+                        if (typeof entry === 'string') {
+                            links.push(`<a href="${escapeHtml(entry)}" target="_blank" rel="noopener">다운로드</a>`);
+                        } else if (entry && typeof entry === 'object') {
+                            if (entry['문제'])  links.push(`<a href="${escapeHtml(entry['문제'])}"  target="_blank" rel="noopener">문제지</a>`);
+                            if (entry['해설'])  links.push(`<a href="${escapeHtml(entry['해설'])}"  target="_blank" rel="noopener">해설</a>`);
+                            if (entry['듣기'])  links.push(`<a href="${escapeHtml(entry['듣기'])}"  target="_blank" rel="noopener">듣기</a>`);
+                            if (entry['url'])   links.push(`<a href="${escapeHtml(entry['url'])}"   target="_blank" rel="noopener">다운로드</a>`);
+                        }
+                        if (links.length === 0) return '';
+                        return `<span class="subject-chip">
+                            <span class="subject-chip-label">${escapeHtml(subjName)}</span>
+                            <span class="subject-chip-sep">·</span>
+                            ${links.join('<span class="subject-chip-sep">·</span>')}
+                        </span>`;
+                    }).join('');
+                }
+                if (!rows) return '';
+                return `<div class="subject-section">
+                    <div class="subject-section-title">${escapeHtml(g.label)}</div>
+                    <div class="subject-row">${rows}</div>
+                </div>`;
+            }).join('');
+
+            return `<article class="exam-card">
+                <div class="exam-card-header">
+                    <span class="exam-name">${escapeHtml(exam.label || exam.id)}</span>
+                    <span class="exam-tag ${escapeHtml(exam.type || '')}">${escapeHtml(typeLabel)}</span>
+                    ${gradeLabel ? `<span class="exam-tag grade">${escapeHtml(gradeLabel)}</span>` : ''}
+                    ${exam.date ? `<span class="exam-date">${escapeHtml(exam.date)}</span>` : ''}
+                </div>
+                ${sections || '<div class="state-text">등록된 파일이 없습니다.</div>'}
+            </article>`;
+        }
+
+        // 필터 이벤트
+        ['filterYear', 'filterType', 'filterGrade'].forEach(id => {
+            document.getElementById(id).addEventListener('change', renderGrid);
+        });
+    </script>
+</body>
+</html>

@@ -211,6 +211,8 @@ html[data-theme="dark"] .toast { background: #e8e8ea; color: #1e2030; }
 }
 .nav-link:hover  { color: #333; background: rgba(102,126,234,0.08); }
 .nav-link.active { background: #667eea; color: #fff; box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+/* 자료실(기출문제) — 관리자만 노출. shared.js의 applyArchiveNavVisibility()가 inline style로 해제 */
+.nav-link-archive { display: none; }
 html[data-theme="dark"] .nav-pill             { background: rgba(30,32,48,0.92); }
 html[data-theme="dark"] .nav-toggle           { color: #e8e8ea; }
 html[data-theme="dark"] .nav-toggle:hover     { background: rgba(154,165,234,0.12); }

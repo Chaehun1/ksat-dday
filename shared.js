@@ -209,3 +209,27 @@ function resolveSeason(choice) {
     if (choice === 'auto')    return getAutoSeason();
     return choice;
 }
+
+// ── 관리자 마킹 (자료실 nav 노출용) ──────────────────────────
+// Firestore/Storage Rules가 실제 권한을 강제. 여기는 UI 게이팅만.
+const ADMIN_UID = 'ffDuvRuJBNUd7KibdHEWO7BMefe2';
+
+function isAdminMarked() {
+    try { return localStorage.getItem('is-admin') === '1'; } catch (e) { return false; }
+}
+function markAdmin()   { try { localStorage.setItem('is-admin', '1'); } catch (e) {} }
+function unmarkAdmin() { try { localStorage.removeItem('is-admin'); } catch (e) {} }
+
+// 관리자라면 .nav-link-archive 링크 노출. 그렇지 않으면 CSS 기본값(숨김) 유지.
+function applyArchiveNavVisibility() {
+    if (!isAdminMarked()) return;
+    document.querySelectorAll('.nav-link-archive').forEach(a => { a.style.display = ''; });
+}
+
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyArchiveNavVisibility);
+    } else {
+        applyArchiveNavVisibility();
+    }
+}

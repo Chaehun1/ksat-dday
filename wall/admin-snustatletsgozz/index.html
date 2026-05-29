@@ -287,6 +287,41 @@
         /* ── Nav ── */
         .back-link { display: inline-flex; align-items: center; gap: 6px; color: #667eea; text-decoration: none; font-size: 0.86em; font-weight: 600; margin-bottom: 16px; }
         .back-link:hover { color: #9aa5ea; }
+
+        /* ── 자료실 폼 ── */
+        .archive-form { display: flex; flex-direction: column; gap: 10px; }
+        .ar-row { display: flex; align-items: center; gap: 12px; }
+        .ar-label { width: 90px; font-size: 0.84em; color: #9aa5ea; font-weight: 600; flex-shrink: 0; }
+        .ar-input {
+            flex: 1;
+            padding: 9px 14px;
+            border: 1px solid #3a3d55;
+            background: #12131f;
+            color: #e8e8ea;
+            border-radius: 9px;
+            font-family: 'IBM Plex Sans KR', sans-serif;
+            font-size: 0.88em;
+        }
+        .ar-input:focus { outline: 2px solid #667eea; outline-offset: 1px; border-color: transparent; }
+        .ar-exam-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #12131f;
+            border: 1px solid #2a2d40;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+        .ar-exam-info { flex: 1; min-width: 0; }
+        .ar-exam-name { font-weight: 700; color: #e8e8ea; font-size: 0.92em; margin-bottom: 4px; }
+        .ar-exam-meta { font-size: 0.78em; color: #888; margin-bottom: 6px; }
+        .ar-exam-files { font-size: 0.78em; color: #b0b0c0; line-height: 1.55; word-break: break-all; }
+        .ar-exam-files strong { color: #9aa5ea; font-weight: 600; }
+        @media (max-width: 540px) {
+            .ar-row { flex-direction: column; align-items: stretch; gap: 4px; }
+            .ar-label { width: auto; }
+        }
     </style>
 </head>
 <body>
@@ -332,6 +367,18 @@
             </div>
         </div>
 
+        <!-- Storage Rules 카드 (자료실용) -->
+        <div class="card" id="storageRulesCard" style="display:none;">
+            <div class="card-title">📦 Storage Rules (자료실)</div>
+            <div class="uid-guide" style="margin-bottom:12px;margin-top:0;">
+                Firebase Console → Storage → 시작하기 (활성화) → 규칙 탭에 아래 코드 붙여넣기
+            </div>
+            <div class="rules-block">
+                <pre class="rules-code" id="storageRulesCode"></pre>
+                <button class="rules-copy-btn" id="copyStorageRulesBtn">복사</button>
+            </div>
+        </div>
+
         <!-- 게시글 관리 카드 -->
         <div class="card">
             <div class="card-title">📝 게시글 관리</div>
@@ -360,6 +407,104 @@
             <button class="bulk-cancel-btn" id="bulkCancelBtn">선택 해제</button>
             <button class="bulk-del-btn"    id="bulkDelBtn">선택 삭제</button>
         </div>
+
+        <!-- ──────────────────────────────────────────────── -->
+        <!-- 자료실 (기출문제) 관리                              -->
+        <!-- ──────────────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-title">📚 자료실 — 시험 등록</div>
+            <div class="archive-form">
+                <div class="ar-row">
+                    <label class="ar-label">학년도</label>
+                    <input type="number" id="arYear" class="ar-input" min="2020" max="2030" placeholder="예: 2027">
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">시험 종류</label>
+                    <select id="arType" class="ar-input">
+                        <option value="pyeongga">평가원 (수능·6모·9모)</option>
+                        <option value="gyoyukcheong">교육청 (학평)</option>
+                    </select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">세부 회차</label>
+                    <select id="arSubtype" class="ar-input">
+                        <option value="suneung">수능</option>
+                        <option value="6mo">6월 모의평가</option>
+                        <option value="9mo">9월 모의평가</option>
+                        <option value="3wol">3월 학평</option>
+                        <option value="4wol">4월 학평</option>
+                        <option value="6wol">6월 학평</option>
+                        <option value="7wol">7월 학평</option>
+                        <option value="9wol">9월 학평</option>
+                        <option value="10wol">10월 학평</option>
+                        <option value="11wol">11월 학평</option>
+                    </select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">학년</label>
+                    <select id="arGrade" class="ar-input">
+                        <option value="3">고3</option>
+                        <option value="2">고2</option>
+                        <option value="1">고1</option>
+                    </select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">시행일</label>
+                    <input type="date" id="arDate" class="ar-input">
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">표시명</label>
+                    <input type="text" id="arLabel" class="ar-input" placeholder="예: 2027학년도 대학수학능력시험">
+                </div>
+                <button class="toolbar-btn active" id="arCreateBtn" style="margin-top:6px;">+ 시험 등록</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📤 자료실 — 파일 업로드</div>
+            <div class="archive-form">
+                <div class="ar-row">
+                    <label class="ar-label">시험</label>
+                    <select id="upExam" class="ar-input"><option value="">— 시험 먼저 등록 —</option></select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">과목 그룹</label>
+                    <select id="upGroup" class="ar-input">
+                        <option value="korean">국어</option>
+                        <option value="math">수학</option>
+                        <option value="english">영어</option>
+                        <option value="korean-history">한국사</option>
+                        <option value="social">사회탐구</option>
+                        <option value="science">과학탐구</option>
+                        <option value="vocational">직업탐구</option>
+                        <option value="second-lang">제2외국어/한문</option>
+                    </select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">세부 과목명</label>
+                    <input type="text" id="upSubject" class="ar-input" placeholder="예: 공통, 화법과 작문, 미적분, 생활과윤리">
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">파일 종류</label>
+                    <select id="upKind" class="ar-input">
+                        <option value="문제">문제지</option>
+                        <option value="해설">해설</option>
+                        <option value="듣기">듣기 음원 (영어)</option>
+                    </select>
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">파일</label>
+                    <input type="file" id="upFile" class="ar-input" accept=".pdf,.mp3,.m4a,.wav,.zip">
+                </div>
+                <button class="toolbar-btn active" id="upBtn" style="margin-top:6px;">⬆ 업로드</button>
+                <div id="upStatus" style="margin-top:10px;font-size:0.85em;color:#9aa5ea;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 등록된 시험 목록 <span id="arListCount" style="font-size:0.78em;color:#666;font-weight:500;margin-left:6px;"></span></div>
+            <div id="arList"><div class="empty-state"><span class="empty-icon">⏳</span>불러오는 중...</div></div>
+        </div>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -370,10 +515,12 @@
         // (이 페이지는 비공개 URL로만 보호되며, 클라이언트 비밀번호는 보안 효과가 없습니다.)
 
         import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, deleteDoc, updateDoc, writeBatch }
+        import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, deleteDoc, updateDoc, writeBatch, serverTimestamp }
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged }
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
         // ── Firebase ──────────────────────────────────────────────────
         const firebaseConfig = {
@@ -384,10 +531,12 @@
             messagingSenderId: "291375667501",
             appId:             "1:291375667501:web:3def7360892dcfc3bf9ba4"
         };
-        const app    = initializeApp(firebaseConfig);
-        const db     = getFirestore(app);
-        const auth   = getAuth(app);
-        const msgCol = collection(db, 'messages');
+        const app      = initializeApp(firebaseConfig);
+        const db       = getFirestore(app);
+        const auth     = getAuth(app);
+        const storage  = getStorage(app);
+        const msgCol   = collection(db, 'messages');
+        const archiveCol = collection(db, 'archive_exams');
 
         // ── State ─────────────────────────────────────────────────────
         let currentUid  = null;
@@ -436,7 +585,18 @@
             document.getElementById('rulesCode').textContent = rules;
             document.getElementById('rulesCard').style.display = '';
 
+            const storageRules = generateStorageRules(currentUid);
+            document.getElementById('storageRulesCode').textContent = storageRules;
+            document.getElementById('storageRulesCard').style.display = '';
+
+            // 관리자 UID라면 마킹 (다른 페이지의 자료실 nav 노출용)
+            if (currentUid === ADMIN_UID) {
+                markAdmin();
+                applyArchiveNavVisibility();
+            }
+
             loadPosts();
+            loadArchiveExams();
         });
 
         // ── Rules generator ───────────────────────────────────────────
@@ -532,6 +692,25 @@ service cloud.firestore {
           && (request.auth.uid == resource.data.authorUid
               || request.auth.uid == "${uid}");
       }
+    }
+
+    // ── 기출문제 자료실 ──────────────────────────────────────
+    // 공개 컬렉션이지만 read도 관리자만(현재 비공개 단계).
+    // 5회분 등록 후 공개 전환 시 read를 'if true'로 변경.
+    match /archive_exams/{examId} {
+      allow read, write: if request.auth != null && request.auth.uid == "${uid}";
+    }
+  }
+}`;
+
+        // ── Storage Rules generator ───────────────────────────────────
+        const generateStorageRules = uid => `rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // 기출문제 자료실 — 관리자만 read·write (비공개 단계)
+    // 5회분 등록 후 공개 전환 시 read를 'if true'로 변경.
+    match /archive/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == "${uid}";
     }
   }
 }`;
@@ -791,6 +970,171 @@ service cloud.firestore {
 
         document.getElementById('copyRulesBtn').addEventListener('click', async () => {
             if (await copyText(document.getElementById('rulesCode').textContent)) showToast('✅ Rules 복사됨');
+        });
+
+        document.getElementById('copyStorageRulesBtn').addEventListener('click', async () => {
+            if (await copyText(document.getElementById('storageRulesCode').textContent)) showToast('✅ Storage Rules 복사됨');
+        });
+
+        // ──────────────────────────────────────────────────────────────
+        // 자료실 (archive_exams) 관리
+        // ──────────────────────────────────────────────────────────────
+        const SUBJECT_GROUP_LABEL = {
+            'korean': '국어', 'math': '수학', 'english': '영어',
+            'korean-history': '한국사', 'social': '사회탐구', 'science': '과학탐구',
+            'vocational': '직업탐구', 'second-lang': '제2외국어/한문'
+        };
+        const SUBTYPE_LABEL = {
+            'suneung': '수능', '6mo': '6모', '9mo': '9모',
+            '3wol': '3월 학평', '4wol': '4월 학평', '6wol': '6월 학평',
+            '7wol': '7월 학평', '9wol': '9월 학평', '10wol': '10월 학평', '11wol': '11월 학평'
+        };
+
+        let archiveExams = [];
+
+        const examDocId = (year, type, grade, subtype) => `${year}-${type}-g${grade}-${subtype}`;
+
+        async function loadArchiveExams() {
+            try {
+                const q = query(archiveCol, orderBy('date', 'desc'), limit(200));
+                const snap = await getDocs(q);
+                archiveExams = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            } catch (e) {
+                console.error('archive load error', e);
+                archiveExams = [];
+            }
+            renderArchiveList();
+            renderUpExamOptions();
+        }
+
+        function renderUpExamOptions() {
+            const sel = document.getElementById('upExam');
+            if (archiveExams.length === 0) {
+                sel.innerHTML = '<option value="">— 시험 먼저 등록 —</option>';
+                return;
+            }
+            sel.innerHTML = archiveExams.map(e =>
+                `<option value="${escapeHtml(e.id)}">${escapeHtml(e.label || e.id)}</option>`
+            ).join('');
+        }
+
+        function renderArchiveList() {
+            const wrap = document.getElementById('arList');
+            document.getElementById('arListCount').textContent = `(총 ${archiveExams.length}개)`;
+            if (archiveExams.length === 0) {
+                wrap.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span>등록된 시험이 없습니다</div>';
+                return;
+            }
+            wrap.innerHTML = archiveExams.map(e => {
+                const fileSummary = summarizeFiles(e.files);
+                return `<div class="ar-exam-row">
+                    <div class="ar-exam-info">
+                        <div class="ar-exam-name">${escapeHtml(e.label || e.id)}</div>
+                        <div class="ar-exam-meta">${escapeHtml(e.date || '')} · ${escapeHtml(SUBTYPE_LABEL[e.subtype] || e.subtype || '')} · 고${escapeHtml(String(e.grade || ''))}</div>
+                        <div class="ar-exam-files">${fileSummary || '<em style="color:#666;">파일 없음</em>'}</div>
+                    </div>
+                    <button class="del-btn" data-ar-del="${escapeHtml(e.id)}">삭제</button>
+                </div>`;
+            }).join('');
+        }
+
+        function summarizeFiles(files) {
+            if (!files) return '';
+            const parts = [];
+            for (const [group, subjects] of Object.entries(files)) {
+                const groupLabel = SUBJECT_GROUP_LABEL[group] || group;
+                if (typeof subjects !== 'object' || !subjects) continue;
+                const subjItems = Object.entries(subjects).map(([sname, entry]) => {
+                    if (!entry || typeof entry !== 'object') return sname;
+                    const kinds = Object.keys(entry).join('/');
+                    return `${sname}(${kinds})`;
+                });
+                parts.push(`<strong>${escapeHtml(groupLabel)}</strong>: ${escapeHtml(subjItems.join(', '))}`);
+            }
+            return parts.join(' &nbsp;|&nbsp; ');
+        }
+
+        // ── 시험 등록 ────────────────────────────────────────────
+        document.getElementById('arCreateBtn').addEventListener('click', async () => {
+            const year    = parseInt(document.getElementById('arYear').value, 10);
+            const type    = document.getElementById('arType').value;
+            const subtype = document.getElementById('arSubtype').value;
+            const grade   = parseInt(document.getElementById('arGrade').value, 10);
+            const date    = document.getElementById('arDate').value;
+            const label   = document.getElementById('arLabel').value.trim();
+
+            if (!year || !type || !subtype || !grade || !date || !label) {
+                showToast('⚠️ 모든 필드를 채워주세요');
+                return;
+            }
+            const id = examDocId(year, type, grade, subtype);
+            try {
+                await setDoc(doc(archiveCol, id), {
+                    year, type, subtype, grade, date, label,
+                    files: {},
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                showToast('✅ 시험 등록됨: ' + id);
+                document.getElementById('arLabel').value = '';
+                document.getElementById('arDate').value  = '';
+                await loadArchiveExams();
+            } catch (e) {
+                console.error(e);
+                showToast('❌ 등록 실패: ' + e.message);
+            }
+        });
+
+        // ── 파일 업로드 ──────────────────────────────────────────
+        document.getElementById('upBtn').addEventListener('click', async () => {
+            const examId  = document.getElementById('upExam').value;
+            const group   = document.getElementById('upGroup').value;
+            const subject = document.getElementById('upSubject').value.trim();
+            const kind    = document.getElementById('upKind').value;
+            const file    = document.getElementById('upFile').files[0];
+            const statusEl = document.getElementById('upStatus');
+
+            if (!examId)  { showToast('⚠️ 시험을 선택해주세요'); return; }
+            if (!subject) { showToast('⚠️ 세부 과목명을 입력해주세요'); return; }
+            if (!file)    { showToast('⚠️ 파일을 선택해주세요'); return; }
+
+            const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
+            const path = `archive/${examId}/${group}/${subject}/${kind}.${ext}`;
+            statusEl.textContent = `업로드 중… ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
+
+            try {
+                const ref = storageRef(storage, path);
+                await uploadBytes(ref, file);
+                const url = await getDownloadURL(ref);
+
+                // Firestore의 files.{group}.{subject}.{kind} = url 업데이트
+                await updateDoc(doc(archiveCol, examId), {
+                    [`files.${group}.${subject}.${kind}`]: url,
+                    updatedAt: serverTimestamp()
+                });
+
+                statusEl.textContent = `✅ 업로드 완료: ${path}`;
+                showToast('✅ 업로드 완료');
+                document.getElementById('upFile').value = '';
+                await loadArchiveExams();
+            } catch (e) {
+                console.error(e);
+                statusEl.textContent = '❌ 실패: ' + e.message;
+                showToast('❌ 업로드 실패: ' + e.message);
+            }
+        });
+
+        // ── 시험 삭제 (Firestore doc만 — Storage 정리는 별도 작업 권장) ─
+        document.getElementById('arList').addEventListener('click', async (e) => {
+            const id = e.target.dataset.arDel;
+            if (!id) return;
+            if (!confirm(`시험 [${id}]을 삭제합니다.\n\n⚠️ Firestore 문서만 지워집니다. Storage 파일은 Firebase Console에서 별도로 삭제해주세요.`)) return;
+            try {
+                await deleteDoc(doc(archiveCol, id));
+                showToast('🗑 삭제됨: ' + id);
+                await loadArchiveExams();
+            } catch (err) {
+                showToast('❌ 삭제 실패: ' + err.message);
+            }
         });
     </script>
 </body>
