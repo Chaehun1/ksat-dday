@@ -211,8 +211,12 @@ function resolveSeason(choice) {
 }
 
 // ── 관리자 마킹 (자료실 nav 노출용) ──────────────────────────
-// Firestore/Storage Rules가 실제 권한을 강제. 여기는 UI 게이팅만.
+// Firestore Rules / R2 Worker 토큰 검증이 실제 권한을 강제. 여기는 UI 게이팅만.
 const ADMIN_UID = 'ffDuvRuJBNUd7KibdHEWO7BMefe2';
+
+// 기출문제 자료실 파일 게이트웨이 (Cloudflare Worker + R2).
+// ⚠️ Worker 배포 후 본인 subdomain으로 교체할 것 (archive-worker/README.md 참고).
+const ARCHIVE_BASE = 'https://ksat-archive.YOUR-SUBDOMAIN.workers.dev';
 
 function isAdminMarked() {
     try { return localStorage.getItem('is-admin') === '1'; } catch (e) { return false; }

@@ -1,0 +1,8 @@
+name = "ksat-archive"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# R2 버킷 바인딩 — 대시보드에서 만든 버킷 이름과 일치해야 함
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "ksat-archive"

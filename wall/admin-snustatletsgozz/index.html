@@ -367,17 +367,6 @@
             </div>
         </div>
 
-        <!-- Storage Rules 카드 (자료실용) -->
-        <div class="card" id="storageRulesCard" style="display:none;">
-            <div class="card-title">📦 Storage Rules (자료실)</div>
-            <div class="uid-guide" style="margin-bottom:12px;margin-top:0;">
-                Firebase Console → Storage → 시작하기 (활성화) → 규칙 탭에 아래 코드 붙여넣기
-            </div>
-            <div class="rules-block">
-                <pre class="rules-code" id="storageRulesCode"></pre>
-                <button class="rules-copy-btn" id="copyStorageRulesBtn">복사</button>
-            </div>
-        </div>
 
         <!-- 게시글 관리 카드 -->
         <div class="card">
@@ -519,8 +508,6 @@
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged }
             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject }
-            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
         // ── Firebase ──────────────────────────────────────────────────
         const firebaseConfig = {
@@ -534,7 +521,6 @@
         const app      = initializeApp(firebaseConfig);
         const db       = getFirestore(app);
         const auth     = getAuth(app);
-        const storage  = getStorage(app);
         const msgCol   = collection(db, 'messages');
         const archiveCol = collection(db, 'archive_exams');
 
@@ -584,10 +570,6 @@
             const rules = generateRules(currentUid);
             document.getElementById('rulesCode').textContent = rules;
             document.getElementById('rulesCard').style.display = '';
-
-            const storageRules = generateStorageRules(currentUid);
-            document.getElementById('storageRulesCode').textContent = storageRules;
-            document.getElementById('storageRulesCard').style.display = '';
 
             // 관리자 UID라면 마킹 (다른 페이지의 자료실 nav 노출용)
             if (currentUid === ADMIN_UID) {
@@ -694,22 +676,10 @@ service cloud.firestore {
       }
     }
 
-    // ── 기출문제 자료실 ──────────────────────────────────────
-    // 공개 컬렉션이지만 read도 관리자만(현재 비공개 단계).
-    // 5회분 등록 후 공개 전환 시 read를 'if true'로 변경.
+    // ── 기출문제 자료실 메타데이터 ───────────────────────────
+    // 파일 자체는 Cloudflare R2(Worker)에 저장. 여기엔 메타+파일 URL만.
+    // 비공개 단계: read도 관리자만. 5회분 등록 후 'if true'로 공개 전환.
     match /archive_exams/{examId} {
-      allow read, write: if request.auth != null && request.auth.uid == "${uid}";
-    }
-  }
-}`;
-
-        // ── Storage Rules generator ───────────────────────────────────
-        const generateStorageRules = uid => `rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    // 기출문제 자료실 — 관리자만 read·write (비공개 단계)
-    // 5회분 등록 후 공개 전환 시 read를 'if true'로 변경.
-    match /archive/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == "${uid}";
     }
   }
@@ -972,10 +942,6 @@ service firebase.storage {
             if (await copyText(document.getElementById('rulesCode').textContent)) showToast('✅ Rules 복사됨');
         });
 
-        document.getElementById('copyStorageRulesBtn').addEventListener('click', async () => {
-            if (await copyText(document.getElementById('storageRulesCode').textContent)) showToast('✅ Storage Rules 복사됨');
-        });
-
         // ──────────────────────────────────────────────────────────────
         // 자료실 (archive_exams) 관리
         // ──────────────────────────────────────────────────────────────
@@ -1097,22 +1063,36 @@ service firebase.storage {
             if (!subject) { showToast('⚠️ 세부 과목명을 입력해주세요'); return; }
             if (!file)    { showToast('⚠️ 파일을 선택해주세요'); return; }
 
+            if (ARCHIVE_BASE.includes('YOUR-SUBDOMAIN')) {
+                showToast('⚠️ shared.js의 ARCHIVE_BASE를 Worker 주소로 먼저 바꿔주세요');
+                return;
+            }
+
             const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
-            const path = `archive/${examId}/${group}/${subject}/${kind}.${ext}`;
+            const key = `archive/${examId}/${group}/${subject}/${kind}.${ext}`;
             statusEl.textContent = `업로드 중… ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
 
             try {
-                const ref = storageRef(storage, path);
-                await uploadBytes(ref, file);
-                const url = await getDownloadURL(ref);
+                const token = await auth.currentUser.getIdToken();
+                const fd = new FormData();
+                fd.append('file', file);
+                fd.append('key', key);
+
+                const res = await fetch(`${ARCHIVE_BASE}/upload`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` },
+                    body: fd
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
 
                 // Firestore의 files.{group}.{subject}.{kind} = url 업데이트
                 await updateDoc(doc(archiveCol, examId), {
-                    [`files.${group}.${subject}.${kind}`]: url,
+                    [`files.${group}.${subject}.${kind}`]: data.url,
                     updatedAt: serverTimestamp()
                 });
 
-                statusEl.textContent = `✅ 업로드 완료: ${path}`;
+                statusEl.textContent = `✅ 업로드 완료: ${key}`;
                 showToast('✅ 업로드 완료');
                 document.getElementById('upFile').value = '';
                 await loadArchiveExams();
@@ -1123,16 +1103,31 @@ service firebase.storage {
             }
         });
 
-        // ── 시험 삭제 (Firestore doc만 — Storage 정리는 별도 작업 권장) ─
+        // ── 시험 삭제 (R2 파일 + Firestore doc 함께 삭제) ──────────
         document.getElementById('arList').addEventListener('click', async (e) => {
             const id = e.target.dataset.arDel;
             if (!id) return;
-            if (!confirm(`시험 [${id}]을 삭제합니다.\n\n⚠️ Firestore 문서만 지워집니다. Storage 파일은 Firebase Console에서 별도로 삭제해주세요.`)) return;
+            if (!confirm(`시험 [${id}]을 삭제합니다.\n\n해당 시험의 R2 파일과 Firestore 문서가 모두 삭제됩니다.`)) return;
             try {
+                // 1) R2 파일 일괄 삭제 (Worker)
+                if (!ARCHIVE_BASE.includes('YOUR-SUBDOMAIN')) {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${ARCHIVE_BASE}/delete`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prefix: `archive/${id}/` })
+                    });
+                    if (!res.ok) {
+                        const d = await res.json().catch(() => ({}));
+                        throw new Error('R2 삭제 실패: ' + (d.error || res.status));
+                    }
+                }
+                // 2) Firestore 문서 삭제
                 await deleteDoc(doc(archiveCol, id));
                 showToast('🗑 삭제됨: ' + id);
                 await loadArchiveExams();
             } catch (err) {
+                console.error(err);
                 showToast('❌ 삭제 실패: ' + err.message);
             }
         });
