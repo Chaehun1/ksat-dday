@@ -215,8 +215,7 @@ function resolveSeason(choice) {
 const ADMIN_UID = 'ffDuvRuJBNUd7KibdHEWO7BMefe2';
 
 // 기출문제 자료실 파일 게이트웨이 (Cloudflare Worker + R2).
-// ⚠️ Worker 배포 후 본인 subdomain으로 교체할 것 (archive-worker/README.md 참고).
-const ARCHIVE_BASE = 'https://ksat-archive.YOUR-SUBDOMAIN.workers.dev';
+const ARCHIVE_BASE = 'https://ksat-archive.littird3.workers.dev';
 
 function isAdminMarked() {
     try { return localStorage.getItem('is-admin') === '1'; } catch (e) { return false; }
