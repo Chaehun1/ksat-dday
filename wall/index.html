@@ -38,7 +38,7 @@
         html, body { overflow-x: hidden; max-width: 100%; }
 
         /* Dark mode (페이지 고유 컴포넌트만) */
-        html[data-theme="dark"] .panel, html[data-theme="dark"] .compose, html[data-theme="dark"] .post { background: #1e2030; color: #e8e8ea; }
+        html[data-theme="dark"] .panel, html[data-theme="dark"] .compose, html[data-theme="dark"] .post, html[data-theme="dark"] .header { background: #1e2030; color: #e8e8ea; }
         html[data-theme="dark"] .post-nick { color: #e8e8ea; }
         html[data-theme="dark"] .post-text { color: #d0d0d8; }
         html[data-theme="dark"] .post-time, html[data-theme="dark"] .char-count, html[data-theme="dark"] .subtitle, html[data-theme="dark"] .post-ip { color: #8a8a9a; }
@@ -52,9 +52,9 @@
         html[data-theme="dark"] h1 { color: #e8e8ea; }
 
         .container { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
-        .header { text-align: center; margin-bottom: 18px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-        h1 { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
-        .subtitle { font-size: 0.92em; opacity: 0.95; font-weight: 400; }
+        .header { text-align: center; margin-bottom: 16px; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 18px 20px; transition: background 0.4s ease; }
+        h1 { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; color: #333; }
+        .subtitle { font-size: 0.92em; color: #888; font-weight: 400; }
 
         .panel, .compose, .post { background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: background 0.4s ease; }
 
@@ -268,7 +268,7 @@
     <script src="../shared.js"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, updateDoc, deleteDoc, increment, serverTimestamp, getDocs, getCountFromServer } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
         const firebaseConfig = {
@@ -504,6 +504,37 @@
         // 답글 패널 열림 상태 (postId set) + 캐시
         const openReplies = new Set();
         const repliesCache = {};
+        // 답글 수 캐시 (count 쿼리 결과) — 패널 안 열어도 버튼에 개수 표시용
+        const replyCountCache = {};
+        const _countPending = new Set();
+
+        function getReplyCount(postId) {
+            const cached = repliesCache[postId];
+            if (cached && cached !== 'loading') return cached.length;
+            const n = replyCountCache[postId];
+            return (typeof n === 'number') ? n : null;
+        }
+
+        // 현재 페이지 글들의 답글 수를 count 쿼리로 받아와 버튼 갱신
+        function fetchReplyCounts(posts) {
+            const targets = posts.filter(p =>
+                replyCountCache[p.id] === undefined &&
+                !repliesCache[p.id] &&
+                !_countPending.has(p.id));
+            targets.forEach(p => _countPending.add(p.id));
+            targets.forEach(async p => {
+                try {
+                    const snap = await getCountFromServer(collection(db, 'messages', p.id, 'replies'));
+                    replyCountCache[p.id] = snap.data().count;
+                    const article = document.querySelector(`[data-post-id="${p.id}"]`);
+                    if (article) updateReplyToggleBtn(article, p.id);
+                } catch (e) {
+                    console.error('reply count', e);
+                } finally {
+                    _countPending.delete(p.id);
+                }
+            });
+        }
         // 검색 + 북마크 필터 상태
         let searchQuery = '';
         let showBookmarksOnly = false;
@@ -607,8 +638,7 @@
                 const isBookmarked = bookmarks.includes(p.id);
                 const isEditing    = editingPosts.has(p.id);
                 const repliesOpen  = openReplies.has(p.id);
-                const replyCache   = repliesCache[p.id];
-                const replyCount   = (replyCache && replyCache !== 'loading') ? replyCache.length : null;
+                const replyCount   = getReplyCount(p.id);
                 const replyBtnText = (replyCount !== null && replyCount > 0) ? `💬 답글 ${replyCount}` : '💬 답글';
                 const editedBadge  = p.editedAt ? '<span class="edited-badge">(수정됨)</span>' : '';
 
@@ -648,6 +678,7 @@
             attachPostEventHandlers(feed);
             renderPagination(posts.length);
             handleDeepLinkScroll(posts);
+            fetchReplyCounts(pagePosts);
         }
 
         function renderReplyPanel(postId) {
@@ -705,8 +736,7 @@
         function updateReplyToggleBtn(article, postId) {
             const btn = article.querySelector('.reply-toggle-btn');
             if (!btn) return;
-            const replies = repliesCache[postId];
-            const replyCount = (replies && replies !== 'loading') ? replies.length : null;
+            const replyCount = getReplyCount(postId);
             btn.textContent = (replyCount !== null && replyCount > 0) ? `💬 답글 ${replyCount}` : '💬 답글';
             const open = openReplies.has(postId);
             btn.classList.toggle('active', open);
@@ -866,6 +896,7 @@
                         dislikes: data.dislikes || 0
                     };
                 });
+                replyCountCache[postId] = repliesCache[postId].length;
             } catch (e) {
                 console.error(e);
                 repliesCache[postId] = [];
@@ -909,6 +940,7 @@
             try {
                 await deleteDoc(doc(db, 'messages', postId, 'replies', replyId));
                 repliesCache[postId] = (repliesCache[postId] || []).filter(r => r.id !== replyId);
+                replyCountCache[postId] = repliesCache[postId].length;
                 rerenderReplyPanelFor(postId);
                 toast('🗑️ 답글이 삭제되었습니다');
             } catch (e) {
