@@ -1068,8 +1068,10 @@ service cloud.firestore {
                 return;
             }
 
-            const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
-            const key = `archive/${examId}/${group}/${subject}/${kind}.${ext}`;
+            // Firestore 필드 경로(~ * / [ ] 금지, .은 중첩 분리자)와 R2 키를 깨뜨리는 문자 제거
+            const safeSubject = subject.replace(/[~*\/\[\]\.]/g, '-');
+            const ext = ((file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '')) || 'bin';
+            const key = `archive/${examId}/${group}/${safeSubject}/${kind}.${ext}`;
             statusEl.textContent = `업로드 중… ${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
 
             try {
@@ -1087,8 +1089,11 @@ service cloud.firestore {
                 if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
 
                 // Firestore의 files.{group}.{subject}.{kind} = url 업데이트
+                // Worker가 max-age=1년(immutable)로 서빙하므로, 같은 키 재업로드 시
+                // 옛 파일이 브라우저에 남지 않도록 버전 쿼리로 캐시 무효화
+                const fileUrl = data.url + '?v=' + Date.now();
                 await updateDoc(doc(archiveCol, examId), {
-                    [`files.${group}.${subject}.${kind}`]: data.url,
+                    [`files.${group}.${safeSubject}.${kind}`]: fileUrl,
                     updatedAt: serverTimestamp()
                 });
 
