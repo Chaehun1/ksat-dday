@@ -3,3 +3,6 @@
 Thumbs.db
 *.log
 .wrangler/
+
+# 기출 PDF 업로드 작업 폴더 (make_folders.py 생성물 — 저작권·용량상 커밋 금지)
+기출_업로드/

@@ -470,6 +470,7 @@
                             links.push(`<a href="${escapeHtml(entry)}" target="_blank" rel="noopener">다운로드</a>`);
                         } else if (entry && typeof entry === 'object') {
                             if (entry['문제'])  links.push(`<a href="${escapeHtml(entry['문제'])}"  target="_blank" rel="noopener">문제지</a>`);
+                            if (entry['정답'])  links.push(`<a href="${escapeHtml(entry['정답'])}"  target="_blank" rel="noopener">정답</a>`);
                             if (entry['해설'])  links.push(`<a href="${escapeHtml(entry['해설'])}"  target="_blank" rel="noopener">해설</a>`);
                             if (entry['듣기'])  links.push(`<a href="${escapeHtml(entry['듣기'])}"  target="_blank" rel="noopener">듣기</a>`);
                             if (entry['url'])   links.push(`<a href="${escapeHtml(entry['url'])}"   target="_blank" rel="noopener">다운로드</a>`);
