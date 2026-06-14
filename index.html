@@ -212,6 +212,16 @@
         html[data-theme="dark"] .scope-table td { background: #232636; color: #d0d0d8; }
         html[data-theme="dark"] .scope-empty { color: #777; }
 
+        /* 모달 상단 성적 통지일 */
+        .scope-result { background: #eef0ff; color: #4250c5; font-size: 0.9em; font-weight: 600; padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; text-align: center; }
+        html[data-theme="dark"] .scope-result { background: #2d3566; color: #aab3f5; }
+
+        /* 실시간 타이머 (시·분·초) */
+        .dday-timer-toggle { margin-top: 12px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.45); color: #fff; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.76em; font-weight: 600; padding: 5px 14px; border-radius: 999px; cursor: pointer; transition: background 0.2s; }
+        .dday-timer-toggle:hover { background: rgba(255,255,255,0.34); }
+        .dday-timer-toggle.active { background: rgba(255,255,255,0.92); color: #333; border-color: transparent; }
+        .dday-timer { margin-top: 10px; font-size: 1.1em; font-weight: 700; color: #fff; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; font-family: ui-monospace, 'IBM Plex Sans KR', monospace; }
+
         @media (max-width: 860px) {
             body { padding: 10px; }
             .fab-actions { position: absolute; top: 10px; right: 10px; }
@@ -293,6 +303,8 @@
                 <div class="main-dday-label" id="mainDdayLabel">2027학년도 수능까지</div>
                 <div class="main-dday-number" id="mainDday">D-000</div>
                 <div class="main-dday-date" id="mainDdayDate">2026년 11월 19일 (목)</div>
+                <button class="dday-timer-toggle" id="ddayTimerToggle" onclick="toggleDdayTimer()">⏱ 실시간 보기</button>
+                <div class="dday-timer" id="ddayTimer" style="display:none;" aria-live="off"></div>
             </section>
 
             <section class="stats-row" aria-label="남은 기간">
@@ -519,6 +531,31 @@
             document.getElementById('progressFill').style.width = pct + '%';
         }
 
+        // ── 실시간 타이머 (일·시·분·초) ──
+        var _ddayTimer = null;
+        function toggleDdayTimer() {
+            var on = document.getElementById('ddayTimer').style.display === 'none';
+            setDdayTimer(on);
+            try { if (on) localStorage.setItem('dday-timer','1'); else localStorage.removeItem('dday-timer'); } catch(e){}
+            if (typeof gtag === 'function') gtag('event', 'dday_timer_toggle', { on: on });
+        }
+        function setDdayTimer(on) {
+            var el = document.getElementById('ddayTimer');
+            document.getElementById('ddayTimerToggle').classList.toggle('active', on);
+            el.style.display = on ? '' : 'none';
+            if (_ddayTimer) { clearInterval(_ddayTimer); _ddayTimer = null; }
+            if (on) { updateDdayTimer(); _ddayTimer = setInterval(updateDdayTimer, 1000); }
+        }
+        function updateDdayTimer() {
+            var el = document.getElementById('ddayTimer');
+            var diff = parseDate(DATES[currentMode].target) - new Date();
+            if (diff <= 0) { el.textContent = '🎉 D-Day!'; return; }
+            var t = Math.floor(diff / 1000);
+            var d = Math.floor(t / 86400), h = Math.floor(t % 86400 / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+            function p(n){ return (n < 10 ? '0' : '') + n; }
+            el.textContent = d + '일 ' + p(h) + ':' + p(m) + ':' + p(s);
+        }
+
         function renderSchedule() {
             var list = document.getElementById('scheduleList');
             list.innerHTML = '';
@@ -538,7 +575,7 @@
                     shouldShow = true;
                     if (s.grades) grades = s.grades;
                 }
-                if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:formatDisplayDate(s.date), category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat, scope: s.scope });
+                if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:formatDisplayDate(s.date), category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat, scope: s.scope, resultDate: s.resultDate });
             });
             if (!showPast) items = items.filter(function(i){ return parseDate(i.date) >= getToday(); });
             if (items.length === 0) {
@@ -561,7 +598,8 @@
                 else { ddayText='D-'+dday; ddayClass='future'; }
                 var bc = item.badgeCat === 'both' ? 'pyeongwon' : item.badgeCat;
                 el.innerHTML = '<div class="schedule-info"><div class="schedule-name">'+item.displayName+getBadge(bc)+'</div><div class="schedule-date">'+item.displayDate+'</div></div><div class="schedule-dday '+ddayClass+'">'+ddayText+'</div>';
-                if (item.category !== 'etc') {
+                var hasScope = item.scope && (Array.isArray(item.scope) ? item.scope.length > 0 : Object.keys(item.scope).length > 0);
+                if (hasScope) {
                     el.classList.add('has-scope');
                     el.addEventListener('click', function(){ openScopeModal(item); });
                 }
@@ -628,6 +666,9 @@
                     html += '<div class="scope-grade-section"><div class="scope-grade-label">'+grade+'</div>'+renderScopeTable(scope[grade])+'</div>';
                 });
                 body.innerHTML = html;
+            }
+            if (item.resultDate) {
+                body.innerHTML = '<div class="scope-result">📋 성적 통지: ' + item.resultDate + '</div>' + body.innerHTML;
             }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -709,6 +750,7 @@
         updateAll();
         scheduleMidnightRefresh();
         setInterval(updateFooter, 60000);
+        try { if (localStorage.getItem('dday-timer') === '1') setDdayTimer(true); } catch(e){}
     </script>
 </body>
 </html>

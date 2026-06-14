@@ -127,6 +127,16 @@ var schedules = [
         { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅲ. 파동과 물질의 성질 - 1. 전자기파의 성질과 활용\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅴ. 생물의 진화와 다양성\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅲ. 우주 - 1. 행성의 운동' }
     ] },
     { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf', scope: SURF_SCOPE },
+    { name: '2027 사관학교 1차시험', date: '2026-08-01', displayDate: '2026년 8월 1일 (토)', category: 'etc', scope: [
+        { subject: '국어', range: '독서, 문학\n(화법과 작문·언어와 매체 제외)\n30문항 · 50분 · 100점' },
+        { subject: '수학', range: '[공통] 수학Ⅰ, 수학Ⅱ\n[자연계열] 미적분, 기하 중 택1\n[인문계열] 확률과 통계, 미적분, 기하 중 택1\n30문항 · 100분 · 100점' },
+        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)\n30문항 · 50분 · 100점' }
+    ] },
+    { name: '2027 경찰대 1차시험', date: '2026-08-01', displayDate: '2026년 8월 1일 (토)', category: 'etc', scope: [
+        { subject: '국어', range: '독서, 문학\n45문항 · 60분 · 100점' },
+        { subject: '수학', range: '수학Ⅰ, 수학Ⅱ\n25문항 · 80분 · 100점' },
+        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)\n45문항 · 60분 · 100점' }
+    ] },
     { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf', scope: SURF_SCOPE },
     { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff', scope: SURF_SCOPE },
     { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
