@@ -79,7 +79,7 @@ var schedules = [
         { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매 - 1. 반응 속도\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] IV. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환' }
     ] },
     { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf', scope: SURF_SCOPE },
-    { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, resultDate: '고3(평가원) 7월 1일(수) · 고1·고2(교육청) 6월 19일(금)', scope: [
+    { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, resultDate: { date: '2026-07-01', text: '고3(평가원) 7월 1일(수) · 고1·고2(교육청) 6월 19일(금)' }, scope: [
         { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
             { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
             { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률\n[미적분] Ⅱ. 미분법\n[기하] Ⅱ. 평면벡터' },
@@ -205,7 +205,7 @@ var schedules = [
     ] },
     { name: '11월 더 프리미엄', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'duff', scope: SURF_SCOPE },
     { name: '11월 서바이벌 프로', date: '2026-11-02', displayDate: '2026년 11월 2일 (월)', category: 'surf', scope: SURF_SCOPE },
-    { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true, scope: [
+    { name: '2027학년도 수능', date: '2026-11-19', displayDate: '2026년 11월 19일 (목)', category: 'suneung', isSuneung: true, resultDate: { date: '2026-12-11', text: '2026년 12월 11일(금)' }, scope: [
         { grade: 3, source: 'suneung', label: '고3', rows: [
             { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
             { subject: '수학', range: '전 범위\n(수학Ⅰ, 수학Ⅱ, 확률과 통계, 미적분, 기하)' },
@@ -217,7 +217,6 @@ var schedules = [
             { subject: '제2외국어/한문', range: '9과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 베트남어Ⅰ, 아랍어Ⅰ, 한문Ⅰ)' }
         ] }
     ] },
-    { name: '수능 성적 통지일', date: '2026-12-11', displayDate: '2026년 12월 11일 (금)', category: 'etc' },
     { name: '정시 원서 접수 시작', date: '2027-01-04', displayDate: '2027년 1월 4일 (월)', category: 'etc' },
     { name: '2028학년도 수능', date: '2027-11-18', displayDate: '2027년 11월 18일 (목)', category: 'suneung', isSuneung: true }
 ];

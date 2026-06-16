@@ -160,6 +160,7 @@
         .schedule-dday.future { color: #667eea; }
         .schedule-dday.today { color: #f44336; }
         .schedule-dday.past { color: #ccc; }
+        .schedule-dday.result-pending { color: #11998e; }
         .schedule-item.upcoming .schedule-dday { color: #f57c00; }
         .schedule-item.is-suneung .schedule-dday { color: #f44336; }
 
@@ -374,7 +375,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script src="schedule-data.js?v=20260614"></script>
+    <script src="schedule-data.js?v=20260615"></script>
     <script>
         function buildDates() {
             var sun = getActiveSuneung(), prev = getPreviousSuneung();
@@ -579,14 +580,28 @@
                 }
                 if (shouldShow) items.push({ name:s.name, date:s.date, displayDate:formatDisplayDate(s.date), category:s.category, isSuneung:s.isSuneung, displayName: grades ? displayName+' ('+grades+')' : displayName, badgeCat: badgeCat, scope: s.scope, resultDate: s.resultDate });
             });
-            if (!showPast) items = items.filter(function(i){ return parseDate(i.date) >= getToday(); });
+            // 시험일이 지났어도 성적통지일 전이면 목록에 유지(통지 D-day 안내). 정렬도 그 날짜 기준.
+            function effectiveDate(i){
+                return (i.resultDate && i.resultDate.date && calculateDday(i.date) < 0) ? i.resultDate.date : i.date;
+            }
+            if (!showPast) items = items.filter(function(i){
+                return parseDate(i.date) >= getToday() ||
+                       (i.resultDate && i.resultDate.date && parseDate(i.resultDate.date) >= getToday());
+            });
+            items.sort(function(a, b){ return parseDate(effectiveDate(a)) - parseDate(effectiveDate(b)); });
             if (items.length === 0) {
                 list.innerHTML = '<div class="empty-message"><span class="empty-icon">🔍</span>선택한 조건에 맞는 일정이 없습니다</div>';
                 return;
             }
             items.forEach(function(item, idx) {
                 var dday = calculateDday(item.date);
-                var isPast = dday < 0, isToday = dday === 0, isUpcoming = dday > 0 && dday <= 7;
+                var isToday = dday === 0;
+                var examPast = dday < 0;
+                // 시험은 끝났지만 성적통지일이 아직이면 '통지 대기'로 목록에 유지
+                var resultDday = (item.resultDate && item.resultDate.date) ? calculateDday(item.resultDate.date) : null;
+                var resultPending = examPast && resultDday !== null && resultDday >= 0;
+                var isPast = examPast && !resultPending;
+                var isUpcoming = dday > 0 && dday <= 7;
                 var isSuneung = item.isSuneung && item.date === getActiveSuneung().date;
                 var el = document.createElement('div');
                 el.className = 'schedule-item';
@@ -595,6 +610,7 @@
                 if (isPast) el.classList.add('past-item');
                 var ddayText, ddayClass;
                 if (isToday) { ddayText='D-Day!'; ddayClass='today'; }
+                else if (resultPending) { ddayText = (resultDday === 0 ? '통지 D-Day' : '통지 D-'+resultDday); ddayClass='result-pending'; }
                 else if (isPast) { ddayText='D+'+Math.abs(dday); ddayClass='past'; }
                 else { ddayText='D-'+dday; ddayClass='future'; }
                 var bc = item.badgeCat === 'both' ? 'pyeongwon' : item.badgeCat;
@@ -683,8 +699,8 @@
                 });
                 body.innerHTML = html;
             }
-            if (item.resultDate) {
-                body.innerHTML = '<div class="scope-result">성적 통지: ' + item.resultDate + '</div>' + body.innerHTML;
+            if (item.resultDate && item.resultDate.text) {
+                body.innerHTML = '<div class="scope-result">성적 통지: ' + item.resultDate.text + '</div>' + body.innerHTML;
             }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
