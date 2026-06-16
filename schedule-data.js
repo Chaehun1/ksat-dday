@@ -129,14 +129,14 @@ var schedules = [
     { name: '2027 LEET (법학적성시험)', date: '2026-07-19', displayDate: '2026년 7월 19일 (일)', category: 'etc' },
     { name: '7월 서바이벌 프로', date: '2026-07-24', displayDate: '2026년 7월 24일 (금)', category: 'surf', scope: SURF_SCOPE },
     { name: '2027 사관학교 1차시험', date: '2026-08-01', displayDate: '2026년 8월 1일 (토)', category: 'etc', scope: [
-        { subject: '국어', range: '독서, 문학\n(화법과 작문·언어와 매체 제외)\n30문항 · 50분 · 100점' },
-        { subject: '수학', range: '[공통] 수학Ⅰ, 수학Ⅱ\n[자연계열] 미적분, 기하 중 택1\n[인문계열] 확률과 통계, 미적분, 기하 중 택1\n30문항 · 100분 · 100점' },
-        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)\n30문항 · 50분 · 100점' }
+        { subject: '국어', range: '독서, 문학\n(화법과 작문·언어와 매체 제외)', meta: '30문항 · 50분 · 100점' },
+        { subject: '수학', range: '[공통] 수학Ⅰ, 수학Ⅱ\n[자연계열] 미적분, 기하 중 택1\n[인문계열] 확률과 통계, 미적분, 기하 중 택1', meta: '30문항 · 100분 · 100점' },
+        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)', meta: '30문항 · 50분 · 100점' }
     ] },
     { name: '2027 경찰대 1차시험', date: '2026-08-01', displayDate: '2026년 8월 1일 (토)', category: 'etc', scope: [
-        { subject: '국어', range: '독서, 문학\n45문항 · 60분 · 100점' },
-        { subject: '수학', range: '수학Ⅰ, 수학Ⅱ\n25문항 · 80분 · 100점' },
-        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)\n45문항 · 60분 · 100점' }
+        { subject: '국어', range: '독서, 문학', meta: '45문항 · 60분 · 100점' },
+        { subject: '수학', range: '수학Ⅰ, 수학Ⅱ', meta: '25문항 · 80분 · 100점' },
+        { subject: '영어', range: '영어Ⅰ, 영어Ⅱ (듣기평가 없음)', meta: '45문항 · 60분 · 100점' }
     ] },
     { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf', scope: SURF_SCOPE },
     { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff', scope: SURF_SCOPE },
