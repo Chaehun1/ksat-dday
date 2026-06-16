@@ -375,7 +375,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script src="schedule-data.js?v=20260616"></script>
+    <script src="schedule-data.js?v=20260617"></script>
     <script>
         function buildDates() {
             var sun = getActiveSuneung(), prev = getPreviousSuneung();
@@ -569,12 +569,7 @@
             var items = [];
             schedules.forEach(function(s) {
                 var shouldShow = false, displayName = s.name, grades = '', badgeCat = s.category;
-                if (s.category === 'both') {
-                    var hp = activeFilters.indexOf('pyeongwon') > -1, hg = activeFilters.indexOf('gyoyukchung') > -1;
-                    if (hp && hg) { shouldShow=true; grades='고1, 고2, 고3'; badgeCat='pyeongwon'; }
-                    else if (hp) { shouldShow=true; grades='고3'; badgeCat='pyeongwon'; }
-                    else if (hg) { shouldShow=true; grades='고1, 고2'; badgeCat='gyoyukchung'; }
-                } else if (activeFilters.indexOf(s.category) > -1) {
+                if (activeFilters.indexOf(s.category) > -1) {
                     shouldShow = true;
                     if (s.grades) grades = s.grades;
                 }
@@ -618,7 +613,7 @@
                 else if (resultPending) { ddayText = (resultDday === 0 ? '성적 통지일 D-Day' : '성적 통지일 D-'+resultDday); ddayClass='result-pending'; }
                 else if (isPast) { ddayText='D+'+Math.abs(dday); ddayClass='past'; }
                 else { ddayText='D-'+dday; ddayClass='future'; }
-                var bc = item.badgeCat === 'both' ? 'pyeongwon' : item.badgeCat;
+                var bc = item.badgeCat;
                 el.innerHTML = '<div class="schedule-info"><div class="schedule-name">'+item.displayName+getBadge(bc)+'</div><div class="schedule-date">'+item.displayDate+'</div></div><div class="schedule-dday '+ddayClass+'">'+ddayText+'</div>';
                 var hasScope = item.scope && (Array.isArray(item.scope) ? item.scope.length > 0 : Object.keys(item.scope).length > 0);
                 if (hasScope) {

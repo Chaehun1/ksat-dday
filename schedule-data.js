@@ -79,10 +79,7 @@ var schedules = [
         { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매 - 1. 반응 속도\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] IV. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환' }
     ] },
     { name: '5월 서바이벌 프로', date: '2026-05-25', displayDate: '2026년 5월 25일 (월)', category: 'surf', scope: SURF_SCOPE },
-    { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, resultDate: [
-        { source: 'pyeongwon',   date: '2026-07-01', text: '고3(평가원) 7월 1일(수)' },
-        { source: 'gyoyukchung', date: '2026-06-19', text: '고1·고2(교육청) 6월 19일(금)' }
-    ], scope: [
+    { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'pyeongwon', grades: '고3', resultDate: [{ date: '2026-07-01', text: '7월 1일(수)' }], scope: [
         { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
             { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
             { subject: '수학', range: '[수학Ⅰ] 전 범위\n[수학Ⅱ] 전 범위\n[확률과 통계] Ⅱ. 확률\n[미적분] Ⅱ. 미분법\n[기하] Ⅱ. 평면벡터' },
@@ -92,7 +89,9 @@ var schedules = [
             { subject: '과학탐구', range: '[물리학Ⅰ] 전 범위\n[물리학Ⅱ] Ⅱ. 전자기장\n[화학Ⅰ] 전 범위\n[화학Ⅱ] Ⅲ. 반응 속도와 촉매\n[생명과학Ⅰ] 전 범위\n[생명과학Ⅱ] Ⅳ. 유전자 발현의 조절\n[지구과학Ⅰ] 전 범위\n[지구과학Ⅱ] Ⅱ. 대기와 해양 - 2. 대기의 운동과 순환' },
             { subject: '직업탐구', range: '6과목 전 범위\n(성공적인 직업 생활, 농업 기초 기술, 공업 일반,\n 상업 경제, 수산·해운 산업 기초, 인간 발달)' },
             { subject: '제2외국어/한문', range: '9과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 베트남어Ⅰ, 아랍어Ⅰ, 한문Ⅰ)' }
-        ] },
+        ] }
+    ] },
+    { name: '6월 모의고사', date: '2026-06-04', displayDate: '2026년 6월 4일 (목)', category: 'gyoyukchung', grades: '고1, 고2', resultDate: [{ date: '2026-06-19', text: '6월 19일(금)' }], scope: [
         { grade: 2, source: 'gyoyukchung', label: '고2 (교육청)', rows: [
             { subject: '국어', range: '6월 수준에 맞추어 출제\n(화법과 언어, 독서와 작문, 문학)' },
             { subject: '수학', range: '[대수] Ⅱ. 삼각함수' },
@@ -143,7 +142,7 @@ var schedules = [
     ] },
     { name: '8월 서바이벌 프로', date: '2026-08-17', displayDate: '2026년 8월 17일 (월)', category: 'surf', scope: SURF_SCOPE },
     { name: '8월 더 프리미엄', date: '2026-08-18', displayDate: '2026년 8월 18일 (화)', category: 'duff', scope: SURF_SCOPE },
-    { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'both', grades: { pyeongwon: '고3', gyoyukchung: '고1, 고2' }, scope: [
+    { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'pyeongwon', grades: '고3', scope: [
         { grade: 3, source: 'pyeongwon', label: '고3 (평가원)', rows: [
             { subject: '국어', range: '전 범위\n(독서, 문학, 화법과 작문, 언어와 매체)' },
             { subject: '수학', range: '전 범위\n(수학Ⅰ, 수학Ⅱ, 확률과 통계, 미적분, 기하)' },
@@ -153,7 +152,9 @@ var schedules = [
             { subject: '과학탐구', range: '8과목 전 범위\n(물리학Ⅰ, 물리학Ⅱ, 화학Ⅰ, 화학Ⅱ,\n 생명과학Ⅰ, 생명과학Ⅱ, 지구과학Ⅰ, 지구과학Ⅱ)' },
             { subject: '직업탐구', range: '6과목 전 범위\n(성공적인 직업 생활, 농업 기초 기술, 공업 일반,\n 상업 경제, 수산·해운 산업 기초, 인간 발달)' },
             { subject: '제2외국어/한문', range: '9과목 전 범위\n(독일어Ⅰ, 프랑스어Ⅰ, 스페인어Ⅰ, 중국어Ⅰ, 일본어Ⅰ,\n 러시아어Ⅰ, 베트남어Ⅰ, 아랍어Ⅰ, 한문Ⅰ)' }
-        ] },
+        ] }
+    ] },
+    { name: '9월 모의고사', date: '2026-09-02', displayDate: '2026년 9월 2일 (수)', category: 'gyoyukchung', grades: '고1, 고2', scope: [
         { grade: 2, source: 'gyoyukchung', label: '고2 (교육청)', rows: [
             { subject: '국어', range: '9월 수준에 맞추어 출제\n(화법과 언어, 독서와 작문, 문학)' },
             { subject: '수학', range: '[대수] 전 범위\n[미적분Ⅰ] Ⅰ. 함수의 극한과 연속 - 1. 함수의 극한' },
