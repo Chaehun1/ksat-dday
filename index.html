@@ -374,7 +374,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script src="schedule-data.js"></script>
+    <script src="schedule-data.js?v=20260614"></script>
     <script>
         function buildDates() {
             var sun = getActiveSuneung(), prev = getPreviousSuneung();
@@ -642,7 +642,7 @@
             var html = '<table class="scope-table"><tbody>';
             rows.forEach(function(r){
                 var metaText = r.meta || SUBJECT_META[r.subject] || '';
-                var metaHtml = metaText ? '<span class="scope-meta">📝 ' + metaText + '</span>' : '';
+                var metaHtml = metaText ? '<span class="scope-meta">' + metaText + '</span>' : '';
                 html += '<tr><th>'+r.subject+'</th><td>'+r.range+metaHtml+'</td></tr>';
             });
             html += '</tbody></table>';
@@ -658,7 +658,7 @@
             var scope = item.scope;
             var hasData = scope && (Array.isArray(scope) ? scope.length > 0 : Object.keys(scope).length > 0);
             if (!hasData) {
-                body.innerHTML = '<div class="scope-empty">📋 출제 범위가 곧 업데이트될 예정이에요</div>';
+                body.innerHTML = '<div class="scope-empty">출제 범위가 곧 업데이트될 예정이에요</div>';
             } else if (Array.isArray(scope) && scope[0] && scope[0].subject) {
                 // 단순 형식: [{subject, range}]
                 body.innerHTML = renderScopeTable(scope);
@@ -667,7 +667,7 @@
                 var sections = scope.filter(function(s){ return !s.source || activeFilters.indexOf(s.source) > -1; });
                 sections.sort(function(a,b){ return (b.grade||0) - (a.grade||0); });
                 if (!sections.length) {
-                    body.innerHTML = '<div class="scope-empty">📋 선택한 필터에 해당하는 출제 범위가 없어요</div>';
+                    body.innerHTML = '<div class="scope-empty">선택한 필터에 해당하는 출제 범위가 없어요</div>';
                 } else {
                     var html = '';
                     sections.forEach(function(s){
@@ -684,7 +684,7 @@
                 body.innerHTML = html;
             }
             if (item.resultDate) {
-                body.innerHTML = '<div class="scope-result">📋 성적 통지: ' + item.resultDate + '</div>' + body.innerHTML;
+                body.innerHTML = '<div class="scope-result">성적 통지: ' + item.resultDate + '</div>' + body.innerHTML;
             }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
