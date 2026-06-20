@@ -446,6 +446,9 @@
         }
 
         function renderExamCard(exam) {
+            // Worker가 ?dl=1이면 강제 다운로드(attachment). 파일은 R2 도메인이라
+            // HTML download 속성은 안 먹어서 쿼리로 처리한다.
+            const dl = u => u + (u.indexOf('?') >= 0 ? '&' : '?') + 'dl=1';
             const typeLabel = exam.type === 'pyeongga' ? '평가원' :
                               exam.type === 'gyoyukcheong' ? '교육청' : exam.type;
             const gradeLabel = exam.grade ? `고${exam.grade}` : '';
@@ -461,19 +464,19 @@
                     rows = `<span class="subject-chip">
                         <span class="subject-chip-label">${escapeHtml(g.label)}</span>
                         <span class="subject-chip-sep">·</span>
-                        <a href="${escapeHtml(grp)}" target="_blank" rel="noopener">다운로드</a>
+                        <a href="${escapeHtml(dl(grp))}" rel="noopener">다운로드</a>
                     </span>`;
                 } else if (grp && typeof grp === 'object') {
                     rows = Object.entries(grp).map(([subjName, entry]) => {
                         const links = [];
                         if (typeof entry === 'string') {
-                            links.push(`<a href="${escapeHtml(entry)}" target="_blank" rel="noopener">다운로드</a>`);
+                            links.push(`<a href="${escapeHtml(dl(entry))}" rel="noopener">다운로드</a>`);
                         } else if (entry && typeof entry === 'object') {
-                            if (entry['문제'])  links.push(`<a href="${escapeHtml(entry['문제'])}"  target="_blank" rel="noopener">문제지</a>`);
-                            if (entry['정답'])  links.push(`<a href="${escapeHtml(entry['정답'])}"  target="_blank" rel="noopener">정답</a>`);
-                            if (entry['해설'])  links.push(`<a href="${escapeHtml(entry['해설'])}"  target="_blank" rel="noopener">해설</a>`);
+                            if (entry['문제'])  links.push(`<a href="${escapeHtml(dl(entry['문제']))}"  rel="noopener">문제지</a>`);
+                            if (entry['정답'])  links.push(`<a href="${escapeHtml(dl(entry['정답']))}"  rel="noopener">정답</a>`);
+                            if (entry['해설'])  links.push(`<a href="${escapeHtml(dl(entry['해설']))}"  rel="noopener">해설</a>`);
                             if (entry['듣기'])  links.push(`<a href="${escapeHtml(entry['듣기'])}"  target="_blank" rel="noopener">듣기</a>`);
-                            if (entry['url'])   links.push(`<a href="${escapeHtml(entry['url'])}"   target="_blank" rel="noopener">다운로드</a>`);
+                            if (entry['url'])   links.push(`<a href="${escapeHtml(dl(entry['url']))}"   rel="noopener">다운로드</a>`);
                         }
                         if (links.length === 0) return '';
                         return `<span class="subject-chip">
