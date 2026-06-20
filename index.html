@@ -14,12 +14,12 @@
          crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수능 디데이 카운터 | 2027 수능 D-day | 6·9월 모의평가 디데이 | 모의고사 일정</title>
-    <meta name="description" content="2027학년도 수능 디데이 카운터 - 수능 D-day, 6·9월 모의평가 디데이, 평가원·교육청·더프·서프 모의고사 일정, 수시/정시 원서접수·성적 통지일까지 한눈에. 2026년 11월 19일 시행.">
+    <title>2027 수능 디데이 · 9모 디데이 | 모의고사 일정</title>
+    <meta name="description" content="모든 수능·평가원·교육청·사설(더프·서프) 모의고사 일정과 디데이를 한눈에. 익명 게시판까지 한 곳에서.">
     <meta name="keywords" content="2027 수능 디데이 카운터, 수능 디데이, 수능 D-day, 6모 디데이, 9모 디데이, 6월 모의고사 디데이, 9월 모의고사 디데이, 6모 D-day, 9모 D-day, 2027 수능, 2027학년도 수능, 수능 디데이 계산기, 수능 카운터, 수능 카운트다운, 수능 남은 날짜, 수능 몇일 남았나, 모의고사 일정, 2026 모의고사 일정, 3월 모의고사, 6월 모의고사, 9월 모의고사, 평가원 모의고사, 교육청 모의고사, 더프 모의고사, 서프 모의고사, 수시 원서 접수, 정시 원서 접수, 수능 성적 통지일, 필적확인란, 필적확인란 문구, 역대 필적확인란, 수능 준비, 수험생">
     <meta name="theme-color" content="#667eea">
-    <meta property="og:title" content="수능 디데이 카운터 | 2027 수능 D-day | 6·9월 모의평가 디데이 | 모의고사 일정">
-    <meta property="og:description" content="2027학년도 수능 디데이 카운터 - 수능까지 남은 날짜, 6·9월 모의평가 디데이, 모의고사 일정, 수시/정시 일정, 역대 필적확인란까지 한눈에">
+    <meta property="og:title" content="2027 수능 디데이 · 9모 디데이 | 모의고사 일정">
+    <meta property="og:description" content="모든 수능·평가원·교육청·사설(더프·서프) 모의고사 일정과 디데이를 한눈에. 익명 게시판까지 한 곳에서.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://chaehun1.github.io/ksat-dday/">
     <meta property="og:image" content="https://chaehun1.github.io/ksat-dday/og-image.png">
@@ -28,8 +28,8 @@
     <meta property="og:site_name" content="2027 수능 디데이 카운터">
     <meta property="og:locale" content="ko_KR">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="수능 디데이 카운터 | 2027 수능 D-day | 6·9월 모의평가 디데이 | 모의고사 일정">
-    <meta name="twitter:description" content="2027학년도 수능 디데이 카운터 - 수능까지 남은 날짜, 6·9월 모의평가 디데이, 모의고사 일정, 수시/정시 일정, 역대 필적확인란까지 한눈에">
+    <meta name="twitter:title" content="2027 수능 디데이 · 9모 디데이 | 모의고사 일정">
+    <meta name="twitter:description" content="모든 수능·평가원·교육청·사설(더프·서프) 모의고사 일정과 디데이를 한눈에. 익명 게시판까지 한 곳에서.">
     <meta name="twitter:image" content="https://chaehun1.github.io/ksat-dday/og-image.png">
     <meta name="author" content="2027 수능 디데이 카운터">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -295,7 +295,7 @@
         <aside class="left-panel" role="complementary">
             <header class="header">
                 <h1>2027 수능 디데이 카운터</h1>
-                <p class="subtitle">수능 D-day와 모든 모의고사 일정을 한눈에</p>
+                <p class="subtitle">모든 수능·평가원·교육청·사설 모의고사 일정을 한눈에</p>
             </header>
 
             <div class="mode-tabs" role="tablist" aria-label="디데이 모드 선택">
@@ -803,23 +803,20 @@
                 var sun = getActiveSuneung();
                 var second = (typeof getSecondTab === 'function') ? getSecondTab() : null; // '6mo'|'9mo'|null
                 var sd = Math.ceil((parseDate(sun.date) - getToday()) / 86400000);
+                var word = '', dd = null;
                 if (second) {
-                    var word = second === '9mo' ? '9모' : '6모';
-                    document.title = '수능 디데이 카운터 | ' + sun.year + ' 수능 D-day | ' + word + ' 디데이 | 모의고사 일정';
-                } else {
-                    document.title = '수능 디데이 카운터 | ' + sun.year + ' 수능 D-day | 모의고사 일정';
+                    word = second === '9mo' ? '9모' : '6모';
+                    var info = second === '9mo' ? getActiveNineMo() : getActiveSixMo();
+                    dd = Math.ceil((parseDate(info.date) - getToday()) / 86400000);
                 }
+                document.title = (second && dd >= 0)
+                    ? sun.year + ' 수능 디데이 D-' + sd + ' · ' + word + ' 디데이 D-' + dd + ' | 모의고사 일정'
+                    : sun.year + ' 수능 디데이 D-' + sd + ' | 모의고사 일정';
                 var md = document.querySelector('meta[name="description"]');
                 if (md) {
-                    var extra = '';
-                    if (second) {
-                        var info = second === '9mo' ? getActiveNineMo() : getActiveSixMo();
-                        var wlabel = second === '9mo' ? '9월 모의평가(9모)' : '6월 모의평가(6모)';
-                        var dd = Math.ceil((parseDate(info.date) - getToday()) / 86400000);
-                        if (dd >= 0) extra = wlabel + ' D-' + dd + ', ';
-                    }
-                    md.setAttribute('content', sun.year + '학년도 수능 D-' + sd + '. ' + extra +
-                        '평가원·교육청·더프·서프 모의고사 일정과 디데이, 수시/정시 원서접수·성적 통지일까지 한눈에.');
+                    var lead = sun.year + ' 수능 D-' + sd + ((second && dd >= 0) ? ', ' + word + ' D-' + dd : '') + '. ';
+                    md.setAttribute('content', lead +
+                        '모든 수능·평가원·교육청·사설 모의고사 일정을 한눈에, 익명 게시판까지.');
                 }
             } catch(e){}
         })();
