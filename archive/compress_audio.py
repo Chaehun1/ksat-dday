@@ -23,7 +23,18 @@ try:
 except Exception:
     pass
 
-ROOT = sys.argv[1] if len(sys.argv) > 1 else "기출_업로드"
+def default_root():
+    home = os.path.expanduser("~")
+    for cand in (os.path.join(home, "OneDrive", "바탕 화면", "기출_업로드"),
+                 os.path.join(home, "Desktop", "기출_업로드"),
+                 os.path.join(home, "OneDrive", "Desktop", "기출_업로드"),
+                 "기출_업로드"):
+        if os.path.isdir(cand):
+            return cand
+    return "기출_업로드"
+
+
+ROOT = sys.argv[1] if len(sys.argv) > 1 else default_root()
 AUDIO_EXT = {".mp3", ".m4a", ".wav", ".aac", ".ogg", ".flac", ".wma"}
 BITRATE = "96k"
 
