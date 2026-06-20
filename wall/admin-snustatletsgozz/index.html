@@ -1179,19 +1179,29 @@ service cloud.firestore {
             renderBulkPreview();
         });
 
+        // 이미 자료실(Firestore)에 등록된 파일인지 — files.{group}.{subject}.{kind} 존재 여부
+        function isAlreadyUploaded(entry) {
+            const exam = archiveExams.find(e => e.id === entry.examId);
+            const g = exam && exam.files && exam.files[entry.group];
+            const s = g && typeof g === 'object' && g[entry.subject];
+            return !!(s && typeof s === 'object' && s[entry.kind]);
+        }
+
         function renderBulkPreview() {
             const wrap = document.getElementById('bulkPreview');
             const btn  = document.getElementById('bulkUploadBtn');
             if (!bulkEntries.length) { wrap.innerHTML = ''; btn.style.display = 'none'; return; }
 
-            const valid   = bulkEntries.filter(e => !e.error);
-            const invalid = bulkEntries.filter(e => e.error);
+            const invalid  = bulkEntries.filter(e => e.error);
+            const validAll = bulkEntries.filter(e => !e.error);
+            const dup      = validAll.filter(isAlreadyUploaded);
+            const fresh    = validAll.filter(e => !isAlreadyUploaded(e));
             const byExam = {};
-            valid.forEach(e => { (byExam[e.examId] = byExam[e.examId] || []).push(e); });
+            fresh.forEach(e => { (byExam[e.examId] = byExam[e.examId] || []).push(e); });
             const newIds = Object.keys(byExam).filter(id => !archiveExams.some(x => x.id === id));
 
             let html = `<div style="font-size:0.86em;margin-bottom:8px;">
-                ✅ 유효 <strong>${valid.length}</strong> · ⚠️ 무시 <strong>${invalid.length}</strong>${newIds.length ? ` · 🆕 신규 시험 <strong>${newIds.length}</strong>개 자동 등록 예정` : ''}
+                ⬆ 업로드 <strong>${fresh.length}</strong>${dup.length ? ` · ⏭️ 이미 등록 <strong>${dup.length}</strong>(건너뜀)` : ''} · ⚠️ 무시 <strong>${invalid.length}</strong>${newIds.length ? ` · 🆕 신규 시험 <strong>${newIds.length}</strong>개` : ''}
             </div>`;
 
             html += Object.keys(byExam).sort().map(id => {
@@ -1204,6 +1214,10 @@ service cloud.firestore {
                 </div>`;
             }).join('');
 
+            if (!fresh.length && dup.length) {
+                html += `<div style="font-size:0.82em;color:#9aa5ea;margin-bottom:4px;">올린 파일이 모두 이미 등록돼 있어요. 새 과목을 추가한 뒤 폴더를 다시 선택하세요.</div>`;
+            }
+
             if (invalid.length) {
                 html += `<div style="margin-top:8px;font-size:0.8em;color:#ff9a9a;">
                     <div style="margin-bottom:4px;">⚠️ 무시되는 파일 (${invalid.length}개):</div>`
@@ -1213,7 +1227,7 @@ service cloud.firestore {
                     + `</div>`;
             }
             wrap.innerHTML = html;
-            btn.style.display = valid.length ? '' : 'none';
+            btn.style.display = fresh.length ? '' : 'none';
         }
 
         // 동시 N개씩 처리하는 작업 풀
@@ -1252,7 +1266,7 @@ service cloud.firestore {
                 showToast('⚠️ shared.js의 ARCHIVE_BASE를 Worker 주소로 먼저 바꿔주세요');
                 return;
             }
-            const valid = bulkEntries.filter(e => !e.error);
+            const valid = bulkEntries.filter(e => !e.error && !isAlreadyUploaded(e));
             if (!valid.length) return;
 
             const btn  = document.getElementById('bulkUploadBtn');
