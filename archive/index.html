@@ -272,15 +272,20 @@
         <div id="adminUI" style="display:none;">
             <div class="filter-bar">
                 <div class="filter-group">
-                    <span class="filter-label">학년도</span>
+                    <span class="filter-label">연도</span>
                     <select class="filter-select" id="filterYear"><option value="">전체</option></select>
                 </div>
                 <div class="filter-group">
-                    <span class="filter-label">시험</span>
-                    <select class="filter-select" id="filterType">
+                    <span class="filter-label">월</span>
+                    <select class="filter-select" id="filterMonth">
                         <option value="">전체</option>
-                        <option value="pyeongga">평가원</option>
-                        <option value="gyoyukcheong">교육청</option>
+                        <option value="3">3월</option>
+                        <option value="5">5월</option>
+                        <option value="6">6월</option>
+                        <option value="7">7월</option>
+                        <option value="9">9월</option>
+                        <option value="10">10월</option>
+                        <option value="11">11월</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -359,6 +364,12 @@
         const auth = getAuth(app);
 
         // ── 과목 표시 순서/라벨 ─────────────────────────
+        // 회차(subtype) → 시행 월. 수능 11월, 평가원 6·9월, 교육청 학평 3·5·7·10월 등
+        const SUBTYPE_MONTH = {
+            suneung: 11, '6mo': 6, '9mo': 9,
+            '3wol': 3, '4wol': 4, '5wol': 5, '6wol': 6, '7wol': 7, '9wol': 9, '10wol': 10, '11wol': 11
+        };
+
         const SUBJECT_GROUPS = [
             { key: 'korean',         label: '국어' },
             { key: 'math',           label: '수학' },
@@ -416,18 +427,19 @@
         function buildYearFilter() {
             const years = [...new Set(allExams.map(e => e.year))].sort((a, b) => b - a);
             const sel = document.getElementById('filterYear');
+            // 값은 학년도(데이터 그대로), 라벨은 시행연도(학년도-1)
             sel.innerHTML = '<option value="">전체</option>' +
-                years.map(y => `<option value="${y}">${y}학년도</option>`).join('');
+                years.map(y => `<option value="${y}">${y - 1}년</option>`).join('');
         }
 
         function renderGrid() {
             const fy = document.getElementById('filterYear').value;
-            const ft = document.getElementById('filterType').value;
+            const fm = document.getElementById('filterMonth').value;
             const fg = document.getElementById('filterGrade').value;
 
             const filtered = allExams.filter(e => {
                 if (fy && String(e.year) !== fy)      return false;
-                if (ft && e.type !== ft)              return false;
+                if (fm && String(SUBTYPE_MONTH[e.subtype] || '') !== fm) return false;
                 if (fg && String(e.grade || '') !== fg) return false;
                 return true;
             });
@@ -449,9 +461,12 @@
             // Worker가 ?dl=1이면 강제 다운로드(attachment). 파일은 R2 도메인이라
             // HTML download 속성은 안 먹어서 쿼리로 처리한다.
             const dl = u => u + (u.indexOf('?') >= 0 ? '&' : '?') + 'dl=1';
-            const typeLabel = exam.type === 'pyeongga' ? '평가원' :
+            const typeLabel = exam.subtype === 'suneung' ? '수능' :
+                              exam.type === 'pyeongga' ? '평가원' :
                               exam.type === 'gyoyukcheong' ? '교육청' : exam.type;
             const gradeLabel = exam.grade ? `고${exam.grade}` : '';
+            const month = SUBTYPE_MONTH[exam.subtype];
+            const examName = (exam.year && month) ? `${exam.year - 1}년 ${month}월` : (exam.label || exam.id);
 
             const sections = SUBJECT_GROUPS.map(g => {
                 const grp = exam.files?.[g.key];
@@ -495,7 +510,7 @@
 
             return `<article class="exam-card">
                 <div class="exam-card-header">
-                    <span class="exam-name">${escapeHtml(exam.label || exam.id)}</span>
+                    <span class="exam-name">${escapeHtml(examName)}</span>
                     <span class="exam-tag ${escapeHtml(exam.type || '')}">${escapeHtml(typeLabel)}</span>
                     ${gradeLabel ? `<span class="exam-tag grade">${escapeHtml(gradeLabel)}</span>` : ''}
                     ${exam.date ? `<span class="exam-date">${escapeHtml(exam.date)}</span>` : ''}
@@ -505,7 +520,7 @@
         }
 
         // 필터 이벤트
-        ['filterYear', 'filterType', 'filterGrade'].forEach(id => {
+        ['filterYear', 'filterMonth', 'filterGrade'].forEach(id => {
             document.getElementById(id).addEventListener('change', renderGrid);
         });
     </script>
