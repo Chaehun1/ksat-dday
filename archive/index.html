@@ -67,43 +67,41 @@
         /* ── 필터 바 ── */
         .filter-bar {
             background: rgba(255,255,255,0.95);
-            border-radius: 18px;
-            padding: 16px 20px;
+            border-radius: 16px;
+            padding: 12px 16px;
             margin-bottom: 16px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             backdrop-filter: blur(8px);
         }
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .filter-label {
-            font-size: 0.82em;
-            color: #666;
-            font-weight: 600;
-        }
         .filter-select {
-            padding: 7px 12px;
-            border: 1px solid #d0d4e0;
-            border-radius: 10px;
-            background: #fff;
-            color: #333;
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 9px 32px 9px 16px;
+            border: 1px solid rgba(102,126,234,0.22);
+            border-radius: 999px;
+            background-color: rgba(255,255,255,0.9);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23667eea" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            color: #444;
             font-family: 'IBM Plex Sans KR', sans-serif;
-            font-size: 0.86em;
-            font-weight: 500;
+            font-size: 0.9em;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.18s;
         }
-        .filter-select:hover { border-color: #667eea; }
+        .filter-select:hover { border-color: #667eea; background-color: #fff; }
         .filter-select:focus-visible { outline: 2px solid #667eea; outline-offset: 1px; }
         html[data-theme="dark"] .filter-bar    { background: rgba(30,32,48,0.92); }
-        html[data-theme="dark"] .filter-label  { color: #9a9aaa; }
-        html[data-theme="dark"] .filter-select { background: #1e2030; border-color: #3a3d55; color: #e8e8ea; }
+        html[data-theme="dark"] .filter-select {
+            background-color: rgba(42,45,64,0.9);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%239aa5ea" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            border-color: #3a3d55; color: #e8e8ea;
+        }
 
         /* ── 시험 카드 그리드 ── */
         .exam-grid {
@@ -272,32 +270,23 @@
         <!-- 관리자 전용 UI (default hidden) -->
         <div id="adminUI" style="display:none;">
             <div class="filter-bar">
-                <div class="filter-group">
-                    <span class="filter-label">연도</span>
-                    <select class="filter-select" id="filterYear"><option value="">전체</option></select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">월</span>
-                    <select class="filter-select" id="filterMonth">
-                        <option value="">전체</option>
-                        <option value="3">3월</option>
-                        <option value="5">5월</option>
-                        <option value="6">6월</option>
-                        <option value="7">7월</option>
-                        <option value="9">9월</option>
-                        <option value="10">10월</option>
-                        <option value="11">11월</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">학년</span>
-                    <select class="filter-select" id="filterGrade">
-                        <option value="">전체</option>
-                        <option value="3">고3</option>
-                        <option value="2">고2</option>
-                        <option value="1">고1</option>
-                    </select>
-                </div>
+                <select class="filter-select" id="filterYear"><option value="">연도</option></select>
+                <select class="filter-select" id="filterMonth">
+                    <option value="">월</option>
+                    <option value="3">3월</option>
+                    <option value="5">5월</option>
+                    <option value="6">6월</option>
+                    <option value="7">7월</option>
+                    <option value="9">9월</option>
+                    <option value="10">10월</option>
+                    <option value="11">11월</option>
+                </select>
+                <select class="filter-select" id="filterGrade">
+                    <option value="">학년</option>
+                    <option value="3">고3</option>
+                    <option value="2">고2</option>
+                    <option value="1">고1</option>
+                </select>
             </div>
 
             <div class="exam-grid" id="examGrid"></div>
@@ -429,7 +418,7 @@
             const years = [...new Set(allExams.map(e => e.year))].sort((a, b) => b - a);
             const sel = document.getElementById('filterYear');
             // 값은 학년도(데이터 그대로), 라벨은 시행연도(학년도-1)
-            sel.innerHTML = '<option value="">전체</option>' +
+            sel.innerHTML = '<option value="">연도</option>' +
                 years.map(y => `<option value="${y}">${y - 1}년</option>`).join('');
         }
 
