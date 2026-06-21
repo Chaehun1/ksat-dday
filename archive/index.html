@@ -152,12 +152,11 @@
         }
         .subject-section:last-child { margin-bottom: 0; }
         .subject-section-title {
-            font-size: 0.78em;
+            font-size: 1.02em;
             font-weight: 700;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 6px;
+            color: #555;
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
         }
         .subject-row {
             display: flex;
@@ -193,6 +192,7 @@
         html[data-theme="dark"] .exam-name     { color: #e8e8ea; }
         html[data-theme="dark"] .exam-date     { color: #9a9aaa; }
         html[data-theme="dark"] .exam-card-header { border-bottom-color: rgba(154,165,234,0.2); }
+        html[data-theme="dark"] .subject-section-title { color: #b8c0e0; }
         html[data-theme="dark"] .subject-chip  { background: rgba(154,165,234,0.1); border-color: rgba(154,165,234,0.2); color: #e8e8ea; }
         html[data-theme="dark"] .subject-chip a { color: #9aa5ea; }
         html[data-theme="dark"] .subject-chip a:hover { background: rgba(154,165,234,0.18); }
@@ -462,13 +462,11 @@
             // Worker가 ?dl=1이면 강제 다운로드(attachment). 파일은 R2 도메인이라
             // HTML download 속성은 안 먹어서 쿼리로 처리한다.
             const dl = u => u + (u.indexOf('?') >= 0 ? '&' : '?') + 'dl=1';
-            const typeLabel = exam.type === 'pyeongga' ? '평가원' :
-                              exam.type === 'gyoyukcheong' ? '교육청' : exam.type;
             const month = SUBTYPE_MONTH[exam.subtype];
             const yr = exam.year ? exam.year - 1 : null;
-            // 수능은 월(11월) 대신 '수능'으로, 나머지는 'N월'로
-            const examName = yr
-                ? (exam.subtype === 'suneung' ? `${yr}년 수능` : (month ? `${yr}년 ${month}월` : `${yr}년`))
+            // 수능은 'YYYY학년도 수능', 모평·학평은 '시행연도 N월'
+            const examName = exam.year
+                ? (exam.subtype === 'suneung' ? `${exam.year}학년도 수능` : (month ? `${yr}년 ${month}월` : `${yr}년`))
                 : (exam.label || exam.id);
 
             const sections = SUBJECT_GROUPS.map(g => {
@@ -514,7 +512,6 @@
             return `<article class="exam-card">
                 <div class="exam-card-header">
                     <span class="exam-name">${escapeHtml(examName)}</span>
-                    <span class="exam-tag ${escapeHtml(exam.type || '')}">${escapeHtml(typeLabel)}</span>
                     ${exam.date ? `<span class="exam-date">${escapeHtml(exam.date)}</span>` : ''}
                 </div>
                 ${sections || '<div class="state-text">등록된 파일이 없습니다.</div>'}
