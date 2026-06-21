@@ -47,7 +47,7 @@ async function handleGet(url, env, request) {
   try { key = decodeURIComponent(url.pathname.replace(/^\/+/, '')); }
   catch { return new Response('Bad path', { status: 400 }); }
 
-  if (!key.startsWith('archive/') || key.includes('..')) {
+  if (!isAllowedKey(key) || key.includes('..')) {
     return new Response('Forbidden', { status: 403 });
   }
 
@@ -83,7 +83,7 @@ async function handleUpload(request, env) {
   const key  = form.get('key');
 
   if (!file || typeof file === 'string') return json({ error: 'no file' }, 400, cors);
-  if (!key || typeof key !== 'string' || !key.startsWith('archive/') || key.includes('..')) {
+  if (!key || typeof key !== 'string' || !isAllowedKey(key) || key.includes('..')) {
     return json({ error: 'bad key' }, 400, cors);
   }
 
@@ -109,7 +109,7 @@ async function handleDelete(request, env) {
   catch { return json({ error: 'invalid json' }, 400, cors); }
 
   const prefix = body && body.prefix;
-  if (!prefix || typeof prefix !== 'string' || !prefix.startsWith('archive/') || prefix.includes('..')) {
+  if (!prefix || typeof prefix !== 'string' || !isAllowedKey(prefix) || prefix.includes('..')) {
     return json({ error: 'bad prefix' }, 400, cors);
   }
 
@@ -186,6 +186,11 @@ async function verifyFirebaseToken(token) {
   } catch {
     return null;
   }
+}
+
+// 서빙·쓰기를 허용할 키 prefix (기출 자료실 + 카드뉴스)
+function isAllowedKey(k) {
+  return typeof k === 'string' && (k.startsWith('archive/') || k.startsWith('news/'));
 }
 
 // ── 유틸 ────────────────────────────────────────────────────────

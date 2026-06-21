@@ -511,6 +511,32 @@
             <div class="card-title">📋 등록된 시험 목록 <span id="arListCount" style="font-size:0.78em;color:#666;font-weight:500;margin-left:6px;"></span></div>
             <div id="arList"><div class="empty-state"><span class="empty-icon">⏳</span>불러오는 중...</div></div>
         </div>
+
+        <div class="card">
+            <div class="card-title">📰 카드뉴스 — 등록 (비공개)</div>
+            <div class="archive-form">
+                <div class="ar-row">
+                    <label class="ar-label">제목</label>
+                    <input type="text" id="newsTitle" class="ar-input" placeholder="예: 여름방학 공부 전략">
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">날짜</label>
+                    <input type="date" id="newsDate" class="ar-input">
+                </div>
+                <div class="ar-row">
+                    <label class="ar-label">카드 이미지</label>
+                    <input type="file" id="newsFiles" class="ar-input" accept="image/*" multiple>
+                </div>
+                <div style="font-size:0.8em;color:#9aa5ea;line-height:1.6;margin:2px 0 8px;">여러 장 선택 — 파일명 순서대로 표지→내용→마무리. 예: 01.png, 02.png, 03.png …</div>
+                <button class="toolbar-btn active" id="newsCreateBtn" style="margin-top:6px;">+ 카드뉴스 등록</button>
+                <div id="newsStatus" style="margin-top:10px;font-size:0.85em;color:#9aa5ea;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 등록된 카드뉴스 <span id="newsListCount" style="font-size:0.78em;color:#666;font-weight:500;margin-left:6px;"></span></div>
+            <div id="newsList"><div class="empty-state"><span class="empty-icon">⏳</span>불러오는 중...</div></div>
+        </div>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -540,6 +566,7 @@
         const auth     = getAuth(app);
         const msgCol   = collection(db, 'messages');
         const archiveCol = collection(db, 'archive_exams');
+        const newsCol    = collection(db, 'news');
 
         // ── State ─────────────────────────────────────────────────────
         let currentUid  = null;
@@ -596,6 +623,7 @@
 
             loadPosts();
             loadArchiveExams();
+            loadNews();
         });
 
         // ── Rules generator ───────────────────────────────────────────
@@ -1344,6 +1372,98 @@ service cloud.firestore {
                 await deleteDoc(doc(archiveCol, id));
                 showToast('🗑 삭제됨: ' + id);
                 await loadArchiveExams();
+            } catch (err) {
+                console.error(err);
+                showToast('❌ 삭제 실패: ' + err.message);
+            }
+        });
+
+        // ── 카드뉴스 (비공개) ────────────────────────────────────
+        let newsItems = [];
+
+        async function loadNews() {
+            try {
+                const q = query(newsCol, orderBy('date', 'desc'), limit(100));
+                const snap = await getDocs(q);
+                newsItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            } catch (e) { console.error('news load', e); newsItems = []; }
+            renderNewsList();
+        }
+
+        function renderNewsList() {
+            const wrap = document.getElementById('newsList');
+            document.getElementById('newsListCount').textContent = `(총 ${newsItems.length}개)`;
+            if (!newsItems.length) {
+                wrap.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span>등록된 카드뉴스가 없습니다</div>';
+                return;
+            }
+            wrap.innerHTML = newsItems.map(n => `<div class="ar-exam-row">
+                <div class="ar-exam-info">
+                    <div class="ar-exam-name">${escapeHtml(n.title || n.id)}</div>
+                    <div class="ar-exam-meta">${escapeHtml(n.date || '')} · 카드 ${(n.cards || []).length}장</div>
+                </div>
+                <button class="del-btn" data-news-del="${escapeHtml(n.id)}">삭제</button>
+            </div>`).join('');
+        }
+
+        document.getElementById('newsCreateBtn').addEventListener('click', async () => {
+            const title = document.getElementById('newsTitle').value.trim();
+            const date  = document.getElementById('newsDate').value;
+            const files = Array.from(document.getElementById('newsFiles').files || []).filter(f => f.size > 0 && !f.name.startsWith('.'));
+            const statusEl = document.getElementById('newsStatus');
+            if (!title) { showToast('⚠️ 제목을 입력해주세요'); return; }
+            if (!date)  { showToast('⚠️ 날짜를 선택해주세요'); return; }
+            if (!files.length) { showToast('⚠️ 카드 이미지를 선택해주세요'); return; }
+            if (ARCHIVE_BASE.includes('YOUR-SUBDOMAIN')) { showToast('⚠️ shared.js의 ARCHIVE_BASE를 먼저 설정해주세요'); return; }
+
+            // 파일명 순(01,02,…)으로 정렬 → 카드 순서
+            files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+            const newsId = String(Date.now());
+            const cards = [];
+            try {
+                const token = await auth.currentUser.getIdToken();
+                for (let i = 0; i < files.length; i++) {
+                    statusEl.textContent = `업로드 중… ${i} / ${files.length}`;
+                    const f = files[i];
+                    const ext = ((f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')) || 'jpg';
+                    const key = `news/${newsId}/${String(i + 1).padStart(2, '0')}.${ext}`;
+                    const fd = new FormData(); fd.append('file', f); fd.append('key', key);
+                    const res = await fetch(`${ARCHIVE_BASE}/upload`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+                    cards.push(data.url + '?v=' + Date.now());
+                }
+                await setDoc(doc(newsCol, newsId), { title, date, cards, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                statusEl.textContent = `✅ 등록 완료: ${title} (${cards.length}장)`;
+                showToast('✅ 카드뉴스 등록됨');
+                document.getElementById('newsTitle').value = '';
+                document.getElementById('newsDate').value  = '';
+                document.getElementById('newsFiles').value = '';
+                await loadNews();
+            } catch (e) {
+                console.error(e);
+                statusEl.textContent = '❌ 실패: ' + e.message;
+                showToast('❌ 등록 실패: ' + e.message);
+            }
+        });
+
+        document.getElementById('newsList').addEventListener('click', async (e) => {
+            const id = e.target.dataset.newsDel;
+            if (!id) return;
+            if (!confirm(`카드뉴스 [${id}]를 삭제합니다.\n\n이미지와 문서가 모두 삭제됩니다.`)) return;
+            try {
+                if (!ARCHIVE_BASE.includes('YOUR-SUBDOMAIN')) {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${ARCHIVE_BASE}/delete`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prefix: `news/${id}/` })
+                    });
+                    if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error('R2 삭제 실패: ' + (d.error || res.status)); }
+                }
+                await deleteDoc(doc(newsCol, id));
+                showToast('🗑 삭제됨: ' + id);
+                await loadNews();
             } catch (err) {
                 console.error(err);
                 showToast('❌ 삭제 실패: ' + err.message);
