@@ -371,6 +371,16 @@
             { key: 'second-lang',    label: '제2외국어/한문' }
         ];
 
+        // 세부과목 표시 순서 (수능 선택과목 표준 순서). 목록에 없는 과목은 뒤로.
+        const SUBJECT_ORDER = {
+            korean:        ['화법과 작문', '언어와 매체'],
+            math:          ['확률과 통계', '미적분', '기하'],
+            social:        ['생활과 윤리', '윤리와 사상', '한국지리', '세계지리', '동아시아사', '세계사', '경제', '정치와 법', '사회·문화'],
+            science:       ['물리학1', '화학1', '생명과학1', '지구과학1', '물리학2', '화학2', '생명과학2', '지구과학2'],
+            vocational:    ['성공적인 직업생활', '농업 기초 기술', '공업 일반', '상업 경제', '수산·해운 산업 기초', '인간 발달'],
+            'second-lang': ['독일어', '프랑스어', '스페인어', '중국어', '일본어', '러시아어', '아랍어', '베트남어', '한문']
+        };
+
         let allExams = [];
 
         function escapeHtml(s) {
@@ -472,7 +482,12 @@
                         <a href="${escapeHtml(dl(grp))}" rel="noopener">다운로드</a>
                     </span>`;
                 } else if (grp && typeof grp === 'object') {
-                    rows = Object.entries(grp).map(([subjName, entry]) => {
+                    const order = SUBJECT_ORDER[g.key] || [];
+                    const ordered = Object.entries(grp).sort((a, b) => {
+                        const ia = order.indexOf(a[0]), ib = order.indexOf(b[0]);
+                        return (ia < 0 ? 1e9 : ia) - (ib < 0 ? 1e9 : ib);
+                    });
+                    rows = ordered.map(([subjName, entry]) => {
                         const links = [];
                         if (typeof entry === 'string') {
                             links.push(`<a href="${escapeHtml(dl(entry))}" rel="noopener">다운로드</a>`);
