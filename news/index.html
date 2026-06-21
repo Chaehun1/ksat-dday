@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EQF5D05DY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9EQF5D05DY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입시 카드뉴스</title>
+    <!-- 비공개 작업 중: 검색엔진 색인 차단. 공개 시 제거 -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .page-header {
+            background: rgba(255,255,255,0.95);
+            border-radius: 22px;
+            padding: 26px 32px;
+            margin-bottom: 18px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+            backdrop-filter: blur(8px);
+        }
+        .page-title { font-size: 1.6em; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; }
+        .page-subtitle { margin-top: 6px; font-size: 0.92em; color: #777; }
+        .draft-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(229,57,53,0.12); color: #c0392b;
+            border: 1px solid rgba(229,57,53,0.3); border-radius: 999px;
+            padding: 3px 10px; font-size: 0.72em; font-weight: 600;
+            margin-left: 8px; vertical-align: middle;
+        }
+        html[data-theme="dark"] .page-header { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .page-title  { color: #e8e8ea; }
+        html[data-theme="dark"] .page-subtitle { color: #9a9aaa; }
+        html[data-theme="dark"] .draft-badge { background: rgba(229,57,53,0.18); color: #ff8a8a; border-color: rgba(229,57,53,0.35); }
+
+        /* ── 카드뉴스 갤러리 ── */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+        .news-card {
+            cursor: pointer; border-radius: 16px; overflow: hidden;
+            background: rgba(255,255,255,0.95); box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px); transition: transform 0.18s, box-shadow 0.18s;
+        }
+        .news-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(0,0,0,0.16); }
+        .news-cover { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; background: #eef0f5; }
+        .news-info { padding: 12px 14px; }
+        .news-title { font-weight: 700; font-size: 0.95em; color: #333; line-height: 1.35; }
+        .news-date { margin-top: 4px; font-size: 0.8em; color: #888; }
+        .news-count { font-size: 0.78em; color: #aaa; }
+        html[data-theme="dark"] .news-card { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .news-title { color: #e8e8ea; }
+        html[data-theme="dark"] .news-date, html[data-theme="dark"] .news-count { color: #9a9aaa; }
+
+        /* ── 상태 박스 ── */
+        .state-box { background: rgba(255,255,255,0.92); border-radius: 18px; padding: 50px 28px; text-align: center; color: #777; box-shadow: 0 8px 24px rgba(0,0,0,0.08); backdrop-filter: blur(8px); }
+        .state-icon { font-size: 2.6em; margin-bottom: 12px; }
+        .state-title { font-size: 1.1em; font-weight: 700; color: #555; margin-bottom: 6px; }
+        .state-text { font-size: 0.9em; line-height: 1.6; color: #888; }
+        html[data-theme="dark"] .state-box   { background: rgba(30,32,48,0.92); color: #9a9aaa; }
+        html[data-theme="dark"] .state-title { color: #e8e8ea; }
+        html[data-theme="dark"] .state-text  { color: #9a9aaa; }
+
+        /* ── 슬라이드 뷰어 ── */
+        .viewer { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; z-index: 1000; flex-direction: column; }
+        .viewer.open { display: flex; }
+        .viewer-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; color: #fff; gap: 12px; }
+        .viewer-bar-title { font-size: 0.95em; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .viewer-close { background: none; border: none; color: #fff; font-size: 1.7em; line-height: 1; cursor: pointer; padding: 0 6px; flex-shrink: 0; }
+        .viewer-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .viewer-track::-webkit-scrollbar { display: none; }
+        .viewer-slide { flex: 0 0 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 0 12px 14px; box-sizing: border-box; }
+        .viewer-slide img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+        .viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.18); border: none; color: #fff; width: 46px; height: 46px; border-radius: 50%; font-size: 1.5em; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .viewer-prev { left: 14px; }
+        .viewer-next { right: 14px; }
+        .viewer-nav:hover { background: rgba(255,255,255,0.32); }
+        .viewer-counter { text-align: center; color: #fff; font-size: 0.9em; font-weight: 600; padding: 4px 0 18px; letter-spacing: 1px; }
+        @media (max-width: 640px) { .viewer-nav { display: none; } }
+
+        @media (max-width: 640px) {
+            .container { padding: 0; }
+            .page-header { padding: 20px 22px; border-radius: 18px; }
+            .page-title { font-size: 1.3em; }
+            .news-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="fab-actions">
+        <button class="fab-btn" id="paletteBtn" aria-label="시즌 팔레트">🎨</button>
+        <div class="theme-menu" id="paletteMenu" role="menu" aria-label="시즌 팔레트">
+            <button class="theme-opt" data-season="auto"     role="menuitem"><span class="emoji">🤖</span> 자동</button>
+            <button class="theme-opt" data-season="default"  role="menuitem"><span class="emoji">🟣</span> 기본</button>
+            <button class="theme-opt" data-season="spring"   role="menuitem"><span class="emoji">🌸</span> 봄</button>
+            <button class="theme-opt" data-season="summer"   role="menuitem"><span class="emoji">🌊</span> 여름</button>
+            <button class="theme-opt" data-season="autumn"   role="menuitem"><span class="emoji">🍁</span> 가을</button>
+            <button class="theme-opt" data-season="winter"   role="menuitem"><span class="emoji">❄️</span> 겨울</button>
+            <button class="theme-opt" data-season="imminent" role="menuitem"><span class="emoji">🔥</span> 임박</button>
+        </div>
+        <button class="fab-btn" id="darkToggle" aria-label="다크모드 토글">🌙</button>
+    </div>
+
+    <nav class="nav-bar" aria-label="주 메뉴">
+        <div class="nav-pill">
+            <button class="nav-toggle" id="navToggle" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu"><span class="nav-toggle-icon" aria-hidden="true">☰</span> 메뉴</button>
+            <div class="nav-menu" id="navMenu" role="menu">
+                <a href="../" class="nav-link" role="menuitem">🏠 디데이</a>
+                <a href="../wall/" class="nav-link" role="menuitem">📝 익명 게시판</a>
+                <a href="../grade-cut/" class="nav-link" role="menuitem">🎯 등급컷</a>
+                <a href="../archive/" class="nav-link nav-link-archive" role="menuitem">📚 기출문제</a>
+                <a href="./" class="nav-link nav-link-news active" role="menuitem">📰 카드뉴스</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">📰 입시 카드뉴스<span class="draft-badge" id="draftBadge" style="display:none;">비공개</span></h1>
+            <p class="page-subtitle">수능·입시 소식을 카드뉴스로 한눈에</p>
+        </header>
+
+        <!-- 비관리자 placeholder -->
+        <div class="state-box" id="placeholderBox">
+            <div class="state-icon">🚧</div>
+            <div class="state-title">준비 중</div>
+            <div class="state-text">카드뉴스는 곧 공개됩니다.</div>
+        </div>
+
+        <!-- 관리자 전용 (default hidden) -->
+        <div id="contentUI" style="display:none;">
+            <div class="news-grid" id="newsGrid"></div>
+
+            <div class="state-box" id="emptyBox" style="display:none;">
+                <div class="state-icon">📭</div>
+                <div class="state-title">아직 등록된 카드뉴스가 없습니다</div>
+                <div class="state-text">관리자 페이지에서 첫 카드뉴스를 등록해보세요.</div>
+            </div>
+
+            <div class="state-box" id="loadingBox">
+                <div class="state-icon">⏳</div>
+                <div class="state-text">불러오는 중...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 슬라이드 뷰어 -->
+    <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="카드뉴스 보기">
+        <div class="viewer-bar">
+            <span class="viewer-bar-title" id="viewerTitle"></span>
+            <button class="viewer-close" id="viewerClose" aria-label="닫기">×</button>
+        </div>
+        <div class="viewer-track" id="viewerTrack"></div>
+        <button class="viewer-nav viewer-prev" id="viewerPrev" aria-label="이전">‹</button>
+        <button class="viewer-nav viewer-next" id="viewerNext" aria-label="다음">›</button>
+        <div class="viewer-counter" id="viewerCounter"></div>
+    </div>
+
+    <script src="../shared.js"></script>
+    <script>
+        initDarkTheme();
+        setupNavMenu();
+        setupDarkToggle('darkToggle');
+        setupPaletteMenu('paletteBtn', 'paletteMenu');
+
+        // 관리자 마킹 시 placeholder 플래시 방지 (auth 확정 전 미리 표시)
+        if (isAdminMarked()) {
+            document.getElementById('placeholderBox').style.display = 'none';
+            document.getElementById('contentUI').style.display = '';
+            document.getElementById('draftBadge').style.display = '';
+        }
+
+        function applySeason() {
+            const choice = getSeasonChoice();
+            const resolved = resolveSeason(choice);
+            if (resolved) document.documentElement.setAttribute('data-season', resolved);
+            else          document.documentElement.removeAttribute('data-season');
+            document.querySelectorAll('.theme-opt').forEach(b => b.classList.toggle('selected', b.dataset.season === choice));
+        }
+        applySeason();
+        document.querySelectorAll('.theme-opt').forEach(b => b.addEventListener('click', () => {
+            saveSeasonChoice(b.dataset.season);
+            applySeason();
+            document.getElementById('paletteMenu').classList.remove('open');
+        }));
+    </script>
+
+    <script type="module">
+        import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { getFirestore, collection, getDocs, query, orderBy, limit }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged }
+            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey:            "AIzaSyAQjIqBSTukahMjOlW7kQyigqz9Y_Tzq_Q",
+            authDomain:        "ksat-dday-bc76f.firebaseapp.com",
+            projectId:         "ksat-dday-bc76f",
+            storageBucket:     "ksat-dday-bc76f.firebasestorage.app",
+            messagingSenderId: "291375667501",
+            appId:             "1:291375667501:web:3def7360892dcfc3bf9ba4"
+        };
+        const app  = initializeApp(firebaseConfig);
+        const db   = getFirestore(app);
+        const auth = getAuth(app);
+
+        let allNews = [];
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        signInAnonymously(auth).catch(e => console.error('auth error', e));
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+            const isAdmin = user.uid === ADMIN_UID;
+            if (isAdmin) {
+                markAdmin();
+                applyArchiveNavVisibility();
+                document.getElementById('placeholderBox').style.display = 'none';
+                document.getElementById('contentUI').style.display = '';
+                document.getElementById('draftBadge').style.display = '';
+                await loadNews();
+            } else {
+                unmarkAdmin();
+                document.getElementById('placeholderBox').style.display = '';
+                document.getElementById('contentUI').style.display = 'none';
+                document.getElementById('draftBadge').style.display = 'none';
+            }
+        });
+
+        async function loadNews() {
+            try {
+                const q    = query(collection(db, 'news'), orderBy('date', 'desc'), limit(100));
+                const snap = await getDocs(q);
+                allNews = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderGallery();
+            } catch (e) {
+                console.error('load news error', e);
+                document.getElementById('loadingBox').innerHTML =
+                    '<div class="state-icon">⚠️</div><div class="state-text">로드 실패: ' + escapeHtml(e.message) + '</div>';
+            }
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('newsGrid');
+            document.getElementById('loadingBox').style.display = 'none';
+            if (!allNews.length) {
+                grid.innerHTML = '';
+                document.getElementById('emptyBox').style.display = '';
+                return;
+            }
+            document.getElementById('emptyBox').style.display = 'none';
+            grid.innerHTML = allNews.map((n, i) => {
+                const cover = (n.cards && n.cards[0]) || '';
+                return `<article class="news-card" data-idx="${i}">
+                    <img class="news-cover" src="${escapeHtml(cover)}" alt="${escapeHtml(n.title || '')}" loading="lazy">
+                    <div class="news-info">
+                        <div class="news-title">${escapeHtml(n.title || '(제목 없음)')}</div>
+                        <div class="news-date">${escapeHtml(n.date || '')} · <span class="news-count">${(n.cards || []).length}장</span></div>
+                    </div>
+                </article>`;
+            }).join('');
+            grid.querySelectorAll('.news-card').forEach(el => {
+                el.addEventListener('click', () => openViewer(allNews[+el.dataset.idx]));
+            });
+        }
+
+        // ── 슬라이드 뷰어 ──────────────────────────────────────
+        const viewer = document.getElementById('viewer');
+        const track  = document.getElementById('viewerTrack');
+
+        function openViewer(news) {
+            if (typeof gtag === 'function') gtag('event', 'news_open', { title: news.title || '' });
+            document.getElementById('viewerTitle').textContent = news.title || '';
+            track.innerHTML = (news.cards || []).map(u =>
+                `<div class="viewer-slide"><img src="${escapeHtml(u)}" alt=""></div>`).join('');
+            viewer.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            track.scrollLeft = 0;
+            updateCounter();
+        }
+        function closeViewer() {
+            viewer.classList.remove('open');
+            document.body.style.overflow = '';
+            track.innerHTML = '';
+        }
+        function updateCounter() {
+            const total = track.children.length;
+            const idx = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)) + 1;
+            document.getElementById('viewerCounter').textContent = total ? `${Math.min(idx, total)} / ${total}` : '';
+        }
+        function slide(dir) { track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' }); }
+
+        document.getElementById('viewerClose').addEventListener('click', closeViewer);
+        document.getElementById('viewerPrev').addEventListener('click', () => slide(-1));
+        document.getElementById('viewerNext').addEventListener('click', () => slide(1));
+        track.addEventListener('scroll', () => { clearTimeout(track._t); track._t = setTimeout(updateCounter, 80); });
+        viewer.addEventListener('click', e => { if (e.target === viewer) closeViewer(); });
+        document.addEventListener('keydown', e => {
+            if (!viewer.classList.contains('open')) return;
+            if (e.key === 'Escape')     closeViewer();
+            if (e.key === 'ArrowLeft')  slide(-1);
+            if (e.key === 'ArrowRight') slide(1);
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /archive/
+Disallow: /news/
 Disallow: /wall/admin-snustatletsgozz/
 Sitemap: https://chaehun1.github.io/ksat-dday/sitemap.xml

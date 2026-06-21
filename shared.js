@@ -223,10 +223,10 @@ function isAdminMarked() {
 function markAdmin()   { try { localStorage.setItem('is-admin', '1'); } catch (e) {} }
 function unmarkAdmin() { try { localStorage.removeItem('is-admin'); } catch (e) {} }
 
-// 관리자라면 .nav-link-archive 링크 노출. 그렇지 않으면 CSS 기본값(숨김) 유지.
+// 관리자라면 .nav-link-archive·.nav-link-news 링크 노출. 그렇지 않으면 CSS 기본값(숨김) 유지.
 function applyArchiveNavVisibility() {
     if (!isAdminMarked()) return;
-    document.querySelectorAll('.nav-link-archive').forEach(a => { a.style.display = ''; });
+    document.querySelectorAll('.nav-link-archive, .nav-link-news').forEach(a => { a.style.display = ''; });
 }
 
 if (typeof document !== 'undefined') {
