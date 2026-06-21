@@ -223,10 +223,11 @@ function isAdminMarked() {
 function markAdmin()   { try { localStorage.setItem('is-admin', '1'); } catch (e) {} }
 function unmarkAdmin() { try { localStorage.removeItem('is-admin'); } catch (e) {} }
 
-// 관리자라면 .nav-link-archive·.nav-link-news 링크 노출. 그렇지 않으면 CSS 기본값(숨김) 유지.
+// 관리자라면 .nav-link-news·.nav-link-gradecut 링크 노출. 그렇지 않으면 CSS 기본값(숨김) 유지.
+// (자료실 .nav-link-archive는 모두에게 노출 — 비관리자는 페이지에서 '준비 중'만 보임)
 function applyArchiveNavVisibility() {
     if (!isAdminMarked()) return;
-    document.querySelectorAll('.nav-link-archive, .nav-link-news').forEach(a => { a.style.display = ''; });
+    document.querySelectorAll('.nav-link-news, .nav-link-gradecut').forEach(a => { a.style.display = ''; });
 }
 
 if (typeof document !== 'undefined') {
