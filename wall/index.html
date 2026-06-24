@@ -58,7 +58,7 @@
 
         .panel, .compose, .post { background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: background 0.4s ease; }
 
-        .compose { padding: 20px; margin-bottom: 16px; }
+        .compose { padding: 20px; margin-bottom: 16px; animation: fadeDown 0.5s ease-out; }
         .compose input, .compose textarea { width: 100%; border: 1px solid #e5e5ea; border-radius: 10px; padding: 10px 14px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.95em; background: #f8f9fa; color: #333; resize: none; transition: border-color 0.2s; }
         .compose input:focus, .compose textarea:focus { outline: none; border-color: #667eea; }
         .compose input { margin-bottom: 10px; }
@@ -71,7 +71,7 @@
         .submit-btn:hover:not(:disabled) { background: #5568d3; transform: translateY(-1px); }
         .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-        .search-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .search-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; animation: fadeUp 0.5s ease-out 0.06s both; }
         .search-row input { flex: 1 1 140px; min-width: 0; padding: 9px 14px; border: 1px solid #ddd; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-size: 0.9em; background: rgba(255,255,255,0.95); color: #333; backdrop-filter: blur(6px); }
         .search-row input:focus { outline: none; border-color: #667eea; }
         html[data-theme="dark"] .search-row input { background: #2a2d40; color: #e8e8ea; border-color: #3a3d55; }
@@ -81,7 +81,7 @@
         html[data-theme="dark"] .filter-btn { background: #2a2d40; color: #9aa5ea; border-color: #3a3d55; }
         html[data-theme="dark"] .filter-btn[aria-pressed="true"] { background: #667eea; color: #fff; border-color: #667eea; }
 
-        .sort-row { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
+        .sort-row { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.5s ease-out 0.12s both; }
         .sort-btn { padding: 8px 18px; border: 1px solid #ddd; background: rgba(255,255,255,0.92); color: #666; border-radius: 999px; font-family: 'IBM Plex Sans KR', sans-serif; font-weight: 600; font-size: 0.85em; cursor: pointer; backdrop-filter: blur(6px); transition: all 0.2s; }
         .sort-btn:hover { color: #333; }
         .sort-btn.active { background: #667eea; color: #fff; border-color: #667eea; }

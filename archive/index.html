@@ -31,6 +31,7 @@
             margin-bottom: 18px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.12);
             backdrop-filter: blur(8px);
+            animation: fadeDown 0.5s ease-out;
         }
         .page-title {
             font-size: 1.6em;
@@ -64,18 +65,15 @@
         html[data-theme="dark"] .page-subtitle { color: #9a9aaa; }
         html[data-theme="dark"] .draft-badge { background: rgba(229,57,53,0.18); color: #ff8a8a; border-color: rgba(229,57,53,0.35); }
 
-        /* ── 필터 바 ── */
+        /* ── 필터 바 (헤더 블록 안) ── */
         .filter-bar {
-            background: rgba(255,255,255,0.95);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            backdrop-filter: blur(8px);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed rgba(102,126,234,0.22);
         }
         .filter-select {
             appearance: none;
@@ -96,7 +94,7 @@
         }
         .filter-select:hover { border-color: #667eea; background-color: #fff; }
         .filter-select:focus-visible { outline: 2px solid #667eea; outline-offset: 1px; }
-        html[data-theme="dark"] .filter-bar    { background: rgba(30,32,48,0.92); }
+        html[data-theme="dark"] .filter-bar    { border-top-color: rgba(154,165,234,0.22); }
         html[data-theme="dark"] .filter-select {
             background-color: rgba(42,45,64,0.9);
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%239aa5ea" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
@@ -108,6 +106,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
+            animation: fadeUp 0.55s ease-out 0.1s both;
         }
         .exam-card {
             background: rgba(255,255,255,0.95);
@@ -205,6 +204,7 @@
             color: #777;
             box-shadow: 0 8px 24px rgba(0,0,0,0.08);
             backdrop-filter: blur(8px);
+            animation: fadeUp 0.5s ease-out 0.08s both;
         }
         .state-icon { font-size: 2.6em; margin-bottom: 12px; }
         .state-title { font-size: 1.1em; font-weight: 700; color: #555; margin-bottom: 6px; }
@@ -258,18 +258,7 @@
         <header class="page-header">
             <h1 class="page-title">📚 기출문제 자료실<span class="draft-badge" id="draftBadge" style="display:none;">비공개</span></h1>
             <p class="page-subtitle">평가원·교육청 기출문제 시험지·해설·듣기음원</p>
-        </header>
-
-        <!-- 비관리자 placeholder -->
-        <div class="state-box" id="placeholderBox">
-            <div class="state-icon">🚧</div>
-            <div class="state-title">준비 중</div>
-            <div class="state-text">기출문제 자료실은 곧 공개됩니다.</div>
-        </div>
-
-        <!-- 관리자 전용 UI (default hidden) -->
-        <div id="adminUI" style="display:none;">
-            <div class="filter-bar">
+            <div class="filter-bar" id="filterBar" style="display:none;">
                 <select class="filter-select" id="filterYear"><option value="">연도</option></select>
                 <select class="filter-select" id="filterMonth">
                     <option value="">월</option>
@@ -288,7 +277,17 @@
                     <option value="1">고1</option>
                 </select>
             </div>
+        </header>
 
+        <!-- 비관리자 placeholder -->
+        <div class="state-box" id="placeholderBox">
+            <div class="state-icon">🚧</div>
+            <div class="state-title">준비 중</div>
+            <div class="state-text">기출문제 자료실은 곧 공개됩니다.</div>
+        </div>
+
+        <!-- 관리자 전용 UI (default hidden) -->
+        <div id="adminUI" style="display:none;">
             <div class="exam-grid" id="examGrid"></div>
 
             <div class="state-box" id="emptyBox" style="display:none;">
@@ -316,6 +315,7 @@
         if (isAdminMarked()) {
             document.getElementById('placeholderBox').style.display = 'none';
             document.getElementById('adminUI').style.display = '';
+            document.getElementById('filterBar').style.display = '';
             document.getElementById('draftBadge').style.display = '';
         }
 
@@ -399,6 +399,7 @@
                 applyArchiveNavVisibility();
                 document.getElementById('placeholderBox').style.display = 'none';
                 document.getElementById('adminUI').style.display = '';
+                document.getElementById('filterBar').style.display = '';
                 document.getElementById('draftBadge').style.display = '';
                 await loadExams();
             } else {
@@ -406,6 +407,7 @@
                 unmarkAdmin();
                 document.getElementById('placeholderBox').style.display = '';
                 document.getElementById('adminUI').style.display = 'none';
+                document.getElementById('filterBar').style.display = 'none';
                 document.getElementById('draftBadge').style.display = 'none';
             }
         });
