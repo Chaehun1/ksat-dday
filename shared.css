@@ -55,7 +55,7 @@ html[data-theme="dark"][data-season="imminent"]  body { background: linear-gradi
 .fab-actions {
     position: fixed;
     top: 16px;
-    right: max(16px, calc((100vw - 1100px) / 2));  /* 데스크탑: layout(1100px) 우측 끝과 정렬 */
+    right: max(16px, calc((100vw - 1100px) / 2 - 84px));  /* 데스크탑: layout 바깥 배경 위에 고정 */
     display: flex;
     align-items: center;  /* 모바일에서 두 버튼 같은 높이 보장 */
     gap: 6px;
@@ -250,6 +250,7 @@ html[data-theme="dark"] .nav-link.active      { background: #667eea; color: #fff
 
 /* ── Mobile shared adjustments ── */
 @media (max-width: 640px) {
+    .fab-actions { position: fixed; top: 10px; right: 10px; }
     .fab-btn { width: 32px; height: 32px; font-size: 13px; }
     .particle { font-size: 1.1em; }
     .nav-bar    { margin-top: 0; padding: 0 6px; }  /* 햄버거가 FAB과 같은 y 위치 */
